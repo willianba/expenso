@@ -5,6 +5,7 @@
 /// <reference lib="deno.ns" />
 
 import "@std/dotenv/load";
+import "./db/db.ts";
 
 import { start } from "$fresh/server.ts";
 import manifest from "./fresh.gen.ts";
