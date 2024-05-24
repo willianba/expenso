@@ -6,12 +6,18 @@ logger.setup({
       formatter: (record) =>
         JSON.stringify({
           message: record.msg,
-          time: record.datetime.toISOString(),
           ...(record.args[0] as Record<string, unknown>),
+          time: record.datetime.toISOString(),
         }),
       useColors: false,
     }),
   },
+  loggers: {
+    default: {
+      level: "DEBUG",
+      handlers: ["default"],
+    },
+  },
 });
 
-export default logger;
+export default logger.getLogger();
