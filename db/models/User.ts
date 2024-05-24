@@ -1,22 +1,23 @@
 import { model, Schema } from "mongoose";
 
-type Dinosaur = {
+export type User = {
+  _id: Schema.Types.ObjectId;
   name: string;
-  description: string;
+  email: string;
   createdAt: Date;
   updatedAt: Date;
 };
 
-const dinosaurSchema = new Schema<Dinosaur>(
+const userSchema = new Schema<User>(
   {
     name: {
       type: String,
       unique: true,
-      required: [true, "Dinosaur name cannot be blank"],
+      required: true,
     },
-    description: {
+    email: {
       type: String,
-      required: [true, "Dinosaur description cannot be blank"],
+      required: true,
     },
   },
   {
@@ -26,4 +27,6 @@ const dinosaurSchema = new Schema<Dinosaur>(
   },
 );
 
-export default model("Dinosaur", dinosaurSchema);
+userSchema.index({ email: 1 });
+
+export default model("User", userSchema);
