@@ -1,8 +1,9 @@
 import { log } from "@/deps.ts";
+import { env } from "@/utils/env.ts";
 
 log.setup({
   handlers: {
-    default: new log.ConsoleHandler("DEBUG", {
+    friendlyJson: new log.ConsoleHandler("DEBUG", {
       formatter: (record) =>
         JSON.stringify({
           message: record.msg,
@@ -11,13 +12,21 @@ log.setup({
         }),
       useColors: false,
     }),
+    complexJson: new log.ConsoleHandler("INFO", {
+      formatter: log.formatters.jsonFormatter,
+      useColors: false,
+    }),
   },
   loggers: {
-    default: {
+    dev: {
       level: "DEBUG",
-      handlers: ["default"],
+      handlers: ["friendlyJson"],
+    },
+    prod: {
+      level: "INFO",
+      handlers: ["complexJson"],
     },
   },
 });
 
-export default log.getLogger();
+export default log.getLogger(env.ENVIRONMENT);
