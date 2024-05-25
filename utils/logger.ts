@@ -1,8 +1,8 @@
-import * as logger from "@std/log";
+import { log } from "@/deps.ts";
 
-logger.setup({
+log.setup({
   handlers: {
-    default: new logger.ConsoleHandler("DEBUG", {
+    default: new log.ConsoleHandler("DEBUG", {
       formatter: (record) =>
         JSON.stringify({
           message: record.msg,
@@ -20,4 +20,4 @@ logger.setup({
   },
 });
 
-export default logger.getLogger();
+export default log.getLogger();
