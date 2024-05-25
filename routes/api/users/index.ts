@@ -1,7 +1,6 @@
 import { Handlers } from "$fresh/server.ts";
 import { User } from "@/db/models/User.ts";
 import logger from "@/utils/logger.ts";
-import { BadRequestError } from "@/utils/errors.ts";
 import { usid, z } from "@/deps.ts";
 
 const CreateUserSchema = z
@@ -16,13 +15,7 @@ const kv = await Deno.openKv();
 export const handler: Handlers<User> = {
   async POST(req, _ctx) {
     const body = await req.json();
-    const validation = CreateUserSchema.safeParse(body);
-
-    if (!validation.success) {
-      throw new BadRequestError();
-    }
-
-    const { name, email } = validation.data;
+    const { name, email } = CreateUserSchema.parse(body);
 
     const password = usid.rand(10);
     await kv.set(
