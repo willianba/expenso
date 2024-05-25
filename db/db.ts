@@ -1,13 +1,14 @@
 import mongoose from "mongoose";
-import logger from "../utils/logger.ts";
+import logger from "@/utils/logger.ts";
+import { env } from "@/utils/env.ts";
 
 let protocol = "mongodb";
-const url = Deno.env.get("MONGOOSE_URL");
-const db = Deno.env.get("MONGOOSE_DB");
-const user = Deno.env.get("MONGOOSE_USER");
-const password = Deno.env.get("MONGOOSE_PASSWORD");
+const url = env.MONGOOSE_URL;
+const db = env.MONGOOSE_DB;
+const user = env.MONGOOSE_USER;
+const password = env.MONGOOSE_PASSWORD;
 
-if (Deno.env.get("MONGOOSE_USE_SSL") === "true") {
+if (env.MONGOOSE_USE_SSL === "true") {
   protocol = "mongodb+srv";
 }
 
