@@ -1,7 +1,7 @@
 import type { Plugin } from "$fresh/server.ts";
 import { STATUS_CODE, STATUS_TEXT } from "@std/http/status";
 import { BadRequestError, UnauthorizedError } from "@/utils/errors.ts";
-import { ZodError } from "@/deps.ts";
+import { ZodError } from "zod";
 import { fromError } from "zod-validation-error";
 
 export function getStatusCode(error: Error) {

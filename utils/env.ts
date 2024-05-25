@@ -1,5 +1,5 @@
-import { z } from "@/deps.ts";
 import { Environment } from "@/utils/constants.ts";
+import { z } from "zod";
 
 const envSchema = z
   .object({

@@ -2,7 +2,7 @@ import { Handlers } from "$fresh/server.ts";
 import UserModel, { User } from "@/db/models/User.ts";
 import logger from "@/utils/logger.ts";
 import { UnauthorizedError } from "@/utils/errors.ts";
-import { z } from "@/deps.ts";
+import { z } from "zod";
 
 const LoginSchema = z
   .object({

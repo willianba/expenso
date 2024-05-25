@@ -1,7 +1,8 @@
 import { Handlers } from "$fresh/server.ts";
 import { User } from "@/db/models/User.ts";
 import logger from "@/utils/logger.ts";
-import { usid, z } from "@/deps.ts";
+import { z } from "zod";
+import { rand as randomId } from "usid";
 
 const CreateUserSchema = z
   .object({
@@ -17,7 +18,7 @@ export const handler: Handlers<User> = {
     const body = await req.json();
     const { name, email } = CreateUserSchema.parse(body);
 
-    const password = usid.rand(10);
+    const password = randomId(10);
     await kv.set(
       ["user", email],
       { name, password },
