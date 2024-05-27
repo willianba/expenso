@@ -6,10 +6,9 @@
 /// <reference lib="deno.unstable" />
 
 import "@std/dotenv/load";
-import "./db/db.ts";
 
 import { start } from "$fresh/server.ts";
-import manifest from "./fresh.gen.ts";
-import config from "./fresh.config.ts";
+import manifest from "@/fresh.gen.ts";
+import config from "@/fresh.config.ts";
 
 await start(manifest, config);
