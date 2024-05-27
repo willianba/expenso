@@ -1,6 +1,5 @@
 import type { Plugin } from "$fresh/server.ts";
 import { STATUS_CODE, STATUS_TEXT } from "@std/http/status";
-import { BadRequestError, UnauthorizedError } from "@/utils/errors.ts";
 import { ZodError } from "zod";
 import { fromError } from "zod-validation-error";
 
@@ -8,10 +7,13 @@ export function getStatusCode(error: Error) {
   if (error instanceof Deno.errors.NotFound) {
     return STATUS_CODE.NotFound;
   }
-  if (error instanceof UnauthorizedError) {
+  if (error instanceof Deno.errors.AlreadyExists) {
+    return STATUS_CODE.Conflict;
+  }
+  if (error instanceof Deno.errors.PermissionDenied) {
     return STATUS_CODE.Unauthorized;
   }
-  if (error instanceof BadRequestError || error instanceof ZodError) {
+  if (error instanceof Deno.errors.InvalidData || error instanceof ZodError) {
     return STATUS_CODE.BadRequest;
   }
   return STATUS_CODE.InternalServerError;

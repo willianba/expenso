@@ -1,8 +1,10 @@
 import { Handlers } from "$fresh/server.ts";
-import { User } from "@/db/models/User.ts";
+import { User } from "@/db/models/user.ts";
 import logger from "@/utils/logger.ts";
 import { z } from "zod";
 import { rand as randomId } from "usid";
+import { hash } from "bcrypt";
+import { kv } from "@/db/kv.ts";
 
 const CreateUserSchema = z
   .object({
@@ -11,21 +13,21 @@ const CreateUserSchema = z
   })
   .required();
 
-const kv = await Deno.openKv();
-
 export const handler: Handlers<User> = {
   async POST(req, _ctx) {
     const body = await req.json();
     const { name, email } = CreateUserSchema.parse(body);
 
     const password = randomId(10);
+    const encryptedPassword = await hash(password);
     await kv.set(
-      ["user", email],
-      { name, password },
+      ["user_login", email],
+      { name, password: encryptedPassword },
       { expireIn: 10 * 1000 }, // 10 minutes
     );
 
-    logger.debug("Password generated", { password });
+    // TODO remove in the future
+    logger.debug("Password generated", { password, encryptedPassword });
 
     // TODO actually send an email
     return Response.json({ message: "Password sent to email" });

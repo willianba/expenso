@@ -1,33 +1,13 @@
-import { model, Schema } from "mongoose";
+import { User } from "@/db/models/user.ts";
 
-type Category = {
-  _id: Schema.Types.ObjectId;
+export type PopulatedCategory = {
+  id: string; // ULID
   label: string;
-  user: Schema.Types.ObjectId;
+  user: User;
   createdAt: Date;
   updatedAt: Date;
 };
 
-const categorySchema = new Schema<Category>(
-  {
-    label: {
-      type: String,
-      unique: true,
-      required: true,
-    },
-    user: {
-      type: Schema.Types.Mixed,
-      ref: "User",
-      required: true,
-    },
-  },
-  {
-    timestamps: true,
-    toObject: { virtuals: true },
-    toJSON: { virtuals: true },
-  },
-);
-
-categorySchema.index({ label: 1, user: 1 }, { unique: true });
-
-export default model("Category", categorySchema);
+export type Category = Omit<PopulatedCategory, "user"> & {
+  userId: string;
+};
