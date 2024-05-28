@@ -30,9 +30,12 @@
     "@std/log": "jsr:@std/log@^0.224.1",
     "@std/ulid": "jsr:@std/ulid@^0.224.0",
     "bcrypt": "https://deno.land/x/bcrypt@v0.4.1/mod.ts",
-    "mongoose": "npm:mongoose@^8.4.0",
+    "daisyui": "npm:daisyui@4.11.1",
     "preact": "https://esm.sh/preact@10.19.6",
     "preact/": "https://esm.sh/preact@10.19.6/",
+    "tailwindcss": "npm:tailwindcss@3.4.3",
+    "tailwindcss/": "npm:/tailwindcss@3.4.3/",
+    "tailwindcss/plugin": "npm:/tailwindcss@3.4.3/plugin.js",
     "usid": "https://deno.land/x/usid@2.0.0/mod.ts",
     "zod": "https://deno.land/x/zod@v3.23.8/mod.ts",
     "zod-validation-error": "npm:zod-validation-error@^3.3.0"
