@@ -3,16 +3,16 @@ import { FreshContext } from "$fresh/server.ts";
 import { type Cookie, getCookies } from "@std/http";
 import UserService, { User } from "@/db/models/user.ts";
 
-interface State {
+export type State = {
   sessionUser?: User;
-}
+};
 
 type SignedInState = Required<State>;
 
-const COOKIE_NAME = "local-session";
+const COOKIE_NAME = "expenso-session";
 
 // used on UI to set default values. the actual values are replaces with the signed in user
-export const BASE_COOKIE = {
+const BASE_COOKIE = {
   secure: true,
   path: "/",
   httpOnly: true,
@@ -46,6 +46,18 @@ function getSessionIdCookie(request: Request): string | undefined {
   return getCookies(request.headers)[cookieName];
 }
 
+export function generateSessionIdCookie(request: Request, sessionId: string) {
+  const https = isHttps(request.url);
+  const cookieName = getCookieName(COOKIE_NAME, https);
+  const cookie: Cookie = {
+    ...BASE_COOKIE,
+    name: cookieName,
+    value: sessionId,
+    secure: https,
+  };
+  return cookie;
+}
+
 function getCookieName(name: string, isHttps: boolean): string {
   return isHttps ? "__Host-" + name : name;
 }
@@ -76,7 +88,7 @@ export default {
     },
     {
       // TODO remove. kept as example for now
-      path: "/account",
+      path: "/test",
       middleware: { handler: ensureSignedIn },
     },
   ],
