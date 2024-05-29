@@ -14,11 +14,14 @@ export default class UserService {
     const userId = monotonicUlid();
     const userWithId = { ...user, id: userId };
 
-    const key = ["user", user.email];
+    const key = ["user", userId];
+    const emailKey = ["user_email", user.email];
     const createRes = await kv
       .atomic()
       .check({ key, versionstamp: null })
       .set(key, userWithId)
+      .check({ key: emailKey, versionstamp: null })
+      .set(emailKey, userId)
       .commit();
 
     if (!createRes.ok) {
@@ -29,7 +32,7 @@ export default class UserService {
   }
 
   public static async getByEmail(email: string) {
-    const userRes = await kv.get<User>(["user", email]);
+    const userRes = await kv.get<User>(["user_email", email]);
     return userRes.value;
   }
 
