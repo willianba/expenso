@@ -1,6 +1,13 @@
 import { kv } from "@/db/kv.ts";
 import { monotonicUlid } from "@std/ulid";
 
+export const UserKeys = {
+  user: (userId: string) => ["user", userId] as const,
+  userEmail: (email: string) => ["user_email", email] as const,
+  userSession: (sessionId: string) => ["user_session", sessionId] as const,
+  userLogin: (email: string) => ["user_login", email] as const,
+};
+
 export type User = {
   id: string; // ULID
   name: string;
@@ -14,8 +21,8 @@ export default class UserService {
     const userId = monotonicUlid();
     const userWithId = { ...user, id: userId };
 
-    const key = ["user", userId];
-    const emailKey = ["user_email", user.email];
+    const key = UserKeys.user(userId);
+    const emailKey = UserKeys.userEmail(user.email);
     const createRes = await kv
       .atomic()
       .check({ key, versionstamp: null })
@@ -32,12 +39,12 @@ export default class UserService {
   }
 
   public static async getByEmail(email: string) {
-    const userRes = await kv.get<User>(["user_email", email]);
+    const userRes = await kv.get<User>(UserKeys.userEmail(email));
     return userRes.value;
   }
 
   public static async getBySessionId(sessionId: string) {
-    const key = ["user_session", sessionId];
+    const key = UserKeys.userSession(sessionId);
     const eventualUser = await kv.get<User>(key, {
       consistency: "eventual",
     });

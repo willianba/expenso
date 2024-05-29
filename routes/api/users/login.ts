@@ -1,5 +1,5 @@
 import { Handlers } from "$fresh/server.ts";
-import { User } from "@/db/models/user.ts";
+import { User, UserKeys } from "@/db/models/user.ts";
 import logger from "@/utils/logger.ts";
 import { z } from "zod";
 import { rand as randomId } from "usid";
@@ -18,8 +18,9 @@ export const handler: Handlers<User> = {
 
     const password = randomId(10);
     const encryptedPassword = await hash(password);
+    const key = UserKeys.userLogin(email);
     await kv.set(
-      ["user_login", email],
+      key,
       { name, password: encryptedPassword },
       { expireIn: 10 * 1000 }, // 10 minutes
     );
