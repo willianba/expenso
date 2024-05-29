@@ -36,13 +36,10 @@ export default {
               return new Response(validationError.message, { status });
             }
 
-            return Response.json(
-              { message: error.message },
-              {
-                statusText: STATUS_TEXT[status],
-                status,
-              },
-            );
+            return new Response(error.message, {
+              statusText: STATUS_TEXT[status],
+              status,
+            });
           }
         },
       },
