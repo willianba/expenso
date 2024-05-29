@@ -4,21 +4,29 @@
 
 import * as $_404 from "./routes/_404.tsx";
 import * as $_app from "./routes/_app.tsx";
-import * as $api_users_index from "./routes/api/users/index.ts";
 import * as $api_users_login from "./routes/api/users/login.ts";
+import * as $api_users_password from "./routes/api/users/password.ts";
 import * as $index from "./routes/index.tsx";
-
+import * as $login from "./routes/login.tsx";
+import * as $password from "./routes/password.tsx";
+import * as $test from "./routes/test.tsx";
+import * as $NavBar from "./islands/NavBar.tsx";
 import { type Manifest } from "$fresh/server.ts";
 
 const manifest = {
   routes: {
     "./routes/_404.tsx": $_404,
     "./routes/_app.tsx": $_app,
-    "./routes/api/users/index.ts": $api_users_index,
     "./routes/api/users/login.ts": $api_users_login,
+    "./routes/api/users/password.ts": $api_users_password,
     "./routes/index.tsx": $index,
+    "./routes/login.tsx": $login,
+    "./routes/password.tsx": $password,
+    "./routes/test.tsx": $test,
   },
-  islands: {},
+  islands: {
+    "./islands/NavBar.tsx": $NavBar,
+  },
   baseUrl: import.meta.url,
 } satisfies Manifest;
 
