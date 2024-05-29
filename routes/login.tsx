@@ -1,4 +1,7 @@
-export default function Login() {
+import { defineRoute } from "$fresh/server.ts";
+import { type State } from "@/plugins/session.ts";
+
+export default defineRoute<State>((_req, _ctx) => {
   return (
     <div className="hero min-h-screen bg-base-200">
       <div className="hero-content flex-col lg:flex-row-reverse">
@@ -38,4 +41,4 @@ export default function Login() {
       </div>
     </div>
   );
-}
+});

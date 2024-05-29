@@ -1,6 +1,7 @@
 import { defineRoute } from "$fresh/server.ts";
+import { type State } from "@/plugins/session.ts";
 
-export default defineRoute((_req, ctx) => {
+export default defineRoute<State>((_req, ctx) => {
   return (
     <div className="hero min-h-screen bg-base-200">
       <div className="hero-content flex-col lg:flex-row-reverse">

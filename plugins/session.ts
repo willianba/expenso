@@ -66,6 +66,16 @@ function isHttps(url: string): boolean {
   return url.startsWith("https://");
 }
 
+async function redirectIfSignedIn(req: Request, ctx: FreshContext<State>) {
+  if (ctx.state.sessionUser) {
+    const url = new URL(req.url);
+    url.pathname = "/";
+    return Response.redirect(url);
+  }
+
+  return await ctx.next();
+}
+
 async function ensureSignedIn(_req: Request, ctx: FreshContext<State>) {
   assertSignedIn(ctx);
   return await ctx.next();
@@ -85,6 +95,14 @@ export default {
     {
       path: "/",
       middleware: { handler: setSessionState },
+    },
+    {
+      path: "/login",
+      middleware: { handler: redirectIfSignedIn },
+    },
+    {
+      path: "/password",
+      middleware: { handler: redirectIfSignedIn },
     },
     {
       // TODO remove. kept as example for now
