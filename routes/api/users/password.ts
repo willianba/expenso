@@ -72,7 +72,7 @@ export const handler: Handlers<User> = {
     }
 
     await kv.delete(UserKeys.userLogin(email));
-    logger.info("User logged in! Redirecting to home", { email });
+    logger.debug("User logged in! Redirecting to home", { email });
 
     return new Response("", {
       status: 302,
