@@ -9,10 +9,10 @@ export type State = {
 
 type SignedInState = Required<State>;
 
-const COOKIE_NAME = "expenso-session";
+export const COOKIE_NAME = "expenso-session";
 
 // used on UI to set default values. the actual values are replaces with the signed in user
-const BASE_COOKIE = {
+export const BASE_COOKIE = {
   secure: true,
   path: "/",
   httpOnly: true,
@@ -41,7 +41,7 @@ async function setSessionState(req: Request, ctx: FreshContext<State>) {
   return await ctx.next();
 }
 
-function getSessionIdCookie(request: Request): string | undefined {
+export function getSessionIdCookie(request: Request): string | undefined {
   const cookieName = getCookieName(COOKIE_NAME, isHttps(request.url));
   return getCookies(request.headers)[cookieName];
 }
@@ -58,18 +58,18 @@ export function generateSessionIdCookie(request: Request, sessionId: string) {
   return cookie;
 }
 
-function getCookieName(name: string, isHttps: boolean): string {
+export function getCookieName(name: string, isHttps: boolean): string {
   return isHttps ? "__Host-" + name : name;
 }
 
-function isHttps(url: string): boolean {
+export function isHttps(url: string): boolean {
   return url.startsWith("https://");
 }
 
 async function redirectIfSignedIn(req: Request, ctx: FreshContext<State>) {
   if (ctx.state.sessionUser) {
     const url = new URL(req.url);
-    url.pathname = "/";
+    url.pathname = "/app";
     return Response.redirect(url);
   }
 

@@ -38,9 +38,24 @@ export default class UserService {
     return userWithId as User;
   }
 
+  public static async getById(userId: string) {
+    const res = await kv.get<User>(UserKeys.user(userId));
+
+    if (res.value === null) {
+      throw new Deno.errors.NotFound("User not found");
+    }
+
+    return res.value;
+  }
+
   public static async getByEmail(email: string) {
-    const userRes = await kv.get<User>(UserKeys.userEmail(email));
-    return userRes.value;
+    const res = await kv.get<User>(UserKeys.userEmail(email));
+
+    if (res.value === null) {
+      throw new Deno.errors.NotFound("User not found");
+    }
+
+    return res.value;
   }
 
   public static async getBySessionId(sessionId: string) {

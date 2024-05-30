@@ -31,6 +31,7 @@
     "@std/ulid": "jsr:@std/ulid@^0.224.0",
     "bcrypt": "https://deno.land/x/bcrypt@v0.4.1/mod.ts",
     "daisyui": "npm:daisyui@4.11.1",
+    "denomailer": "https://deno.land/x/denomailer@1.6.0/mod.ts",
     "preact": "https://esm.sh/preact@10.19.6",
     "preact/": "https://esm.sh/preact@10.19.6/",
     "tailwindcss": "npm:tailwindcss@3.4.3",

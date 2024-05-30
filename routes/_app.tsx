@@ -1,7 +1,8 @@
-import { type PageProps } from "$fresh/server.ts";
-import NavBar from "@/islands/NavBar.tsx";
+import { defineRoute } from "$fresh/server.ts";
+import Container from "@/components/Container.tsx";
+import { State } from "@/plugins/session.ts";
 
-export default function App({ Component }: PageProps) {
+export default defineRoute<State>((_req, ctx) => {
   return (
     <html data-theme="macchiato">
       <head>
@@ -13,10 +14,11 @@ export default function App({ Component }: PageProps) {
       </head>
       <body>
         <div>
-          <NavBar />
-          <Component />
+          <Container sessionUser={ctx.state.sessionUser}>
+            <ctx.Component />
+          </Container>
         </div>
       </body>
     </html>
   );
-}
+});

@@ -31,8 +31,6 @@ export const handler: Handlers<User> = {
     }
 
     const { email, password } = validation.data;
-
-    logger.info("Finding user in cache by email", { email });
     const tempUser = await kv.get<TemporaryUser>(UserKeys.userLogin(email));
 
     if (!tempUser.value) {
@@ -56,7 +54,7 @@ export const handler: Handlers<User> = {
     const sessionId = crypto.randomUUID();
     const cookie = generateSessionIdCookie(req, sessionId);
     const headers = new Headers({
-      Location: "/",
+      Location: "/app",
     });
     setCookie(headers, cookie);
 

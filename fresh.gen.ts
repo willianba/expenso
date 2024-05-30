@@ -5,12 +5,16 @@
 import * as $_404 from "./routes/_404.tsx";
 import * as $_app from "./routes/_app.tsx";
 import * as $api_users_login from "./routes/api/users/login.ts";
+import * as $api_users_logout from "./routes/api/users/logout.ts";
 import * as $api_users_password from "./routes/api/users/password.ts";
+import * as $app from "./routes/app.tsx";
 import * as $index from "./routes/index.tsx";
 import * as $login from "./routes/login.tsx";
 import * as $password from "./routes/password.tsx";
 import * as $test from "./routes/test.tsx";
-import * as $NavBar from "./islands/NavBar.tsx";
+import * as $AppButton from "./islands/AppButton.tsx";
+import * as $AuthButton from "./islands/AuthButton.tsx";
+import * as $BackButton from "./islands/BackButton.tsx";
 import { type Manifest } from "$fresh/server.ts";
 
 const manifest = {
@@ -18,14 +22,18 @@ const manifest = {
     "./routes/_404.tsx": $_404,
     "./routes/_app.tsx": $_app,
     "./routes/api/users/login.ts": $api_users_login,
+    "./routes/api/users/logout.ts": $api_users_logout,
     "./routes/api/users/password.ts": $api_users_password,
+    "./routes/app.tsx": $app,
     "./routes/index.tsx": $index,
     "./routes/login.tsx": $login,
     "./routes/password.tsx": $password,
     "./routes/test.tsx": $test,
   },
   islands: {
-    "./islands/NavBar.tsx": $NavBar,
+    "./islands/AppButton.tsx": $AppButton,
+    "./islands/AuthButton.tsx": $AuthButton,
+    "./islands/BackButton.tsx": $BackButton,
   },
   baseUrl: import.meta.url,
 } satisfies Manifest;

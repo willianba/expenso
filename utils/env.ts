@@ -4,6 +4,7 @@ import { z } from "zod";
 export const envSchema = z.object({
   ENVIRONMENT: z.nativeEnum(Environment).default(Environment.DEVELOPMENT),
   DENO_KV_PATH: z.string().optional(),
+  RESEND_API_KEY: z.string(),
 });
 
 type Env = z.infer<typeof envSchema>;

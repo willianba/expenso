@@ -3,7 +3,7 @@ import { type State } from "@/plugins/session.ts";
 
 export default defineRoute<State>((_req, _ctx) => {
   return (
-    <div className="hero min-h-screen bg-base-200">
+    <div className="hero min-h-full bg-base-200">
       <div className="hero-content flex-col lg:flex-row-reverse">
         <div className="card shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
           <form className="card-body" method="POST" action="/api/users/login">

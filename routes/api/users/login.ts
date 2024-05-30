@@ -1,10 +1,10 @@
 import { Handlers } from "$fresh/server.ts";
 import { User, UserKeys } from "@/db/models/user.ts";
-import logger from "@/utils/logger.ts";
 import { z } from "zod";
 import { rand as randomId } from "usid";
 import { hash } from "bcrypt";
 import { kv } from "@/db/kv.ts";
+import mailer from "@/utils/email.ts";
 
 const CreateUserSchema = z.object({
   name: z.string(),
@@ -25,10 +25,13 @@ export const handler: Handlers<User> = {
       { expireIn: 10 * 1000 }, // 10 minutes
     );
 
-    // TODO remove in the future
-    logger.debug("Password generated", { password, encryptedPassword });
+    await mailer.send({
+      from: "expenso@resend.dev",
+      to: email,
+      subject: "Your expenso temporary password",
+      content: `Your temporary password is ${password}. Please use it in the next 10 minutes or request a new password.`,
+    });
 
-    // TODO actually send an email
     const url = new URL(req.url);
     url.pathname = "/password";
     url.searchParams.set("email", email);
