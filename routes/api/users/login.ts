@@ -2,7 +2,7 @@ import { Handlers } from "$fresh/server.ts";
 import { User, UserKeys } from "@/db/models/user.ts";
 import { z } from "zod";
 import { rand as randomId } from "usid";
-import { hash } from "bcrypt";
+import { hashSync } from "bcrypt";
 import { kv } from "@/db/kv.ts";
 import mailer from "@/utils/email.ts";
 
@@ -17,7 +17,7 @@ export const handler: Handlers<User> = {
     const { name, email } = CreateUserSchema.parse(body);
 
     const password = randomId(10);
-    const encryptedPassword = await hash(password);
+    const encryptedPassword = hashSync(password);
     const key = UserKeys.userLogin(email);
     await kv.set(
       key,

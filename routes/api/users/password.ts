@@ -1,7 +1,7 @@
 import { Handlers } from "$fresh/server.ts";
 import logger from "@/utils/logger.ts";
 import { z } from "zod";
-import { compare } from "https://deno.land/x/bcrypt@v0.4.1/src/main.ts";
+import { compareSync } from "https://deno.land/x/bcrypt@v0.4.1/src/main.ts";
 import { kv } from "@/db/kv.ts";
 import UserService, { User, UserKeys } from "@/db/models/user.ts";
 import { generateSessionIdCookie } from "@/plugins/session.ts";
@@ -38,7 +38,7 @@ export const handler: Handlers<User> = {
       throw new Deno.errors.PermissionDenied("Unauthorized");
     }
 
-    const doesPasswordMatch = await compare(password, tempUser.value?.password);
+    const doesPasswordMatch = compareSync(password, tempUser.value?.password);
 
     if (!doesPasswordMatch) {
       logger.error("Passwords don't match", { email });
