@@ -1,9 +1,12 @@
 name: Deploy
 on:
   push:
-    branches: master
+    branches:
+      - master
   pull_request:
-    branches: master
+    branches:
+      - master
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -22,6 +25,12 @@ jobs:
         uses: denoland/setup-deno@v1
         with:
           deno-version: v1.x
+
+      - name: Build .env
+        run: |
+          echo ${{ env.ENVIRONMENT }} >> .env
+          echo ${{ env.DENO_KV_PATH }} >> .env
+          echo ${{ secrets.RESEND_API_KEY }} >> .env
 
       - name: Build step
         run: "deno task build"
