@@ -1,6 +1,6 @@
 import { User } from "@/db/models/user.ts";
-import { PaymentMethod } from "@/db/models/paymentMethod.ts";
-import { Category } from "@/db/models/category.ts";
+import { RawPaymentMethod } from "@/db/models/paymentMethod.ts";
+import { RawCategory } from "@/db/models/category.ts";
 
 enum MoneyType {
   INCOME = "income",
@@ -13,31 +13,29 @@ enum PaymentType {
   CURRENT = "current",
 }
 
-export type PopulatedPayment = {
-  method: PaymentMethod;
-  category: Category;
+export type Payment = {
+  method: RawPaymentMethod;
+  category: RawCategory;
   type: PaymentType;
   installments?: number;
   date: Date;
 };
 
-export type PopulatedMoney = {
+export type Money = {
   id: string;
   price: number;
   type: MoneyType;
-  payment?: PopulatedPayment;
+  payment?: Payment;
   user: User;
   report: Report;
-  createdAt: Date;
-  updatedAt: Date;
 };
 
-export type Payment = Omit<PopulatedPayment, "method"> & {
+export type RawPayment = Omit<Payment, "method"> & {
   methodId: string;
   categoryId: string;
 };
 
-export type Money = Omit<PopulatedMoney, "user" | "report"> & {
+export type RawMoney = Omit<Money, "user" | "report"> & {
   userId: string;
   reportId: string;
 };

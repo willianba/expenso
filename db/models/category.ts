@@ -1,13 +1,11 @@
 import { User } from "@/db/models/user.ts";
 
-export type PopulatedCategory = {
+export type Category = {
   id: string; // ULID
   label: string;
   user: User;
-  createdAt: Date;
-  updatedAt: Date;
 };
 
-export type Category = Omit<PopulatedCategory, "user"> & {
+export type RawCategory = Omit<Category, "user"> & {
   userId: string;
 };

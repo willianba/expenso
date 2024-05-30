@@ -1,13 +1,11 @@
 import { User } from "@/db/models/user.ts";
 
-export type PopulatedPaymentMethod = {
+export type PaymentMethod = {
   id: string; // ULID
   label: string;
   user: User;
-  createdAt: Date;
-  updatedAt: Date;
 };
 
-export type PaymentMethod = Omit<PopulatedPaymentMethod, "user"> & {
+export type RawPaymentMethod = Omit<PaymentMethod, "user"> & {
   userId: string;
 };
