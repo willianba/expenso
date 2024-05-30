@@ -50,11 +50,6 @@ export default class UserService {
 
   public static async getByEmail(email: string) {
     const res = await kv.get<User>(UserKeys.userEmail(email));
-
-    if (res.value === null) {
-      throw new Deno.errors.NotFound("User not found");
-    }
-
     return res.value;
   }
 
