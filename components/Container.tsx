@@ -13,7 +13,7 @@ export default function Container(props: ContainerProps) {
   return (
     <div class="w-screen h-screen p-4 mx-auto bg-base-200">
       <NavBar sessionUser={sessionUser} />
-      <div class="max-w-full max-h-full mx-auto flex items-center justify-center navbar-offset">
+      <div class="navbar-offset">
         {children}
       </div>
     </div>
