@@ -2,6 +2,7 @@ import BackButton from "@/islands/BackButton.tsx";
 import AuthButton from "@/islands/AuthButton.tsx";
 import { User } from "@/db/models/user.ts";
 import AppButton from "@/islands/AppButton.tsx";
+import ThemeController from "@/islands/ThemeController.tsx";
 
 type NavBarProps = {
   sessionUser?: User;
@@ -20,6 +21,7 @@ export default function NavBar(props: NavBarProps) {
       </div>
       <div class="navbar-end">
         <div class="flex space-x-2">
+          <ThemeController />
           <AuthButton sessionUser={sessionUser} />
           <AppButton sessionUser={sessionUser} />
         </div>
