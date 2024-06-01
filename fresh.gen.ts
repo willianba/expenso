@@ -15,6 +15,7 @@ import * as $test from "./routes/test.tsx";
 import * as $AppButton from "./islands/AppButton.tsx";
 import * as $AuthButton from "./islands/AuthButton.tsx";
 import * as $BackButton from "./islands/BackButton.tsx";
+import * as $ThemeController from "./islands/ThemeController.tsx";
 import { type Manifest } from "$fresh/server.ts";
 
 const manifest = {
@@ -34,6 +35,7 @@ const manifest = {
     "./islands/AppButton.tsx": $AppButton,
     "./islands/AuthButton.tsx": $AuthButton,
     "./islands/BackButton.tsx": $BackButton,
+    "./islands/ThemeController.tsx": $ThemeController,
   },
   baseUrl: import.meta.url,
 } satisfies Manifest;
