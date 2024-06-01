@@ -1,12 +1,15 @@
 import { useState } from "preact/hooks";
+import { LocalStorage } from "@jmondi/browser-storage";
 
 enum Themes {
   LATTE = "latte",
   MACCHIATO = "macchiato",
 }
 
+const storage = new LocalStorage();
+
 const getTheme = () => {
-  return localStorage.getItem("theme") as Themes ?? Themes.MACCHIATO;
+  return storage.get("theme") as Themes ?? Themes.MACCHIATO;
 };
 
 export default function ThemeController() {
@@ -14,7 +17,7 @@ export default function ThemeController() {
 
   const handleToggle = () => {
     const newTheme = theme === Themes.LATTE ? Themes.MACCHIATO : Themes.LATTE;
-    localStorage.setItem("theme", newTheme);
+    storage.set("theme", newTheme);
     setTheme(newTheme);
   };
 
