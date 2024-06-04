@@ -7,11 +7,11 @@ export type State = {
   sessionUser?: User;
 };
 
-type SignedInState = Required<State>;
+export type SignedInState = Required<State>;
 
 export const COOKIE_NAME = "expenso-session";
 
-// used on UI to set default values. the actual values are replaces with the signed in user
+// used on UI to set default values. the actual values are replaced with the signed in user
 export const BASE_COOKIE = {
   secure: true,
   path: "/",
@@ -76,6 +76,16 @@ async function redirectIfSignedIn(req: Request, ctx: FreshContext<State>) {
   return await ctx.next();
 }
 
+async function redirectIfSignedOut(req: Request, ctx: FreshContext<State>) {
+  if (!ctx.state.sessionUser) {
+    const url = new URL(req.url);
+    url.pathname = "/login";
+    return Response.redirect(url);
+  }
+
+  return await ctx.next();
+}
+
 async function ensureSignedIn(_req: Request, ctx: FreshContext<State>) {
   assertSignedIn(ctx);
   return await ctx.next();
@@ -93,8 +103,12 @@ export default {
   name: "session",
   middlewares: [
     {
-      path: "/",
+      path: "/app",
       middleware: { handler: setSessionState },
+    },
+    {
+      path: "/app",
+      middleware: { handler: redirectIfSignedOut },
     },
     {
       path: "/login",
@@ -105,8 +119,7 @@ export default {
       middleware: { handler: redirectIfSignedIn },
     },
     {
-      // TODO remove. kept as example for now
-      path: "/test",
+      path: "/api/money",
       middleware: { handler: ensureSignedIn },
     },
   ],
