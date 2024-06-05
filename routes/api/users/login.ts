@@ -8,21 +8,20 @@ import mailer from "@/utils/email.ts";
 import logger from "@/utils/logger.ts";
 
 const CreateUserSchema = z.object({
-  name: z.string(),
   email: z.string().email(),
 });
 
 export const handler: Handlers<User> = {
   async POST(req, _ctx) {
     const body = Object.fromEntries(await req.formData());
-    const { name, email } = CreateUserSchema.parse(body);
+    const { email } = CreateUserSchema.parse(body);
 
     const password = randomId(10);
     const encryptedPassword = hashSync(password);
-    const key = UserKeys.userLogin(email);
+    const key = UserKeys.temporaryLogin(email);
     await kv.set(
       key,
-      { name, password: encryptedPassword },
+      { password: encryptedPassword },
       { expireIn: 10 * 1000 }, // 10 minutes
     );
 

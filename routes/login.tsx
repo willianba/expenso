@@ -11,18 +11,6 @@ export default defineRoute<State>((_req, _ctx) => {
             <form className="card-body" method="POST" action="/api/users/login">
               <div className="form-control">
                 <label className="label">
-                  <span className="label-text">Name</span>
-                </label>
-                <input
-                  type="text"
-                  name="name"
-                  placeholder="Name"
-                  className="input input-bordered"
-                  required
-                />
-              </div>
-              <div className="form-control">
-                <label className="label">
                   <span className="label-text">Email</span>
                 </label>
                 <input
