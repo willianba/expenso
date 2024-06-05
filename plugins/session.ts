@@ -103,7 +103,7 @@ export default {
   name: "session",
   middlewares: [
     {
-      path: "/app",
+      path: "/",
       middleware: { handler: setSessionState },
     },
     {
@@ -119,7 +119,7 @@ export default {
       middleware: { handler: redirectIfSignedIn },
     },
     {
-      path: "/api/money",
+      path: "/api/money/",
       middleware: { handler: ensureSignedIn },
     },
   ],
