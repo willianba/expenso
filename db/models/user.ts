@@ -1,16 +1,15 @@
 import { kv } from "@/db/kv.ts";
 import { monotonicUlid } from "@std/ulid";
 
-export const UserKeys = {
-  user: (userId: string) => ["user", userId] as const,
-  userEmail: (email: string) => ["user_email", email] as const,
-  userSession: (sessionId: string) => ["user_session", sessionId] as const,
-  userLogin: (email: string) => ["user_login", email] as const,
-};
+export enum Keys {
+  USER = "user",
+  USER_BY_EMAIL = "user_by_email",
+  USER_SESSION = "user_session",
+  TEMPORARY_LOGIN = "user_temporary_login",
+}
 
 export type User = {
   id: string; // ULID
-  name: string;
   email: string;
 };
 
@@ -21,14 +20,14 @@ export default class UserService {
     const userId = monotonicUlid();
     const userWithId = { ...user, id: userId };
 
-    const key = UserKeys.user(userId);
-    const emailKey = UserKeys.userEmail(user.email);
+    const key = [Keys.USER, userId];
+    const emailKey = [Keys.USER_BY_EMAIL, user.email];
     const createRes = await kv
       .atomic()
       .check({ key, versionstamp: null })
       .set(key, userWithId)
       .check({ key: emailKey, versionstamp: null })
-      .set(emailKey, userId)
+      .set(emailKey, userWithId)
       .commit();
 
     if (!createRes.ok) {
@@ -39,7 +38,7 @@ export default class UserService {
   }
 
   public static async getById(userId: string) {
-    const res = await kv.get<User>(UserKeys.user(userId));
+    const res = await kv.get<User>([Keys.USER, userId]);
 
     if (res.value === null) {
       throw new Deno.errors.NotFound("User not found");
@@ -49,12 +48,12 @@ export default class UserService {
   }
 
   public static async getByEmail(email: string) {
-    const res = await kv.get<User>(UserKeys.userEmail(email));
+    const res = await kv.get<User>([Keys.USER_BY_EMAIL, email]);
     return res.value;
   }
 
   public static async getBySessionId(sessionId: string) {
-    const key = UserKeys.userSession(sessionId);
+    const key = [Keys.USER_SESSION, sessionId];
     const eventualUser = await kv.get<User>(key, {
       consistency: "eventual",
     });

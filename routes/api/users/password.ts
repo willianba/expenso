@@ -3,7 +3,7 @@ import logger from "@/utils/logger.ts";
 import { z } from "zod";
 import { compareSync } from "https://deno.land/x/bcrypt@v0.4.1/src/main.ts";
 import { kv } from "@/db/kv.ts";
-import UserService, { User, UserKeys } from "@/db/models/user.ts";
+import UserService, { User, Keys as UserKeys } from "@/db/models/user.ts";
 import { generateSessionIdCookie } from "@/plugins/session.ts";
 import { setCookie } from "@std/http";
 
@@ -31,7 +31,10 @@ export const handler: Handlers<User> = {
     }
 
     const { email, password } = validation.data;
-    const tempUser = await kv.get<TemporaryUser>(UserKeys.userLogin(email));
+    const tempUser = await kv.get<TemporaryUser>([
+      UserKeys.TEMPORARY_LOGIN,
+      email,
+    ]);
 
     if (!tempUser.value) {
       logger.error("User not found in cache", { email });
@@ -48,7 +51,7 @@ export const handler: Handlers<User> = {
     let user = await UserService.getByEmail(email);
     if (!user) {
       logger.warn("User not found, creating it", { email });
-      user = await UserService.create({ email, name: tempUser.value.name });
+      user = await UserService.create({ email });
     }
 
     const sessionId = crypto.randomUUID();
@@ -58,7 +61,7 @@ export const handler: Handlers<User> = {
     });
     setCookie(headers, cookie);
 
-    const sessionKey = UserKeys.userSession(sessionId);
+    const sessionKey = [UserKeys.USER_SESSION, sessionId];
     const sessionRes = await kv
       .atomic()
       .check({ key: sessionKey, versionstamp: null })
@@ -71,7 +74,7 @@ export const handler: Handlers<User> = {
       });
     }
 
-    await kv.delete(UserKeys.userLogin(email));
+    await kv.delete([UserKeys.TEMPORARY_LOGIN, email]);
     logger.debug("User logged in! Redirecting to home", { email });
 
     return new Response("", {

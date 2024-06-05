@@ -1,5 +1,5 @@
 import { Handlers } from "$fresh/server.ts";
-import { User, UserKeys } from "@/db/models/user.ts";
+import { User, Keys as UserKeys } from "@/db/models/user.ts";
 import { kv } from "@/db/kv.ts";
 import {
   BASE_COOKIE,
@@ -19,7 +19,7 @@ export const handler: Handlers<User> = {
       return Response.redirect(url);
     }
 
-    await kv.delete(UserKeys.userSession(sessionId));
+    await kv.delete([UserKeys.USER_SESSION, sessionId]);
 
     const headers = new Headers({
       Location: "/",

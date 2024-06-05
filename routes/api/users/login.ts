@@ -1,5 +1,5 @@
 import { Handlers } from "$fresh/server.ts";
-import { User, UserKeys } from "@/db/models/user.ts";
+import { User, Keys as UserKeys } from "@/db/models/user.ts";
 import { z } from "zod";
 import { rand as randomId } from "usid";
 import { hashSync } from "bcrypt";
@@ -18,7 +18,7 @@ export const handler: Handlers<User> = {
 
     const password = randomId(10);
     const encryptedPassword = hashSync(password);
-    const key = UserKeys.temporaryLogin(email);
+    const key = [UserKeys.TEMPORARY_LOGIN, email];
     await kv.set(
       key,
       { password: encryptedPassword },
