@@ -4,6 +4,9 @@
 
 import * as $_404 from "./routes/_404.tsx";
 import * as $_app from "./routes/_app.tsx";
+import * as $api_categories_index from "./routes/api/categories/index.ts";
+import * as $api_money_index from "./routes/api/money/index.ts";
+import * as $api_paymentMethods_index from "./routes/api/paymentMethods/index.ts";
 import * as $api_users_login from "./routes/api/users/login.ts";
 import * as $api_users_logout from "./routes/api/users/logout.ts";
 import * as $api_users_password from "./routes/api/users/password.ts";
@@ -12,16 +15,23 @@ import * as $index from "./routes/index.tsx";
 import * as $login from "./routes/login.tsx";
 import * as $password from "./routes/password.tsx";
 import * as $test from "./routes/test.tsx";
+import * as $AddExpenseButton from "./islands/AddExpenseButton.tsx";
 import * as $AppButton from "./islands/AppButton.tsx";
 import * as $AuthButton from "./islands/AuthButton.tsx";
 import * as $BackButton from "./islands/BackButton.tsx";
+import * as $ExpenseModal from "./islands/ExpenseModal.tsx";
+import * as $InputSelector from "./islands/InputSelector.tsx";
 import * as $ThemeController from "./islands/ThemeController.tsx";
+import * as $hooks_useModal from "./islands/hooks/useModal.tsx";
 import { type Manifest } from "$fresh/server.ts";
 
 const manifest = {
   routes: {
     "./routes/_404.tsx": $_404,
     "./routes/_app.tsx": $_app,
+    "./routes/api/categories/index.ts": $api_categories_index,
+    "./routes/api/money/index.ts": $api_money_index,
+    "./routes/api/paymentMethods/index.ts": $api_paymentMethods_index,
     "./routes/api/users/login.ts": $api_users_login,
     "./routes/api/users/logout.ts": $api_users_logout,
     "./routes/api/users/password.ts": $api_users_password,
@@ -32,10 +42,14 @@ const manifest = {
     "./routes/test.tsx": $test,
   },
   islands: {
+    "./islands/AddExpenseButton.tsx": $AddExpenseButton,
     "./islands/AppButton.tsx": $AppButton,
     "./islands/AuthButton.tsx": $AuthButton,
     "./islands/BackButton.tsx": $BackButton,
+    "./islands/ExpenseModal.tsx": $ExpenseModal,
+    "./islands/InputSelector.tsx": $InputSelector,
     "./islands/ThemeController.tsx": $ThemeController,
+    "./islands/hooks/useModal.tsx": $hooks_useModal,
   },
   baseUrl: import.meta.url,
 } satisfies Manifest;
