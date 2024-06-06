@@ -26,13 +26,15 @@ export default function AddExpenseButton(props: ExpenseButtonProps) {
           </path>
         </svg>
       </button>
-      <ExpenseModal
-        id={modalId}
-        moneyType={moneyType}
-        paymentType={paymentType}
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
-      />
+      {paymentType && (
+        <ExpenseModal
+          id={modalId}
+          moneyType={moneyType}
+          paymentType={paymentType}
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+        />
+      )}
     </>
   );
 }
