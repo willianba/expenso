@@ -1,14 +1,13 @@
 import ExpenseModal from "@/islands/ExpenseModal.tsx";
 import useModal from "@/islands/hooks/useModal.tsx";
-import { MoneyType, PaymentType } from "@/utils/constants.ts";
+import { PaymentType } from "@/utils/constants.ts";
 
 type ExpenseButtonProps = {
-  moneyType: MoneyType;
-  paymentType?: PaymentType;
+  paymentType: PaymentType;
 };
 
 export default function AddExpenseButton(props: ExpenseButtonProps) {
-  const { moneyType, paymentType } = props;
+  const { paymentType } = props;
   const { modalId, openModal, isOpen, setIsOpen } = useModal();
 
   return (
@@ -26,15 +25,12 @@ export default function AddExpenseButton(props: ExpenseButtonProps) {
           </path>
         </svg>
       </button>
-      {paymentType && (
-        <ExpenseModal
-          id={modalId}
-          moneyType={moneyType}
-          paymentType={paymentType}
-          isOpen={isOpen}
-          setIsOpen={setIsOpen}
-        />
-      )}
+      <ExpenseModal
+        id={modalId}
+        paymentType={paymentType}
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+      />
     </>
   );
 }

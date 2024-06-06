@@ -1,16 +1,15 @@
 import AddExpenseButton from "@/islands/AddExpenseButton.tsx";
-import { MoneyType, PaymentType } from "@/utils/constants.ts";
+import { PaymentType } from "@/utils/constants.ts";
 import Table from "@/islands/Table.tsx";
 
 type CardProps = {
   title: string;
-  moneyType: MoneyType;
   paymentType?: PaymentType;
   classes?: string;
 };
 
 export default function Card(props: CardProps) {
-  const { classes, moneyType, paymentType, title } = props;
+  const { classes, paymentType, title } = props;
 
   return (
     <div
@@ -19,9 +18,7 @@ export default function Card(props: CardProps) {
       <div class="card-body h-full">
         <div class="flex justify-between">
           <h2 class="card-title">{title}</h2>
-          {paymentType && (
-            <AddExpenseButton moneyType={moneyType} paymentType={paymentType} />
-          )}
+          {paymentType && <AddExpenseButton paymentType={paymentType} />}
         </div>
         <span class="divider m-0 h-2" />
         {paymentType &&

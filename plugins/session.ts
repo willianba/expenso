@@ -119,7 +119,7 @@ export default {
       middleware: { handler: redirectIfSignedIn },
     },
     {
-      path: "/api/money/",
+      path: "/api/expenses/",
       middleware: { handler: ensureSignedIn },
     },
   ],

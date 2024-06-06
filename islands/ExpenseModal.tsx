@@ -1,20 +1,19 @@
 import { useEffect, useRef, useState } from "preact/hooks";
-import { MoneyType, PaymentType } from "@/utils/constants.ts";
+import { PaymentType } from "@/utils/constants.ts";
 import InputSelector from "@/islands/InputSelector.tsx";
 import { getFormattedDate } from "@/utils/date.ts";
-import { moneySig } from "@/signals/money.ts";
-import { MoneyWithoutUser } from "@/db/models/money.ts";
+import { expenses } from "@/signals/expenses.ts";
+import { ExpenseWithoutUser } from "@/db/models/expense.ts";
 
 type ModalProps = {
   id: string;
-  moneyType: MoneyType;
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   paymentType: PaymentType;
 };
 
 export default function ExpenseModal(props: ModalProps) {
-  const { id, moneyType, paymentType, isOpen, setIsOpen } = props;
+  const { id, paymentType, isOpen, setIsOpen } = props;
   const [categories, setCategories] = useState([]);
   const [paymentMethods, setPaymentMethods] = useState([]);
   const formRef = useRef<HTMLFormElement>(null);
@@ -67,7 +66,7 @@ export default function ExpenseModal(props: ModalProps) {
 
   const onSubmit = async (e: Event) => {
     e.preventDefault();
-    const res = await fetch("/api/money", {
+    const res = await fetch("/api/expenses", {
       method: "POST",
       body: new FormData(formRef.current!),
     });
@@ -76,13 +75,13 @@ export default function ExpenseModal(props: ModalProps) {
       // TODO show error message
     }
 
-    const addedExpense = await res.json() as MoneyWithoutUser;
+    const addedExpense = await res.json() as ExpenseWithoutUser;
 
     // don't triger signal if the expense added wasn't for the current month
     if (
       new Date(addedExpense.payment!.date).getMonth() === new Date().getMonth()
     ) {
-      moneySig.value = [...moneySig.value, addedExpense];
+      expenses.value = [...expenses.value, addedExpense];
     }
 
     // TODO trigger toast
@@ -186,7 +185,6 @@ export default function ExpenseModal(props: ModalProps) {
               required
             />
           </div>
-          <input type="hidden" name="moneyType" value={moneyType} />
           <input type="hidden" name="paymentType" value={paymentType} />
           <div className="form-control mt-6">
             <button className="btn btn-md btn-primary" type="submit">

@@ -1,6 +1,5 @@
 import { PaymentType } from "@/utils/constants.ts";
-import { getSignalFromPaymentType } from "@/signals/money.ts";
-import { getFormattedDate } from "@/utils/date.ts";
+import { getSignalFromPaymentType } from "@/signals/expenses.ts";
 
 type TableProps = {
   paymentType: PaymentType;
@@ -8,7 +7,7 @@ type TableProps = {
 
 export default function Table(props: TableProps) {
   const { paymentType } = props;
-  const dataSignal = getSignalFromPaymentType(paymentType);
+  const expenses = getSignalFromPaymentType(paymentType);
 
   return (
     <div class="overflow-y-auto">
@@ -24,15 +23,15 @@ export default function Table(props: TableProps) {
           </tr>
         </thead>
         <tbody>
-          {dataSignal.value.map((money) => (
+          {expenses.value.map((expense) => (
             <tr>
-              <td>{money.name}</td>
-              <td>{money.payment.method.label}</td>
-              <td>{money.payment.category.label}</td>
-              <td>{money.payment.date}</td>
-              <td>{money.price}</td>
+              <td>{expense.name}</td>
+              <td>{expense.payment.method.label}</td>
+              <td>{expense.payment.category.label}</td>
+              <td>{expense.payment.date}</td>
+              <td>{expense.price}</td>
               {paymentType === PaymentType.OVER_TIME && (
-                <td>{money.payment.installments}</td>
+                <td>{expense.payment.installments}</td>
               )}
             </tr>
           ))}

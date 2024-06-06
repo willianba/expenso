@@ -1,7 +1,7 @@
 import { Handlers } from "$fresh/server.ts";
-import { MoneyType, PaymentType } from "@/utils/constants.ts";
+import { PaymentType } from "@/utils/constants.ts";
 import { z } from "zod";
-import MoneyService, { CreateMoneyInput } from "@/db/models/money.ts";
+import ExpenseService, { CreateExpenseInput } from "@/db/models/expense.ts";
 import { SignedInState } from "@/plugins/session.ts";
 import PaymentMethodService from "@/db/models/paymentMethod.ts";
 import CategoryService from "@/db/models/category.ts";
@@ -12,11 +12,10 @@ const EntrySchema = z.object({
   label: z.string(),
 });
 
-const CreateMoneySchema = z
+const CreateExpenseSchema = z
   .object({
     name: z.string(),
     price: z.string(),
-    moneyType: z.nativeEnum(MoneyType),
     paymentDate: z.string().date(),
     paymentMethod: z.string(),
     paymentCategory: z.string(),
@@ -30,24 +29,18 @@ const CreateMoneySchema = z
       }
       return true;
     },
-    { message: "Installments are required for payment type over time" },
+    { message: "Installments are required for payments over time" },
   );
 
 export const handler: Handlers<undefined, SignedInState> = {
   async POST(req, ctx) {
     const body = Object.fromEntries(await req.formData());
-    const data = CreateMoneySchema.parse(body);
-    logger.info("Creating money entry");
+    const data = CreateExpenseSchema.parse(body);
+    logger.info("Creating expense");
     const paymentMethod = EntrySchema.parse(JSON.parse(data.paymentMethod));
     const paymentCategory = EntrySchema.parse(JSON.parse(data.paymentCategory));
 
     const userId = ctx.state.sessionUser!.id;
-    const createMoneyInput: CreateMoneyInput = {
-      name: data.name,
-      price: Number(data.price),
-      type: data.moneyType,
-      userId,
-    };
 
     let paymentMethodId = paymentMethod.id;
     if (!paymentMethod.id) {
@@ -75,16 +68,21 @@ export const handler: Handlers<undefined, SignedInState> = {
       categoryId = category.id;
     }
 
-    createMoneyInput.payment = {
-      methodId: paymentMethodId as string,
-      categoryId: categoryId as string,
-      type: data.paymentType,
-      date: new Date(data.paymentDate),
-      ...(data.installments && { installments: Number(data.installments) }),
+    const createExpenseInput: CreateExpenseInput = {
+      name: data.name,
+      price: Number(data.price),
+      userId,
+      payment: {
+        methodId: paymentMethodId!,
+        categoryId: categoryId!,
+        type: data.paymentType,
+        date: new Date(data.paymentDate),
+        ...(data.installments && { installments: Number(data.installments) }),
+      },
     };
 
-    const money = await MoneyService.create(createMoneyInput);
-    logger.info("Money entry created", { money: money.id });
-    return new Response(JSON.stringify(money), { status: 201 });
+    const expense = await ExpenseService.create(createExpenseInput);
+    logger.info("Expense created", { expense: expense.id });
+    return new Response(JSON.stringify(expense), { status: 201 });
   },
 };

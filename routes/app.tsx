@@ -1,7 +1,7 @@
 import { defineRoute } from "$fresh/server.ts";
 import { type State } from "@/plugins/session.ts";
 import Card from "@/components/Card.tsx";
-import { MoneyType, PaymentType } from "@/utils/constants.ts";
+import { PaymentType } from "@/utils/constants.ts";
 import { RouteConfig } from "$fresh/server.ts";
 import Loader from "@/islands/Loader.tsx";
 
@@ -18,13 +18,11 @@ export default defineRoute<State>((_req, _ctx) => {
           <Card
             classes="h-2/4"
             title="Fixed expenses"
-            moneyType={MoneyType.EXPENSE}
             paymentType={PaymentType.FIXED}
           />
           <Card
             classes="h-2/4"
             title="Over time expenses"
-            moneyType={MoneyType.EXPENSE}
             paymentType={PaymentType.OVER_TIME}
           />
         </div>
@@ -32,7 +30,6 @@ export default defineRoute<State>((_req, _ctx) => {
           <Card
             classes="h-no-nav"
             title="Current month expenses"
-            moneyType={MoneyType.EXPENSE}
             paymentType={PaymentType.CURRENT}
           />
         </div>
@@ -40,12 +37,10 @@ export default defineRoute<State>((_req, _ctx) => {
           <Card
             classes="h-2/4"
             title="Total income"
-            moneyType={MoneyType.INCOME}
           />
           <Card
             classes="h-2/4"
             title="Total expenses"
-            moneyType={MoneyType.EXPENSE}
           />
         </div>
       </div>

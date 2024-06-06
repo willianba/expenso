@@ -3,11 +3,6 @@ export enum Environment {
   PRODUCTION = "prod",
 }
 
-export enum MoneyType {
-  INCOME = "income",
-  EXPENSE = "expense",
-}
-
 export enum PaymentType {
   FIXED = "fixed",
   OVER_TIME = "over_time",

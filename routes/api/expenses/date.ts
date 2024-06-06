@@ -1,34 +1,34 @@
 import { Handlers } from "$fresh/server.ts";
-import MoneyService, { Money } from "@/db/models/money.ts";
+import ExpenseService, { Expense } from "@/db/models/expense.ts";
 import { SignedInState } from "@/plugins/session.ts";
 import { z } from "zod";
 
-const MoneyByMonthSchema = z.object({
+const ExpensesByMonthSchema = z.object({
   year: z.string(),
   month: z.string().optional(),
 });
 
-export const handler: Handlers<Money, SignedInState> = {
+export const handler: Handlers<Expense, SignedInState> = {
   async GET(_req, ctx) {
     const { sessionUser } = ctx.state;
     const searchParams = Object.fromEntries(ctx.url.searchParams.entries());
-    const { year, month } = MoneyByMonthSchema.parse(searchParams);
+    const { year, month } = ExpensesByMonthSchema.parse(searchParams);
 
     if (month) {
-      const moneyByMonth = await MoneyService.getByMonth(
+      const expensesByMonth = await ExpenseService.getByMonth(
         sessionUser!.id,
         parseInt(year),
         parseInt(month),
       );
 
-      return Response.json(moneyByMonth);
+      return Response.json(expensesByMonth);
     }
 
-    const moneyByYear = await MoneyService.getByYear(
+    const expensesByYear = await ExpenseService.getByYear(
       sessionUser!.id,
       parseInt(year),
     );
 
-    return Response.json(moneyByYear);
+    return Response.json(expensesByYear);
   },
 };
