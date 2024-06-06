@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "preact/hooks";
 import { MoneyType, PaymentType } from "@/utils/constants.ts";
 import InputSelector from "@/islands/InputSelector.tsx";
 import { getFormattedDate } from "@/utils/date.ts";
+import { moneySig } from "@/signals/money.ts";
+import { MoneyWithoutUser } from "@/db/models/money.ts";
 
 type ModalProps = {
   id: string;
@@ -74,6 +76,16 @@ export default function ExpenseModal(props: ModalProps) {
       // TODO show error message
     }
 
+    const addedExpense = await res.json() as MoneyWithoutUser;
+
+    // check if expense has month as the current on
+    if (
+      new Date(addedExpense.payment!.date).getMonth() !== new Date().getMonth()
+    ) {
+      return;
+    }
+    moneySig.value = [...moneySig.value, addedExpense];
+
     //TODO dispatch signal to add expense to the table
     //maybe trigger a toast on the same signal?
     closeDialog();
@@ -113,7 +125,7 @@ export default function ExpenseModal(props: ModalProps) {
               type="date"
               placeholder="Payment date"
               className="input input-sm input-bordered"
-              value={getFormattedDate().toISOString().split("T")[0]}
+              value={getFormattedDate(new Date()).toISOString().split("T")[0]}
               required
             />
           </div>

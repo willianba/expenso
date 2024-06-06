@@ -1,6 +1,6 @@
 import AddExpenseButton from "@/islands/AddExpenseButton.tsx";
 import { MoneyType, PaymentType } from "@/utils/constants.ts";
-import Table from "@/components/Table.tsx";
+import Table from "@/islands/Table.tsx";
 
 type CardProps = {
   title: string;

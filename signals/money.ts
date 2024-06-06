@@ -6,17 +6,17 @@ export const moneySig = signal<MoneyWithoutUser[]>([]);
 
 export const fixedMoneySig = computed(() => {
   return moneySig.value.filter(
-    (money) => money.payment?.type === PaymentType.FIXED,
+    (money) => money.payment.type === PaymentType.FIXED,
   );
 });
 export const overTimeMoneySig = computed(() => {
   return moneySig.value.filter(
-    (money) => money.payment?.type === PaymentType.OVER_TIME,
+    (money) => money.payment.type === PaymentType.OVER_TIME,
   );
 });
 export const currentMonthMoneySig = computed(() => {
   return moneySig.value.filter(
-    (money) => money.payment?.type === PaymentType.CURRENT,
+    (money) => money.payment.type === PaymentType.CURRENT,
   );
 });
 

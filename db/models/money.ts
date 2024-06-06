@@ -31,20 +31,20 @@ export type Money = {
   id: string;
   name: string;
   price: number;
-  payment?: Payment;
+  payment: Payment;
   type: MoneyType;
   user: User;
 };
 
 export type MoneyWithoutUser = Omit<Money, "user">;
 
-export type RawPayment = Omit<Payment, "method" | "category"> & {
+type RawPayment = Omit<Payment, "method" | "category"> & {
   methodId: string;
   categoryId: string;
 };
 
 export type RawMoney = Omit<Money, "user" | "payment"> & {
-  payment?: RawPayment;
+  payment: RawPayment;
   userId: string;
 };
 
@@ -111,7 +111,12 @@ export default class MoneyService {
       throw new Deno.errors.AlreadyExists("Money already exists");
     }
 
-    return moneyWithId;
+    const [populatedMoney] = await MoneyService.populate(
+      [moneyWithId],
+      input.userId,
+    );
+
+    return populatedMoney;
   }
 
   public static async getAllByUserId(userId: string) {

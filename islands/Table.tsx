@@ -1,5 +1,6 @@
 import { PaymentType } from "@/utils/constants.ts";
 import { getSignalFromPaymentType } from "@/signals/money.ts";
+import { getFormattedDate } from "@/utils/date.ts";
 
 type TableProps = {
   paymentType: PaymentType;
@@ -26,12 +27,12 @@ export default function Table(props: TableProps) {
           {dataSignal.value.map((money) => (
             <tr>
               <td>{money.name}</td>
-              <td>{money.payment?.method?.label}</td>
-              <td>{money.payment?.category?.label}</td>
-              <td>{money.payment?.date.toLocaleDateString()}</td>
+              <td>{money.payment.method.label}</td>
+              <td>{money.payment.category.label}</td>
+              <td>{money.payment.date}</td>
               <td>{money.price}</td>
               {paymentType === PaymentType.OVER_TIME && (
-                <td>{money.payment?.installments}</td>
+                <td>{money.payment.installments}</td>
               )}
             </tr>
           ))}
