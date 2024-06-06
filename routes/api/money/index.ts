@@ -21,7 +21,7 @@ const CreateMoneySchema = z
     paymentMethod: z.string(),
     paymentCategory: z.string(),
     paymentType: z.nativeEnum(PaymentType),
-    installments: z.number().optional(),
+    installments: z.string().optional(),
   })
   .refine(
     (schema) => {
@@ -80,7 +80,7 @@ export const handler: Handlers<undefined, SignedInState> = {
       categoryId: categoryId as string,
       type: data.paymentType,
       date: new Date(data.paymentDate),
-      installments: data.installments,
+      ...(data.installments && { installments: Number(data.installments) }),
     };
 
     const money = await MoneyService.create(createMoneyInput);
