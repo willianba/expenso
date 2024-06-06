@@ -16,7 +16,6 @@ import * as $app from "./routes/app.tsx";
 import * as $index from "./routes/index.tsx";
 import * as $login from "./routes/login.tsx";
 import * as $password from "./routes/password.tsx";
-import * as $test from "./routes/test.tsx";
 import * as $AddExpenseButton from "./islands/AddExpenseButton.tsx";
 import * as $AppButton from "./islands/AppButton.tsx";
 import * as $AuthButton from "./islands/AuthButton.tsx";
@@ -43,7 +42,6 @@ const manifest = {
     "./routes/index.tsx": $index,
     "./routes/login.tsx": $login,
     "./routes/password.tsx": $password,
-    "./routes/test.tsx": $test,
   },
   islands: {
     "./islands/AddExpenseButton.tsx": $AddExpenseButton,
