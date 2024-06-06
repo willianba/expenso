@@ -12,7 +12,7 @@ export default function Table(props: TableProps) {
 
   return (
     <div class="overflow-y-auto">
-      <table class="table table-xs table-pin-cols">
+      <table class="table table-sm table-pin-cols">
         <thead>
           <tr>
             <th>Name</th>
