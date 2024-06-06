@@ -78,16 +78,14 @@ export default function ExpenseModal(props: ModalProps) {
 
     const addedExpense = await res.json() as MoneyWithoutUser;
 
-    // check if expense has month as the current on
+    // don't triger signal if the expense added wasn't for the current month
     if (
-      new Date(addedExpense.payment!.date).getMonth() !== new Date().getMonth()
+      new Date(addedExpense.payment!.date).getMonth() === new Date().getMonth()
     ) {
-      return;
+      moneySig.value = [...moneySig.value, addedExpense];
     }
-    moneySig.value = [...moneySig.value, addedExpense];
 
-    //TODO dispatch signal to add expense to the table
-    //maybe trigger a toast on the same signal?
+    // TODO trigger toast
     closeDialog();
   };
 
