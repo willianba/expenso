@@ -4,7 +4,9 @@
 
 import * as $_404 from "./routes/_404.tsx";
 import * as $_app from "./routes/_app.tsx";
+import * as $_layout from "./routes/_layout.tsx";
 import * as $api_categories_index from "./routes/api/categories/index.ts";
+import * as $api_money_date from "./routes/api/money/date.ts";
 import * as $api_money_index from "./routes/api/money/index.ts";
 import * as $api_paymentMethods_index from "./routes/api/paymentMethods/index.ts";
 import * as $api_users_login from "./routes/api/users/login.ts";
@@ -29,7 +31,9 @@ const manifest = {
   routes: {
     "./routes/_404.tsx": $_404,
     "./routes/_app.tsx": $_app,
+    "./routes/_layout.tsx": $_layout,
     "./routes/api/categories/index.ts": $api_categories_index,
+    "./routes/api/money/date.ts": $api_money_date,
     "./routes/api/money/index.ts": $api_money_index,
     "./routes/api/paymentMethods/index.ts": $api_paymentMethods_index,
     "./routes/api/users/login.ts": $api_users_login,
