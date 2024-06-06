@@ -7,7 +7,6 @@ import * as $_app from "./routes/_app.tsx";
 import * as $_layout from "./routes/_layout.tsx";
 import * as $api_categories_index from "./routes/api/categories/index.ts";
 import * as $api_expenses_date from "./routes/api/expenses/date.ts";
-import * as $api_expenses_events from "./routes/api/expenses/events.ts";
 import * as $api_expenses_index from "./routes/api/expenses/index.ts";
 import * as $api_paymentMethods_index from "./routes/api/paymentMethods/index.ts";
 import * as $api_users_login from "./routes/api/users/login.ts";
@@ -36,7 +35,6 @@ const manifest = {
     "./routes/_layout.tsx": $_layout,
     "./routes/api/categories/index.ts": $api_categories_index,
     "./routes/api/expenses/date.ts": $api_expenses_date,
-    "./routes/api/expenses/events.ts": $api_expenses_events,
     "./routes/api/expenses/index.ts": $api_expenses_index,
     "./routes/api/paymentMethods/index.ts": $api_paymentMethods_index,
     "./routes/api/users/login.ts": $api_users_login,
