@@ -8,7 +8,7 @@ type ModalProps = {
   moneyType: MoneyType;
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
-  paymentType?: PaymentType;
+  paymentType: PaymentType;
 };
 
 export default function ExpenseModal(props: ModalProps) {
@@ -65,19 +65,18 @@ export default function ExpenseModal(props: ModalProps) {
 
   const onSubmit = async (e: Event) => {
     e.preventDefault();
-    if (formRef.current?.reportValidity()) {
-      const res = await fetch("/api/money", {
-        method: "POST",
-        body: new FormData(formRef.current!),
-      });
+    const res = await fetch("/api/money", {
+      method: "POST",
+      body: new FormData(formRef.current!),
+    });
 
-      if (!res.ok) {
-        // TODO show error message
-      }
-
-      //TODO dispatch signal to add expense to the table
-      closeDialog();
+    if (!res.ok) {
+      // TODO show error message
     }
+
+    //TODO dispatch signal to add expense to the table
+    //maybe trigger a toast on the same signal?
+    closeDialog();
   };
 
   return (
@@ -89,7 +88,7 @@ export default function ExpenseModal(props: ModalProps) {
           </button>
         </form>
         <h3 class="font-bold text-lg">Add expense</h3>
-        <form method="POST" action="/api/money" ref={formRef}>
+        <form onSubmit={onSubmit} ref={formRef}>
           <div className="form-control">
             <label for="name" className="label">
               <span className="label-text">Name</span>
@@ -180,7 +179,7 @@ export default function ExpenseModal(props: ModalProps) {
           <input type="hidden" name="moneyType" value={moneyType} />
           <input type="hidden" name="paymentType" value={paymentType} />
           <div className="form-control mt-6">
-            <button className="btn btn-md btn-primary" onClick={onSubmit}>
+            <button className="btn btn-md btn-primary" type="submit">
               Save
             </button>
           </div>
