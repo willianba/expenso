@@ -4,6 +4,8 @@ import Card from "@/components/Card.tsx";
 import { PaymentType } from "@/utils/constants.ts";
 import { RouteConfig } from "$fresh/server.ts";
 import Loader from "@/islands/Loader.tsx";
+import AddExpenseButton from "@/islands/AddExpenseButton.tsx";
+import Table from "@/islands/Table.tsx";
 
 export const config: RouteConfig = {
   skipInheritedLayouts: true,
@@ -18,30 +20,50 @@ export default defineRoute<State>((_req, _ctx) => {
           <Card
             classes="h-2/4"
             title="Fixed expenses"
-            paymentType={PaymentType.FIXED}
-          />
+            actionButton={<AddExpenseButton paymentType={PaymentType.FIXED} />}
+          >
+            <Table
+              paymentType={PaymentType.FIXED}
+            />
+          </Card>
           <Card
             classes="h-2/4"
             title="Over time expenses"
-            paymentType={PaymentType.OVER_TIME}
-          />
+            actionButton={
+              <AddExpenseButton paymentType={PaymentType.OVER_TIME} />
+            }
+          >
+            <Table
+              paymentType={PaymentType.OVER_TIME}
+            />
+          </Card>
         </div>
         <div class="gap-4 col-span-2 flex flex-col">
           <Card
             classes="h-no-nav"
             title="Current month expenses"
-            paymentType={PaymentType.CURRENT}
-          />
+            actionButton={
+              <AddExpenseButton paymentType={PaymentType.CURRENT} />
+            }
+          >
+            <Table
+              paymentType={PaymentType.CURRENT}
+            />
+          </Card>
         </div>
         <div class="gap-4 col-span-1 min-h-full flex flex-col">
           <Card
             classes="h-2/4"
             title="Total income"
-          />
+          >
+            Oi
+          </Card>
           <Card
             classes="h-2/4"
             title="Total expenses"
-          />
+          >
+            Oi
+          </Card>
         </div>
       </div>
     </>

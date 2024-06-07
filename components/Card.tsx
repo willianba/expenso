@@ -1,15 +1,14 @@
-import AddExpenseButton from "@/islands/AddExpenseButton.tsx";
-import { PaymentType } from "@/utils/constants.ts";
-import Table from "@/islands/Table.tsx";
+import { type ComponentChild, type ComponentChildren } from "preact";
 
 type CardProps = {
   title: string;
-  paymentType?: PaymentType;
+  children: ComponentChildren;
+  actionButton?: ComponentChild;
   classes?: string;
 };
 
 export default function Card(props: CardProps) {
-  const { classes, paymentType, title } = props;
+  const { classes, title, actionButton, children } = props;
 
   return (
     <div
@@ -18,15 +17,10 @@ export default function Card(props: CardProps) {
       <div class="card-body h-full">
         <div class="flex justify-between">
           <h2 class="card-title">{title}</h2>
-          {paymentType && <AddExpenseButton paymentType={paymentType} />}
+          {actionButton}
         </div>
         <span class="divider m-0 h-2" />
-        {paymentType &&
-          (
-            <Table
-              paymentType={paymentType}
-            />
-          )}
+        {children}
       </div>
     </div>
   );
