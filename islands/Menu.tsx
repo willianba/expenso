@@ -1,6 +1,6 @@
 import { expenses } from "@/signals/expenses.ts";
 import { ExpenseWithoutUser } from "@/db/models/expense.ts";
-import { useState } from "preact/hooks";
+import { useEffect, useState } from "preact/hooks";
 import { today } from "@/utils/date.ts";
 
 const months = [
@@ -18,8 +18,15 @@ const months = [
   { name: "December", number: 12 },
 ];
 
+const blacklistedPathnames = ["/", "/login", "/password"];
+
 export default function Menu() {
   const [activeMonth, setActiveMonth] = useState(today().month);
+  const [showButton, setShowButton] = useState(false);
+
+  useEffect(() => {
+    setShowButton(!blacklistedPathnames.includes(location.pathname));
+  }, []);
 
   const fetchExpenses = (month: number) => {
     fetch(`/api/expenses/date?year=2024&month=${month}`).then(async (res) => {
@@ -30,26 +37,30 @@ export default function Menu() {
   };
 
   return (
-    <ul class="menu menu-horizontal bg-base-100 rounded-box">
-      <li>
-        <details>
-          <summary>
-            {months.find((m) => m.number === activeMonth)!.name}
-          </summary>
-          <ul>
-            {months.map((month) => (
-              <li>
-                <a
-                  class={activeMonth === month.number ? "active" : ""}
-                  onClick={() => fetchExpenses(month.number)}
-                >
-                  {month.name}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </details>
-      </li>
-    </ul>
+    showButton
+      ? (
+        <ul class="menu menu-horizontal bg-base-100 rounded-box">
+          <li>
+            <details>
+              <summary>
+                {months.find((m) => m.number === activeMonth)!.name}
+              </summary>
+              <ul>
+                {months.map((month) => (
+                  <li>
+                    <a
+                      class={activeMonth === month.number ? "active" : ""}
+                      onClick={() => fetchExpenses(month.number)}
+                    >
+                      {month.name}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </details>
+          </li>
+        </ul>
+      )
+      : null
   );
 }
