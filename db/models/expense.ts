@@ -12,11 +12,11 @@ import { monotonicUlid } from "@std/ulid";
 import { kv } from "@/db/kv.ts";
 
 enum Keys {
-  EXPENSE = "expense",
-  EXPENSE_BY_USER = "expense_by_user",
-  EXPENSE_BY_PAYMENT_METHOD = "expens_by_payment_method",
-  EXPENSE_BY_CATEGORY = "expense_by_category",
-  EXPENSE_BY_DATE = "expense_by_date",
+  EXPENSES = "expenses",
+  EXPENSES_BY_USER = "expenses_by_user",
+  EXPENSES_BY_PAYMENT_METHOD = "expenses_by_payment_method",
+  EXPENSES_BY_CATEGORY = "expenses_by_category",
+  EXPENSES_BY_DATE = "expenses_by_date",
 }
 
 type Payment = {
@@ -24,6 +24,7 @@ type Payment = {
   category: Category | RawCategory;
   type: PaymentType;
   date: Date;
+  installment?: number;
   installments?: number;
 };
 
@@ -54,24 +55,24 @@ export default class ExpenseService {
     const expenseId = monotonicUlid();
     const expenseWithId: RawExpense = { ...input, id: expenseId };
 
-    const key = [Keys.EXPENSE, expenseId];
-    const userKey = [Keys.EXPENSE_BY_USER, input.userId, expenseId];
+    const key = [Keys.EXPENSES, expenseId];
+    const userKey = [Keys.EXPENSES_BY_USER, input.userId, expenseId];
     const categoryKey = [
-      Keys.EXPENSE_BY_CATEGORY,
+      Keys.EXPENSES_BY_CATEGORY,
       input.userId,
       input.payment.categoryId,
       expenseId,
     ];
 
     const paymentMethodKey = [
-      Keys.EXPENSE_BY_PAYMENT_METHOD,
+      Keys.EXPENSES_BY_PAYMENT_METHOD,
       input.userId,
       input.payment.methodId,
       expenseId,
     ];
 
     const dateKey = [
-      Keys.EXPENSE_BY_DATE,
+      Keys.EXPENSES_BY_DATE,
       input.userId,
       input.payment.date.getFullYear().toString(),
       (input.payment.date.getMonth() + 1).toString(),
@@ -106,7 +107,12 @@ export default class ExpenseService {
 
   public static async getByMonth(userId: string, year: number, month: number) {
     const entries = kv.list<RawExpense>({
-      prefix: [Keys.EXPENSE_BY_DATE, userId, year.toString(), month.toString()],
+      prefix: [
+        Keys.EXPENSES_BY_DATE,
+        userId,
+        year.toString(),
+        month.toString(),
+      ],
     });
 
     const rawExpenses: RawExpense[] = await Array.fromAsync(
@@ -119,7 +125,7 @@ export default class ExpenseService {
 
   public static async getByYear(userId: string, year: number) {
     const entries = kv.list<RawExpense>({
-      prefix: [Keys.EXPENSE_BY_DATE, userId, year.toString()],
+      prefix: [Keys.EXPENSES_BY_DATE, userId, year.toString()],
     });
 
     const rawExpenses: RawExpense[] = await Array.fromAsync(
@@ -142,16 +148,14 @@ export default class ExpenseService {
       )!;
       const category = categories.find((c) => c.id === re.payment.categoryId)!;
 
+      const { categoryId: _, methodId: __, ...payment } = re.payment;
+
       const expense: ExpenseWithoutUser = {
         ...re,
         payment: {
-          type: re.payment.type,
-          date: re.payment.date,
+          ...payment,
           method: paymentMethod,
           category: category,
-          ...(re.payment.installments && {
-            installments: re.payment.installments,
-          }),
         },
       };
 

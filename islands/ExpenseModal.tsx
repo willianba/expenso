@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "preact/hooks";
 import { PaymentType } from "@/utils/constants.ts";
 import InputSelector from "@/islands/InputSelector.tsx";
-import { getFormattedDate } from "@/utils/date.ts";
+import { formToday, getFormattedDate } from "@/utils/date.ts";
 import { expenses } from "@/signals/expenses.ts";
 import { ExpenseWithoutUser } from "@/db/models/expense.ts";
 
@@ -77,10 +77,9 @@ export default function ExpenseModal(props: ModalProps) {
 
     const addedExpense = await res.json() as ExpenseWithoutUser;
 
-    // don't triger signal if the expense added wasn't for the current month
-    if (
-      new Date(addedExpense.payment!.date).getMonth() === new Date().getMonth()
-    ) {
+    const isFromSameMonth =
+      new Date(addedExpense.payment.date).getMonth() === new Date().getMonth();
+    if (isFromSameMonth) {
       expenses.value = [...expenses.value, addedExpense];
     }
 
@@ -122,7 +121,7 @@ export default function ExpenseModal(props: ModalProps) {
               type="date"
               placeholder="Payment date"
               className="input input-sm input-bordered"
-              value={getFormattedDate(new Date()).toISOString().split("T")[0]}
+              value={formToday()}
               required
             />
           </div>

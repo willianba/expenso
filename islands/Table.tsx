@@ -1,5 +1,7 @@
 import { PaymentType } from "@/utils/constants.ts";
 import { getSignalFromPaymentType } from "@/signals/expenses.ts";
+import { getFormattedDate } from "@/utils/date.ts";
+import { formatCurrency } from "@/utils/currency.ts";
 
 type TableProps = {
   paymentType: PaymentType;
@@ -19,7 +21,7 @@ export default function Table(props: TableProps) {
             <th>Category</th>
             <th>Date</th>
             <th>Price</th>
-            {paymentType === PaymentType.OVER_TIME && <th>Installments #</th>}
+            {paymentType === PaymentType.OVER_TIME && <th>Installments</th>}
           </tr>
         </thead>
         <tbody>
@@ -28,10 +30,14 @@ export default function Table(props: TableProps) {
               <td>{expense.name}</td>
               <td>{expense.payment.method.label}</td>
               <td>{expense.payment.category.label}</td>
-              <td>{expense.payment.date}</td>
-              <td>{expense.price}</td>
+              <td>
+                {getFormattedDate(expense.payment.date)}
+              </td>
+              <td>{formatCurrency(expense.price)}</td>
               {paymentType === PaymentType.OVER_TIME && (
-                <td>{expense.payment.installments}</td>
+                <td>
+                  {`${expense.payment.installment}/${expense.payment.installments}`}
+                </td>
               )}
             </tr>
           ))}

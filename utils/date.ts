@@ -1,10 +1,10 @@
-export const getFormattedDate = (date: Date) => {
-  const { year, month, day } = stripDate(date);
-  const formattedDate = `${year}-${month < 10 ? "0" : ""}${month}-${
-    day < 10 ? "0" : ""
-  }${day}`;
+export const getFormattedDate = (date: Date | string) => {
+  // TODO at some point make this come from user settings
+  return Intl.DateTimeFormat("pt-BR").format(new Date(date));
+};
 
-  return new Date(formattedDate);
+export const formToday = () => {
+  return new Date().toISOString().split("T")[0];
 };
 
 export const today = () => {
@@ -12,7 +12,7 @@ export const today = () => {
   return stripDate(date);
 };
 
-const stripDate = (date: Date) => {
+export const stripDate = (date: Date) => {
   const year = date.getFullYear();
   const month = date.getMonth() + 1;
   const day = date.getDate();

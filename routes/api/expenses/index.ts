@@ -77,12 +77,46 @@ export const handler: Handlers<undefined, SignedInState> = {
         categoryId: categoryId!,
         type: data.paymentType,
         date: new Date(data.paymentDate),
-        ...(data.installments && { installments: Number(data.installments) }),
       },
     };
 
+    if (data.installments) {
+      const installments = Number(data.installments);
+      const promises = [];
+
+      for (let i = 1; i <= installments; i++) {
+        const date =
+          i === 1
+            ? new Date(data.paymentDate)
+            : new Date(
+                new Date(data.paymentDate).setMonth(
+                  new Date(data.paymentDate).getMonth() + i - 1,
+                ),
+              );
+
+        promises.push(
+          ExpenseService.create({
+            ...createExpenseInput,
+            payment: {
+              ...createExpenseInput.payment,
+              date,
+              installment: i,
+              installments,
+            },
+          }),
+        );
+      }
+
+      const expenses = await Promise.all(promises);
+      logger.info("Expenses created", { amount: expenses.length });
+      const firstExpense = expenses.find(
+        (expense) => expense.payment.installment === 1,
+      );
+      return Response.json(firstExpense, { status: 201 });
+    }
+
     const expense = await ExpenseService.create(createExpenseInput);
     logger.info("Expense created", { expense: expense.id });
-    return new Response(JSON.stringify(expense), { status: 201 });
+    return Response.json(expense, { status: 201 });
   },
 };
