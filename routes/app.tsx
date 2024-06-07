@@ -21,7 +21,7 @@ export default defineRoute<State>((_req, _ctx) => {
         <div class="gap-4 col-span-2 flex flex-col">
           <Card
             classes="h-2/4"
-            title="Fixed expenses"
+            title="Fixed"
             actionButton={<AddExpenseButton paymentType={PaymentType.FIXED} />}
           >
             <Table
@@ -30,7 +30,7 @@ export default defineRoute<State>((_req, _ctx) => {
           </Card>
           <Card
             classes="h-2/4"
-            title="Over time expenses"
+            title="Over time"
             actionButton={
               <AddExpenseButton paymentType={PaymentType.OVER_TIME} />
             }
@@ -43,7 +43,7 @@ export default defineRoute<State>((_req, _ctx) => {
         <div class="gap-4 col-span-2 flex flex-col">
           <Card
             classes="h-no-nav"
-            title="Current month expenses"
+            title="Current month"
             actionButton={
               <AddExpenseButton paymentType={PaymentType.CURRENT} />
             }
