@@ -21,8 +21,10 @@ import * as $AppButton from "./islands/AppButton.tsx";
 import * as $AuthButton from "./islands/AuthButton.tsx";
 import * as $BackButton from "./islands/BackButton.tsx";
 import * as $ExpenseModal from "./islands/ExpenseModal.tsx";
+import * as $ExpensesStats from "./islands/ExpensesStats.tsx";
 import * as $InputSelector from "./islands/InputSelector.tsx";
 import * as $Loader from "./islands/Loader.tsx";
+import * as $Menu from "./islands/Menu.tsx";
 import * as $Table from "./islands/Table.tsx";
 import * as $ThemeController from "./islands/ThemeController.tsx";
 import * as $hooks_useModal from "./islands/hooks/useModal.tsx";
@@ -51,8 +53,10 @@ const manifest = {
     "./islands/AuthButton.tsx": $AuthButton,
     "./islands/BackButton.tsx": $BackButton,
     "./islands/ExpenseModal.tsx": $ExpenseModal,
+    "./islands/ExpensesStats.tsx": $ExpensesStats,
     "./islands/InputSelector.tsx": $InputSelector,
     "./islands/Loader.tsx": $Loader,
+    "./islands/Menu.tsx": $Menu,
     "./islands/Table.tsx": $Table,
     "./islands/ThemeController.tsx": $ThemeController,
     "./islands/hooks/useModal.tsx": $hooks_useModal,

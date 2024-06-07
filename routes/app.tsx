@@ -6,6 +6,8 @@ import { RouteConfig } from "$fresh/server.ts";
 import Loader from "@/islands/Loader.tsx";
 import AddExpenseButton from "@/islands/AddExpenseButton.tsx";
 import Table from "@/islands/Table.tsx";
+import { totalExpenses } from "@/signals/expenses.ts";
+import ExpensesStats from "@/islands/ExpensesStats.tsx";
 
 export const config: RouteConfig = {
   skipInheritedLayouts: true,
@@ -62,7 +64,7 @@ export default defineRoute<State>((_req, _ctx) => {
             classes="h-2/4"
             title="Total expenses"
           >
-            Oi
+            <ExpensesStats />
           </Card>
         </div>
       </div>

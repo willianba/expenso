@@ -19,6 +19,9 @@ export const currentMonthExpenses = computed(() => {
     (expense) => expense.payment.type === PaymentType.CURRENT,
   );
 });
+export const totalExpenses = computed(() => {
+  return expenses.value.reduce((acc, expense) => acc + expense.price, 0);
+});
 
 export function getSignalFromPaymentType(type: PaymentType) {
   switch (type) {
