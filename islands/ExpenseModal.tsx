@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "preact/hooks";
 import { PaymentType } from "@/utils/constants.ts";
 import InputSelector from "@/islands/InputSelector.tsx";
-import { formToday, getFormattedDate } from "@/utils/date.ts";
+import { formToday, getFormattedDate, stripDate, today } from "@/utils/date.ts";
 import { expenses } from "@/signals/expenses.ts";
 import { ExpenseWithoutUser } from "@/db/models/expense.ts";
 
@@ -76,10 +76,10 @@ export default function ExpenseModal(props: ModalProps) {
     }
 
     const addedExpense = await res.json() as ExpenseWithoutUser;
+    const addedExpenseDate = stripDate(new Date(addedExpense.payment.date));
+    const { month, year } = today();
 
-    const isFromSameMonth =
-      new Date(addedExpense.payment.date).getMonth() === new Date().getMonth();
-    if (isFromSameMonth) {
+    if (addedExpenseDate.month === month && addedExpenseDate.year === year) {
       expenses.value = [...expenses.value, addedExpense];
     }
 
@@ -177,9 +177,7 @@ export default function ExpenseModal(props: ModalProps) {
               type="number"
               step="0.01"
               min={0.01}
-              placeholder={paymentType === PaymentType.OVER_TIME
-                ? "Installment price"
-                : "Expense price"}
+              placeholder="Expense price"
               className="input input-sm input-bordered"
               required
             />
