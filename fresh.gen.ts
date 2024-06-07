@@ -5,13 +5,13 @@
 import * as $_404 from "./routes/_404.tsx";
 import * as $_app from "./routes/_app.tsx";
 import * as $_layout from "./routes/_layout.tsx";
+import * as $api_auth_login from "./routes/api/auth/login.ts";
+import * as $api_auth_logout from "./routes/api/auth/logout.ts";
+import * as $api_auth_password from "./routes/api/auth/password.ts";
 import * as $api_categories_index from "./routes/api/categories/index.ts";
 import * as $api_expenses_date from "./routes/api/expenses/date.ts";
 import * as $api_expenses_index from "./routes/api/expenses/index.ts";
 import * as $api_paymentMethods_index from "./routes/api/paymentMethods/index.ts";
-import * as $api_users_login from "./routes/api/users/login.ts";
-import * as $api_users_logout from "./routes/api/users/logout.ts";
-import * as $api_users_password from "./routes/api/users/password.ts";
 import * as $app from "./routes/app.tsx";
 import * as $index from "./routes/index.tsx";
 import * as $login from "./routes/login.tsx";
@@ -33,13 +33,13 @@ const manifest = {
     "./routes/_404.tsx": $_404,
     "./routes/_app.tsx": $_app,
     "./routes/_layout.tsx": $_layout,
+    "./routes/api/auth/login.ts": $api_auth_login,
+    "./routes/api/auth/logout.ts": $api_auth_logout,
+    "./routes/api/auth/password.ts": $api_auth_password,
     "./routes/api/categories/index.ts": $api_categories_index,
     "./routes/api/expenses/date.ts": $api_expenses_date,
     "./routes/api/expenses/index.ts": $api_expenses_index,
     "./routes/api/paymentMethods/index.ts": $api_paymentMethods_index,
-    "./routes/api/users/login.ts": $api_users_login,
-    "./routes/api/users/logout.ts": $api_users_logout,
-    "./routes/api/users/password.ts": $api_users_password,
     "./routes/app.tsx": $app,
     "./routes/index.tsx": $index,
     "./routes/login.tsx": $login,

@@ -6,7 +6,7 @@ export default defineRoute<State>((_req, _ctx) => {
     <div className="hero min-h-full bg-base-200">
       <div className="hero-content flex-col lg:flex-row-reverse">
         <div className="card shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
-          <form className="card-body" method="POST" action="/api/users/login">
+          <form className="card-body" method="POST" action="/api/auth/login">
             <div className="form-control">
               <label className="label">
                 <span className="label-text">Email</span>

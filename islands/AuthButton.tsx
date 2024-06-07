@@ -30,7 +30,7 @@ export default function AuthButton(props: AuthButtonProps) {
     if (sessionUser) {
       setData({
         title: "Log out",
-        href: "/api/users/logout",
+        href: "/api/auth/logout",
         class: "btn-ghost",
       });
     } else {

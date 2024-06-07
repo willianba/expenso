@@ -25,15 +25,19 @@ export const handler: Handlers<User> = {
       { expireIn: 10 * 1000 }, // 10 minutes
     );
 
-    await mailer.send({
-      from: "Expenso <expenso@resend.dev>",
-      to: email,
-      subject: "Your expenso temporary password",
-      html: `Your temporary password is <b>${password}</b>.
+    try {
+      await mailer.send({
+        from: "Expenso <expenso@resend.dev>",
+        to: email,
+        subject: "Your expenso temporary password",
+        html: `Your temporary password is <b>${password}</b>.
         <br />
         Please use it in the next 10 minutes or request a new password.`,
-      content: `Your temporary password is ${password}. Please use it in the next 10 minutes or request a new password.`,
-    });
+        content: `Your temporary password is ${password}. Please use it in the next 10 minutes or request a new password.`,
+      });
+    } catch (error) {
+      logger.error(`Error sending email to ${email}`, { error });
+    }
 
     logger.debug(`User ${email} requested a temporary password`);
 

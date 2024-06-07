@@ -9,7 +9,7 @@ export default defineRoute<State>((_req, ctx) => {
           <form
             className="card-body"
             method="POST"
-            action="/api/users/password"
+            action="/api/auth/password"
           >
             <div className="form-control">
               <label className="label">
