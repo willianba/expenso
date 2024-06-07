@@ -82,6 +82,7 @@ export const handler: Handlers<undefined, SignedInState> = {
 
     if (data.installments) {
       const installments = Number(data.installments);
+      const installmentPrice = Number(data.price) / installments;
       const promises = [];
 
       for (let i = 1; i <= installments; i++) {
@@ -97,6 +98,7 @@ export const handler: Handlers<undefined, SignedInState> = {
         promises.push(
           ExpenseService.create({
             ...createExpenseInput,
+            price: installmentPrice,
             payment: {
               ...createExpenseInput.payment,
               date,
