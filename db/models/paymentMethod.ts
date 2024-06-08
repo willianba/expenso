@@ -3,8 +3,8 @@ import { monotonicUlid } from "@std/ulid";
 import { kv } from "@/db/kv.ts";
 
 enum Keys {
-  PAYMENT_METHOD = "payment_method",
-  PAYMENT_METHOD_BY_USER = "payment_method_by_user",
+  PAYMENT_METHODS = "payment_methods",
+  PAYMENT_METHODS_BY_USER = "payment_methods_by_user",
 }
 
 export type PaymentMethod = {
@@ -27,9 +27,9 @@ export default class PaymentMethodService {
       id: paymentMethodId,
     };
 
-    const key = [Keys.PAYMENT_METHOD, paymentMethodId];
+    const key = [Keys.PAYMENT_METHODS, paymentMethodId];
     const userKey = [
-      Keys.PAYMENT_METHOD_BY_USER,
+      Keys.PAYMENT_METHODS_BY_USER,
       input.userId,
       paymentMethodId,
     ];
@@ -50,7 +50,7 @@ export default class PaymentMethodService {
 
   public static async getAllByUserId(userId: string) {
     const entries = kv.list<RawPaymentMethod>({
-      prefix: [Keys.PAYMENT_METHOD_BY_USER, userId],
+      prefix: [Keys.PAYMENT_METHODS_BY_USER, userId],
     });
 
     const paymentMethods: RawPaymentMethod[] = await Array.fromAsync(

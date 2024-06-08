@@ -61,7 +61,7 @@ export const handler: Handlers<User> = {
     });
     setCookie(headers, cookie);
 
-    const sessionKey = [UserKeys.USER_SESSION, sessionId];
+    const sessionKey = [UserKeys.USERS_SESSION, sessionId];
     const sessionRes = await kv
       .atomic()
       .check({ key: sessionKey, versionstamp: null })

@@ -2,10 +2,10 @@ import { kv } from "@/db/kv.ts";
 import { monotonicUlid } from "@std/ulid";
 
 export enum Keys {
-  USER = "user",
-  USER_BY_EMAIL = "user_by_email",
-  USER_SESSION = "user_session",
-  TEMPORARY_LOGIN = "user_temporary_login",
+  USERS = "users",
+  USERS_BY_EMAIL = "users_by_email",
+  USERS_SESSION = "users_session",
+  TEMPORARY_LOGIN = "users_temporary_login",
 }
 
 export type User = {
@@ -20,8 +20,8 @@ export default class UserService {
     const userId = monotonicUlid();
     const userWithId = { ...user, id: userId };
 
-    const key = [Keys.USER, userId];
-    const emailKey = [Keys.USER_BY_EMAIL, user.email];
+    const key = [Keys.USERS, userId];
+    const emailKey = [Keys.USERS_BY_EMAIL, user.email];
     const createRes = await kv
       .atomic()
       .check({ key, versionstamp: null })
@@ -38,7 +38,7 @@ export default class UserService {
   }
 
   public static async getById(userId: string) {
-    const res = await kv.get<User>([Keys.USER, userId]);
+    const res = await kv.get<User>([Keys.USERS, userId]);
 
     if (res.value === null) {
       throw new Deno.errors.NotFound("User not found");
@@ -48,12 +48,12 @@ export default class UserService {
   }
 
   public static async getByEmail(email: string) {
-    const res = await kv.get<User>([Keys.USER_BY_EMAIL, email]);
+    const res = await kv.get<User>([Keys.USERS_BY_EMAIL, email]);
     return res.value;
   }
 
   public static async getBySessionId(sessionId: string) {
-    const key = [Keys.USER_SESSION, sessionId];
+    const key = [Keys.USERS_SESSION, sessionId];
     const eventualUser = await kv.get<User>(key, {
       consistency: "eventual",
     });

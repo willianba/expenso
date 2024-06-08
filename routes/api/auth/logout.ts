@@ -19,7 +19,7 @@ export const handler: Handlers<User> = {
       return Response.redirect(url);
     }
 
-    await kv.delete([UserKeys.USER_SESSION, sessionId]);
+    await kv.delete([UserKeys.USERS_SESSION, sessionId]);
 
     const headers = new Headers({
       Location: "/",
