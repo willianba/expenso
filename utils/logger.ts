@@ -12,10 +12,6 @@ log.setup({
         }),
       useColors: false,
     }),
-    complexJson: new log.ConsoleHandler("INFO", {
-      formatter: log.formatters.jsonFormatter,
-      useColors: false,
-    }),
   },
   loggers: {
     dev: {
@@ -24,7 +20,7 @@ log.setup({
     },
     prod: {
       level: "INFO",
-      handlers: ["complexJson"],
+      handlers: ["friendlyJson"],
     },
   },
 });
