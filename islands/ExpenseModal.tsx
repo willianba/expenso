@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "preact/hooks";
 import { PaymentType } from "@/utils/constants.ts";
 import InputSelector from "@/islands/InputSelector.tsx";
-import { formToday, getFormattedDate, stripDate, today } from "@/utils/date.ts";
+import { formToday, stripDate, today } from "@/utils/date.ts";
 import { expenses } from "@/signals/expenses.ts";
 import { ExpenseWithoutUser } from "@/db/models/expense.ts";
 

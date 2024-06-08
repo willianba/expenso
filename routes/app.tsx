@@ -6,7 +6,6 @@ import { RouteConfig } from "$fresh/server.ts";
 import Loader from "@/islands/Loader.tsx";
 import AddExpenseButton from "@/islands/AddExpenseButton.tsx";
 import Table from "@/islands/Table.tsx";
-import { totalExpenses } from "@/signals/expenses.ts";
 import ExpensesStats from "@/islands/ExpensesStats.tsx";
 
 export const config: RouteConfig = {
