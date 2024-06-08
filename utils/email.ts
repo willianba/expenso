@@ -1,6 +1,5 @@
 import { SMTPClient, SendConfig } from "denomailer";
 import { env } from "@/utils/env.ts";
-import logger from "@/utils/logger.ts";
 
 class EmailProvider {
   private readonly client: SMTPClient;
@@ -29,12 +28,8 @@ class EmailProvider {
   }
 
   public async send(config: SendConfig) {
-    try {
-      await this.client.send(config);
-      await this.client.close();
-    } catch (error) {
-      logger.error("Error sending email", { error });
-    }
+    await this.client.send(config);
+    await this.client.close();
   }
 }
 
