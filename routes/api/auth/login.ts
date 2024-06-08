@@ -6,6 +6,8 @@ import { hashSync } from "bcrypt";
 import { kv } from "@/db/kv.ts";
 import mailer from "@/utils/email.ts";
 import logger from "@/utils/logger.ts";
+import { env } from "@/utils/env.ts";
+import { Environment } from "@/utils/constants.ts";
 
 const CreateUserSchema = z.object({
   email: z.string().email(),
@@ -25,20 +27,24 @@ export const handler: Handlers<User> = {
       { expireIn: 10 * 1000 }, // 10 minutes
     );
 
-    try {
-      await mailer.send({
-        from: "Expenso <expenso@resend.dev>",
-        to: email,
-        subject: "Your expenso temporary password",
-        html: `Your temporary password is <b>${password}</b>.
+    // TODO remove when I make the email work for everyone
+    if (env.ENVIRONMENT === Environment.DEVELOPMENT) {
+      try {
+        await mailer.send({
+          from: "Expenso <expenso@resend.dev>",
+          to: email,
+          subject: "Your expenso temporary password",
+          html: `Your temporary password is <b>${password}</b>.
         <br />
         Please use it in the next 10 minutes or request a new password.`,
-        content: `Your temporary password is ${password}. Please use it in the next 10 minutes or request a new password.`,
-      });
-    } catch (error) {
-      logger.error(`Error sending email to ${email}`, { error });
-      // TODO remove when I make the email work for everyone
-      logger.debug(`Temporary password for ${email}: ${password}`);
+          content: `Your temporary password is ${password}. Please use it in the next 10 minutes or request a new password.`,
+        });
+      } catch (error) {
+        logger.error(`Error sending email to ${email}`, { error });
+        logger.debug(`Temporary password for ${email}: ${password}`);
+      }
+    } else {
+      logger.info(`Temporary password for ${email}: ${password}`);
     }
 
     logger.debug(`User ${email} requested a temporary password`);
