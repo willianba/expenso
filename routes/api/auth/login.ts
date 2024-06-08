@@ -37,6 +37,8 @@ export const handler: Handlers<User> = {
       });
     } catch (error) {
       logger.error(`Error sending email to ${email}`, { error });
+      // TODO remove when I make the email work for everyone
+      logger.debug(`Temporary password for ${email}: ${password}`);
     }
 
     logger.debug(`User ${email} requested a temporary password`);
