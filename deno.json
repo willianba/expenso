@@ -44,6 +44,16 @@
   },
   "compilerOptions": {
     "jsx": "react-jsx",
-    "jsxImportSource": "preact"
+    "jsxImportSource": "preact",
+    "noUnusedLocals": true,
+    "noUnusedParameters": true
+  },
+  "deploy": {
+    "project": "a5faed4e-ddaf-4198-9b02-e379b4f89a5b",
+    "exclude": [
+      "**/node_modules"
+    ],
+    "include": [],
+    "entrypoint": "main.ts"
   }
 }
