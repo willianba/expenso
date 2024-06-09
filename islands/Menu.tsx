@@ -1,7 +1,9 @@
 import { expenses } from "@/signals/expenses.ts";
 import { ExpenseWithoutUser } from "@/db/models/expense.ts";
-import { useEffect, useState } from "preact/hooks";
+import { useEffect, useRef, useState } from "preact/hooks";
 import { today } from "@/utils/date.ts";
+import { RawIncome } from "@/db/models/income.ts";
+import { income } from "@/signals/income.ts";
 
 const months = [
   { name: "January", number: 1 },
@@ -18,31 +20,79 @@ const months = [
   { name: "December", number: 12 },
 ];
 
-const blacklistedPathnames = ["/", "/login", "/password"];
+// TODO make this dynamic
+const years = [
+  2024,
+  2025,
+  2026,
+];
+
+const allowedPathnames = ["/app"];
 
 export default function Menu() {
   const [activeMonth, setActiveMonth] = useState(today().month);
+  const [activeYear, setActiveYear] = useState(today().year);
   const [showButton, setShowButton] = useState(false);
+  const monthRef = useRef<HTMLDetailsElement>(null);
+  const yearRef = useRef<HTMLDetailsElement>(null);
 
   useEffect(() => {
-    setShowButton(!blacklistedPathnames.includes(location.pathname));
+    const onClickOutside = (e: MouseEvent) => {
+      if (
+        monthRef.current && !monthRef.current.contains(e.target as Node) &&
+        yearRef.current && !yearRef.current.contains(e.target as Node)
+      ) {
+        closeOpenSummary("month");
+        closeOpenSummary("year");
+      }
+    };
+
+    document.addEventListener("click", onClickOutside);
+    setShowButton(allowedPathnames.includes(location.pathname));
+
+    return () => {
+      document.removeEventListener("click", onClickOutside);
+    };
   }, []);
 
-  const fetchExpenses = (month: number) => {
-    fetch(`/api/expenses/date?year=2024&month=${month}`).then(async (res) => {
-      const result = await res.json() as ExpenseWithoutUser[];
-      expenses.value = result;
+  const fetchData = (month: number, year: number) => {
+    if (month === activeMonth && year === activeYear) {
+      return;
+    }
+
+    fetch(`/api/expenses/date?year=${year}&month=${month}`).then(
+      async (res) => {
+        const result = await res.json() as ExpenseWithoutUser[];
+        expenses.value = result;
+      },
+    );
+
+    fetch(`/api/income/date?year=${year}&month=${month}`).then(async (res) => {
+      const result = await res.json() as RawIncome[];
+      income.value = result;
     });
+
     setActiveMonth(month);
+    setActiveYear(year);
+  };
+
+  const closeOpenSummary = (summary: "month" | "year") => {
+    if (yearRef.current && yearRef.current.open && summary === "month") {
+      yearRef.current.open = false;
+    } else if (
+      monthRef.current && monthRef.current.open && summary === "year"
+    ) {
+      monthRef.current.open = false;
+    }
   };
 
   return (
     showButton
       ? (
-        <ul class="menu menu-horizontal bg-base-100 rounded-box">
+        <ul class="menu menu-horizontal bg-neutral rounded-box">
           <li>
-            <details>
-              <summary>
+            <details ref={monthRef}>
+              <summary onClick={() => closeOpenSummary("month")}>
                 {months.find((m) => m.number === activeMonth)!.name}
               </summary>
               <ul>
@@ -50,9 +100,28 @@ export default function Menu() {
                   <li>
                     <a
                       class={activeMonth === month.number ? "active" : ""}
-                      onClick={() => fetchExpenses(month.number)}
+                      onClick={() => fetchData(month.number, activeYear)}
                     >
                       {month.name}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </details>
+          </li>
+          <li>
+            <details ref={yearRef}>
+              <summary onClick={() => closeOpenSummary("year")}>
+                {years.find((y) => y === activeYear)}
+              </summary>
+              <ul>
+                {years.map((year) => (
+                  <li>
+                    <a
+                      class={activeYear === year ? "active" : ""}
+                      onClick={() => fetchData(activeMonth, year)}
+                    >
+                      {year}
                     </a>
                   </li>
                 ))}
