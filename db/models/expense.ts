@@ -14,8 +14,6 @@ import { kv } from "@/db/kv.ts";
 enum Keys {
   EXPENSES = "expenses",
   EXPENSES_BY_USER = "expenses_by_user",
-  EXPENSES_BY_PAYMENT_METHOD = "expenses_by_payment_method",
-  EXPENSES_BY_CATEGORY = "expenses_by_category",
   EXPENSES_BY_DATE = "expenses_by_date",
 }
 
@@ -57,20 +55,6 @@ export default class ExpenseService {
 
     const key = [Keys.EXPENSES, expenseId];
     const userKey = [Keys.EXPENSES_BY_USER, input.userId, expenseId];
-    const categoryKey = [
-      Keys.EXPENSES_BY_CATEGORY,
-      input.userId,
-      input.payment.categoryId,
-      expenseId,
-    ];
-
-    const paymentMethodKey = [
-      Keys.EXPENSES_BY_PAYMENT_METHOD,
-      input.userId,
-      input.payment.methodId,
-      expenseId,
-    ];
-
     const dateKey = [
       Keys.EXPENSES_BY_DATE,
       input.userId,
@@ -83,13 +67,9 @@ export default class ExpenseService {
       .atomic()
       .check({ key, versionstamp: null })
       .check({ key: userKey, versionstamp: null })
-      .check({ key: categoryKey, versionstamp: null })
-      .check({ key: paymentMethodKey, versionstamp: null })
       .check({ key: dateKey, versionstamp: null })
       .set(key, expenseWithId)
       .set(userKey, expenseWithId)
-      .set(categoryKey, expenseWithId)
-      .set(paymentMethodKey, expenseWithId)
       .set(dateKey, expenseWithId)
       .commit();
 
