@@ -7,7 +7,7 @@ import Loader from "@/islands/Loader.tsx";
 import AddExpenseButton from "@/islands/AddExpenseButton.tsx";
 import Table from "@/islands/Table.tsx";
 import AddIncomeButton from "@/islands/AddIncomeButton.tsx";
-import { ExpenseStats, IncomeStats } from "@/islands/Stats.tsx";
+import { BalanceStats, ExpenseStats, IncomeStats } from "@/islands/Stats.tsx";
 import {
   CurrentMonthCardTitle,
   FixedCardTitle,
@@ -60,17 +60,22 @@ export default defineRoute<State>((_req, _ctx) => {
         </div>
         <div class="gap-4 col-span-1 min-h-full flex flex-col">
           <Card
-            classes="h-2/4"
-            title="Total income"
+            title="Income"
             actionButton={<AddIncomeButton />}
           >
             <IncomeStats />
           </Card>
           <Card
-            classes="h-2/4"
-            title="Total expenses"
+            classes="flex-grow"
+            title="Expenses"
           >
             <ExpenseStats />
+          </Card>
+          <Card
+            classes="flex-grow"
+            title="Balance"
+          >
+            <BalanceStats />
           </Card>
         </div>
       </div>
