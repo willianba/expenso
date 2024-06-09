@@ -3,7 +3,7 @@ import logger from "@/utils/logger.ts";
 import { z } from "zod";
 import { compareSync } from "https://deno.land/x/bcrypt@v0.4.1/src/main.ts";
 import { kv } from "@/db/kv.ts";
-import UserService, { User, Keys as UserKeys } from "@/db/models/user.ts";
+import UserService, { Keys as UserKeys, User } from "@/db/models/user.ts";
 import { generateSessionIdCookie } from "@/plugins/session.ts";
 import { setCookie } from "@std/http";
 

@@ -1,4 +1,4 @@
-import { signal, computed } from "@preact/signals";
+import { computed, signal } from "@preact/signals";
 import { ExpenseWithoutUser } from "@/db/models/expense.ts";
 import { PaymentType } from "@/utils/constants.ts";
 

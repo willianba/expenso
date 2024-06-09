@@ -86,14 +86,11 @@ export const handler: Handlers<undefined, SignedInState> = {
       const promises = [];
 
       for (let i = 1; i <= installments; i++) {
-        const date =
-          i === 1
-            ? new Date(data.paymentDate)
-            : new Date(
-                new Date(data.paymentDate).setMonth(
-                  new Date(data.paymentDate).getMonth() + i - 1,
-                ),
-              );
+        const date = i === 1 ? new Date(data.paymentDate) : new Date(
+          new Date(data.paymentDate).setMonth(
+            new Date(data.paymentDate).getMonth() + i - 1,
+          ),
+        );
 
         promises.push(
           ExpenseService.create({

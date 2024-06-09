@@ -1,5 +1,5 @@
 import { Handlers } from "$fresh/server.ts";
-import { User, Keys as UserKeys } from "@/db/models/user.ts";
+import { Keys as UserKeys, User } from "@/db/models/user.ts";
 import { kv } from "@/db/kv.ts";
 import {
   BASE_COOKIE,

@@ -1,5 +1,5 @@
 import { Handlers } from "$fresh/server.ts";
-import { User, Keys as UserKeys } from "@/db/models/user.ts";
+import { Keys as UserKeys, User } from "@/db/models/user.ts";
 import { z } from "zod";
 import { rand as randomId } from "usid";
 import { hashSync } from "bcrypt";
@@ -37,7 +37,8 @@ export const handler: Handlers<User> = {
           html: `Your temporary password is <b>${password}</b>.
         <br />
         Please use it in the next 10 minutes or request a new password.`,
-          content: `Your temporary password is ${password}. Please use it in the next 10 minutes or request a new password.`,
+          content:
+            `Your temporary password is ${password}. Please use it in the next 10 minutes or request a new password.`,
         });
       } catch (error) {
         logger.error(`Error sending email to ${email}`, { error });

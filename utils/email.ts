@@ -1,4 +1,4 @@
-import { SMTPClient, SendConfig } from "denomailer";
+import { SendConfig, SMTPClient } from "denomailer";
 import { env } from "@/utils/env.ts";
 
 class EmailProvider {
