@@ -1,4 +1,4 @@
-import { useRef } from "preact/hooks";
+import { useRef, useState } from "preact/hooks";
 import { income } from "@/signals/income.ts";
 import { RawIncome } from "@/db/models/income.ts";
 import { formToday, stripDate, today } from "@/utils/date.ts";
@@ -10,6 +10,7 @@ type IncomeFormProps = {
 export default function IncomeForm(props: IncomeFormProps) {
   const { closeModal } = props;
   const formRef = useRef<HTMLFormElement>(null);
+  const [saveDisabled, setSaveDisabled] = useState(false);
 
   const cleanAndClose = () => {
     formRef.current?.reset();
@@ -18,6 +19,7 @@ export default function IncomeForm(props: IncomeFormProps) {
 
   const onSubmit = async (e: Event) => {
     e.preventDefault();
+    setSaveDisabled(true);
     const res = await fetch("/api/income", {
       method: "POST",
       body: new FormData(formRef.current!),
@@ -36,6 +38,7 @@ export default function IncomeForm(props: IncomeFormProps) {
     }
 
     // TODO trigger toast
+    setSaveDisabled(false);
     cleanAndClose();
   };
 
@@ -86,7 +89,11 @@ export default function IncomeForm(props: IncomeFormProps) {
         />
       </div>
       <div className="form-control mt-6">
-        <button className="btn btn-md btn-primary" type="submit">
+        <button
+          className="btn btn-md btn-primary"
+          type="submit"
+          disabled={saveDisabled}
+        >
           Save
         </button>
       </div>

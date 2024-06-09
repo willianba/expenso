@@ -13,6 +13,7 @@ type ExpenseFormProps = {
 export default function ExpenseForm(props: ExpenseFormProps) {
   const { paymentType, closeModal } = props;
 
+  const [saveDisabled, setSaveDisabled] = useState(false);
   const [categories, setCategories] = useState([]);
   const [paymentMethods, setPaymentMethods] = useState([]);
   const formRef = useRef<HTMLFormElement>(null);
@@ -45,6 +46,7 @@ export default function ExpenseForm(props: ExpenseFormProps) {
 
   const onSubmit = async (e: Event) => {
     e.preventDefault();
+    setSaveDisabled(true);
     const res = await fetch("/api/expenses", {
       method: "POST",
       body: new FormData(formRef.current!),
@@ -63,6 +65,7 @@ export default function ExpenseForm(props: ExpenseFormProps) {
     }
 
     // TODO trigger toast
+    setSaveDisabled(false);
     cleanAndClose();
   };
 
@@ -155,7 +158,11 @@ export default function ExpenseForm(props: ExpenseFormProps) {
       </div>
       <input type="hidden" name="paymentType" value={paymentType} />
       <div className="form-control mt-6">
-        <button className="btn btn-md btn-primary" type="submit">
+        <button
+          className="btn btn-md btn-primary"
+          type="submit"
+          disabled={saveDisabled}
+        >
           Save
         </button>
       </div>
