@@ -1,17 +1,25 @@
 import { useEffect } from "preact/hooks";
 import { expenses } from "@/signals/expenses.ts";
 import { today } from "@/utils/date.ts";
+import { RawIncome } from "@/db/models/income.ts";
+import { income } from "@/signals/income.ts";
+import { ExpenseWithoutUser } from "@/db/models/expense.ts";
 
-// this is created for making the signals work on the client
-// idk if there's a better way to do this or if this is an anti-pattern
 export default function Loader() {
   useEffect(() => {
     const { year, month } = today();
 
     fetch(`/api/expenses/date?year=${year}&month=${month}`).then(
       async (res) => {
-        const expensesFromThisMonth = await res.json();
+        const expensesFromThisMonth = await res.json() as ExpenseWithoutUser[];
         expenses.value = expensesFromThisMonth;
+      },
+    );
+
+    fetch(`/api/income/date?year=${year}&month=${month}`).then(
+      async (res) => {
+        const incomeList = await res.json() as RawIncome[];
+        income.value = incomeList;
       },
     );
   }, []);
