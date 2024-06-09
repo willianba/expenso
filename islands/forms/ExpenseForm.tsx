@@ -157,7 +157,7 @@ export default function ExpenseForm(props: ExpenseFormProps) {
         />
       </div>
       <input type="hidden" name="paymentType" value={paymentType} />
-      <div className="form-control mt-6">
+      <div className="flex justify-end mt-6">
         <button
           className="btn btn-md btn-primary"
           type="submit"

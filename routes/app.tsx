@@ -5,7 +5,7 @@ import { PaymentType } from "@/utils/constants.ts";
 import { RouteConfig } from "$fresh/server.ts";
 import Loader from "@/islands/Loader.tsx";
 import AddExpenseButton from "@/islands/AddExpenseButton.tsx";
-import Table from "@/islands/Table.tsx";
+import ExpensesTable from "@/islands/tables/ExpensesTable.tsx";
 import AddIncomeButton from "@/islands/AddIncomeButton.tsx";
 import { BalanceStats, ExpenseStats, IncomeStats } from "@/islands/Stats.tsx";
 import {
@@ -29,7 +29,7 @@ export default defineRoute<State>((_req, _ctx) => {
             title={<FixedCardTitle />}
             actionButton={<AddExpenseButton paymentType={PaymentType.FIXED} />}
           >
-            <Table
+            <ExpensesTable
               paymentType={PaymentType.FIXED}
             />
           </Card>
@@ -40,7 +40,7 @@ export default defineRoute<State>((_req, _ctx) => {
               <AddExpenseButton paymentType={PaymentType.OVER_TIME} />
             }
           >
-            <Table
+            <ExpensesTable
               paymentType={PaymentType.OVER_TIME}
             />
           </Card>
@@ -53,7 +53,7 @@ export default defineRoute<State>((_req, _ctx) => {
               <AddExpenseButton paymentType={PaymentType.CURRENT} />
             }
           >
-            <Table
+            <ExpensesTable
               paymentType={PaymentType.CURRENT}
             />
           </Card>
