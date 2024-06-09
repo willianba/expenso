@@ -1,4 +1,4 @@
-import ExpenseModal from "@/islands/ExpenseModal.tsx";
+import { ExpenseModal } from "@/components/Modal.tsx";
 import useModal from "@/islands/hooks/useModal.tsx";
 import { PaymentType } from "@/utils/constants.ts";
 
@@ -8,7 +8,7 @@ type ExpenseButtonProps = {
 
 export default function AddExpenseButton(props: ExpenseButtonProps) {
   const { paymentType } = props;
-  const { modalId, openModal, isOpen, setIsOpen } = useModal();
+  const { modalId, openModal, closeModal } = useModal();
 
   return (
     <>
@@ -28,8 +28,7 @@ export default function AddExpenseButton(props: ExpenseButtonProps) {
       <ExpenseModal
         id={modalId}
         paymentType={paymentType}
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
+        closeModal={closeModal}
       />
     </>
   );
