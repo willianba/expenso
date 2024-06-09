@@ -9,16 +9,34 @@ export const fixedExpenses = computed(() => {
     (expense) => expense.payment.type === PaymentType.FIXED,
   );
 });
+export const totalFixedExpenses = computed(() => {
+  return fixedExpenses.value.reduce((acc, expense) => acc + expense.price, 0);
+});
+
 export const overTimeExpenses = computed(() => {
   return expenses.value.filter(
     (expense) => expense.payment.type === PaymentType.OVER_TIME,
   );
 });
+export const totalOverTimeExpenses = computed(() => {
+  return overTimeExpenses.value.reduce(
+    (acc, expense) => acc + expense.price,
+    0,
+  );
+});
+
 export const currentMonthExpenses = computed(() => {
   return expenses.value.filter(
     (expense) => expense.payment.type === PaymentType.CURRENT,
   );
 });
+export const totalCurrentMonthExpenses = computed(() => {
+  return currentMonthExpenses.value.reduce(
+    (acc, expense) => acc + expense.price,
+    0,
+  );
+});
+
 export const totalExpenses = computed(() => {
   return expenses.value.reduce((acc, expense) => acc + expense.price, 0);
 });

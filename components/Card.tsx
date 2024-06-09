@@ -1,7 +1,7 @@
 import { type ComponentChild, type ComponentChildren } from "preact";
 
 type CardProps = {
-  title: string;
+  title: ComponentChild | string;
   children: ComponentChildren;
   actionButton?: ComponentChild;
   classes?: string;
@@ -16,7 +16,9 @@ export default function Card(props: CardProps) {
     >
       <div class="card-body h-full">
         <div class="flex justify-between">
-          <h2 class="card-title">{title}</h2>
+          {typeof title === "string"
+            ? <h2 class="card-title">{title}</h2>
+            : title}
           {actionButton}
         </div>
         <span class="divider m-0 h-2" />

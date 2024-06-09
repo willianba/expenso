@@ -1,12 +1,18 @@
 import { defineRoute } from "$fresh/server.ts";
-import { type State } from "@/plugins/session.ts";
+import { State } from "@/plugins/session.ts";
 import Card from "@/components/Card.tsx";
 import { PaymentType } from "@/utils/constants.ts";
 import { RouteConfig } from "$fresh/server.ts";
 import Loader from "@/islands/Loader.tsx";
 import AddExpenseButton from "@/islands/AddExpenseButton.tsx";
 import Table from "@/islands/Table.tsx";
-import ExpensesStats from "@/islands/ExpensesStats.tsx";
+import AddIncomeButton from "@/islands/AddIncomeButton.tsx";
+import { ExpenseStats, IncomeStats } from "@/islands/Stats.tsx";
+import {
+  CurrentMonthCardTitle,
+  FixedCardTitle,
+  OverTimeCardTitle,
+} from "@/islands/CardTitle.tsx";
 
 export const config: RouteConfig = {
   skipInheritedLayouts: true,
@@ -20,7 +26,7 @@ export default defineRoute<State>((_req, _ctx) => {
         <div class="gap-4 col-span-2 flex flex-col">
           <Card
             classes="h-2/4"
-            title="Fixed"
+            title={<FixedCardTitle />}
             actionButton={<AddExpenseButton paymentType={PaymentType.FIXED} />}
           >
             <Table
@@ -29,7 +35,7 @@ export default defineRoute<State>((_req, _ctx) => {
           </Card>
           <Card
             classes="h-2/4"
-            title="Over time"
+            title={<OverTimeCardTitle />}
             actionButton={
               <AddExpenseButton paymentType={PaymentType.OVER_TIME} />
             }
@@ -42,7 +48,7 @@ export default defineRoute<State>((_req, _ctx) => {
         <div class="gap-4 col-span-2 flex flex-col">
           <Card
             classes="h-no-nav"
-            title="Current month"
+            title={<CurrentMonthCardTitle />}
             actionButton={
               <AddExpenseButton paymentType={PaymentType.CURRENT} />
             }
@@ -56,14 +62,15 @@ export default defineRoute<State>((_req, _ctx) => {
           <Card
             classes="h-2/4"
             title="Total income"
+            actionButton={<AddIncomeButton />}
           >
-            Oi
+            <IncomeStats />
           </Card>
           <Card
             classes="h-2/4"
             title="Total expenses"
           >
-            <ExpensesStats />
+            <ExpenseStats />
           </Card>
         </div>
       </div>
