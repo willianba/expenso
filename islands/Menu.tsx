@@ -89,7 +89,7 @@ export default function Menu() {
   return (
     showButton
       ? (
-        <ul class="menu menu-horizontal bg-neutral rounded-box">
+        <ul class="menu menu-horizontal bg-neutral rounded-box gap-1">
           <li>
             <details ref={monthRef}>
               <summary onClick={() => closeOpenSummary("month")}>
