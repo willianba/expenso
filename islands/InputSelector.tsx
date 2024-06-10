@@ -78,7 +78,7 @@ const InputSelector = (props: InputSelectorProps) => {
         class="input input-sm input-bordered"
       />
       {showDropdown && (
-        <ul class="absolute top-full left-0 right-0 border border-base-300 mt-1 rounded-lg shadow-lg z-50 bg-base-100">
+        <ul class="absolute top-full left-0 right-0 border border-base-300 mt-1 rounded-box shadow-lg z-50 bg-base-100">
           {filteredOptions.length > 0
             ? (
               filteredOptions.map((option) => (
