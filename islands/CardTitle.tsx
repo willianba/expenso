@@ -18,7 +18,7 @@ function CardTitle(props: CardTitleProps) {
     <div class="flex items-center">
       <h2 class="card-title">{title}</h2>
       <div class="divider divider-horizontal" />
-      <span class="text-info">{formatCurrency(signal.value)}</span>
+      <span class="text-accent">{formatCurrency(signal.value)}</span>
     </div>
   );
 }

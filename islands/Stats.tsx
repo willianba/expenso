@@ -27,7 +27,7 @@ export function IncomeStats() {
     <Stats>
       <div class="stat">
         <div class="stat-title">Total income</div>
-        <div class="stat-value text-info">
+        <div class="stat-value text-accent">
           {formatCurrency(totalIncome.value)}
         </div>
         <div class="stat-actions">
@@ -98,7 +98,7 @@ export function ExpenseStats() {
     <Stats>
       <div class="stat">
         <div class="stat-title">Total spent</div>
-        <div class="stat-value text-info">
+        <div class="stat-value text-accent">
           {formatCurrency(totalExpenses.value)}
         </div>
       </div>
@@ -129,7 +129,7 @@ export function BalanceStats() {
     } else if (balance === 0) {
       setTextStyle("text-warning");
     } else {
-      setTextStyle("text-info");
+      setTextStyle("text-success");
     }
   }, [totalIncome.value, totalExpenses.value]);
 
