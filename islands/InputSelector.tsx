@@ -78,21 +78,23 @@ const InputSelector = (props: InputSelectorProps) => {
         class="input input-sm input-bordered"
       />
       {showDropdown && (
-        <ul class="absolute top-full left-0 right-0 border border-base-300 mt-1 rounded-box shadow-lg z-50 bg-base-100">
-          {filteredOptions.length > 0
-            ? (
-              filteredOptions.map((option) => (
-                <li
-                  key={option.id || option.label}
-                  onMouseDown={() => handleSelect(option)}
-                  class="px-4 py-2 hover:bg-base-200 cursor-pointer"
-                >
-                  {option.label}
-                </li>
-              ))
-            )
-            : <li class="px-4 py-2">No results</li>}
-        </ul>
+        <div class="absolute top-full left-0 right-0 mt-1 w-full shadow-md z-50">
+          <ul class="menu menu-sm menu-horizontal bg-base-200 gap-1 rounded-lg w-full">
+            {filteredOptions.length > 0
+              ? (
+                filteredOptions.map((option) => (
+                  <li
+                    class="w-full"
+                    key={option.id || option.label}
+                    onMouseDown={() => handleSelect(option)}
+                  >
+                    <a>{option.label}</a>
+                  </li>
+                ))
+              )
+              : <li class="px-3 py-1">No results</li>}
+          </ul>
+        </div>
       )}
       <input
         type="hidden"
