@@ -9,6 +9,7 @@ import * as $api_auth_login from "./routes/api/auth/login.ts";
 import * as $api_auth_logout from "./routes/api/auth/logout.ts";
 import * as $api_auth_password from "./routes/api/auth/password.ts";
 import * as $api_categories_index from "./routes/api/categories/index.ts";
+import * as $api_expenses_id_ from "./routes/api/expenses/[id].ts";
 import * as $api_expenses_date from "./routes/api/expenses/date.ts";
 import * as $api_expenses_index from "./routes/api/expenses/index.ts";
 import * as $api_income_date from "./routes/api/income/date.ts";
@@ -24,15 +25,18 @@ import * as $AppButton from "./islands/AppButton.tsx";
 import * as $AuthButton from "./islands/AuthButton.tsx";
 import * as $BackButton from "./islands/BackButton.tsx";
 import * as $CardTitle from "./islands/CardTitle.tsx";
+import * as $EditIncomeButton from "./islands/EditIncomeButton.tsx";
 import * as $InputSelector from "./islands/InputSelector.tsx";
 import * as $Loader from "./islands/Loader.tsx";
 import * as $Menu from "./islands/Menu.tsx";
 import * as $Stats from "./islands/Stats.tsx";
-import * as $Table from "./islands/Table.tsx";
 import * as $ThemeController from "./islands/ThemeController.tsx";
 import * as $forms_ExpenseForm from "./islands/forms/ExpenseForm.tsx";
 import * as $forms_IncomeForm from "./islands/forms/IncomeForm.tsx";
 import * as $hooks_useModal from "./islands/hooks/useModal.tsx";
+import * as $tables_ExpenseOptionsButton from "./islands/tables/ExpenseOptionsButton.tsx";
+import * as $tables_ExpensesTable from "./islands/tables/ExpensesTable.tsx";
+import * as $tables_IncomeTable from "./islands/tables/IncomeTable.tsx";
 import { type Manifest } from "$fresh/server.ts";
 
 const manifest = {
@@ -44,6 +48,7 @@ const manifest = {
     "./routes/api/auth/logout.ts": $api_auth_logout,
     "./routes/api/auth/password.ts": $api_auth_password,
     "./routes/api/categories/index.ts": $api_categories_index,
+    "./routes/api/expenses/[id].ts": $api_expenses_id_,
     "./routes/api/expenses/date.ts": $api_expenses_date,
     "./routes/api/expenses/index.ts": $api_expenses_index,
     "./routes/api/income/date.ts": $api_income_date,
@@ -61,15 +66,18 @@ const manifest = {
     "./islands/AuthButton.tsx": $AuthButton,
     "./islands/BackButton.tsx": $BackButton,
     "./islands/CardTitle.tsx": $CardTitle,
+    "./islands/EditIncomeButton.tsx": $EditIncomeButton,
     "./islands/InputSelector.tsx": $InputSelector,
     "./islands/Loader.tsx": $Loader,
     "./islands/Menu.tsx": $Menu,
     "./islands/Stats.tsx": $Stats,
-    "./islands/Table.tsx": $Table,
     "./islands/ThemeController.tsx": $ThemeController,
     "./islands/forms/ExpenseForm.tsx": $forms_ExpenseForm,
     "./islands/forms/IncomeForm.tsx": $forms_IncomeForm,
     "./islands/hooks/useModal.tsx": $hooks_useModal,
+    "./islands/tables/ExpenseOptionsButton.tsx": $tables_ExpenseOptionsButton,
+    "./islands/tables/ExpensesTable.tsx": $tables_ExpensesTable,
+    "./islands/tables/IncomeTable.tsx": $tables_IncomeTable,
   },
   baseUrl: import.meta.url,
 } satisfies Manifest;

@@ -15,6 +15,7 @@ enum Keys {
   EXPENSES = "expenses",
   EXPENSES_BY_USER = "expenses_by_user",
   EXPENSES_BY_DATE = "expenses_by_date",
+  DELETED_EXPENSES = "deleted_expenses",
 }
 
 type Payment = {
@@ -143,5 +144,41 @@ export default class ExpenseService {
     });
 
     return expenses;
+  }
+
+  public static async delete(userId: string, expenseId: string) {
+    const key = [Keys.EXPENSES, expenseId];
+    const rawExpense = await kv.get<RawExpense>(key);
+
+    if (!rawExpense.value) {
+      throw new Deno.errors.NotFound("Expense not found");
+    }
+
+    const [populatedExpense] = await this.populate([rawExpense.value], userId);
+
+    const userKey = [Keys.EXPENSES_BY_USER, userId, expenseId];
+    const dateKey = [
+      Keys.EXPENSES_BY_DATE,
+      userId,
+      populatedExpense.payment.date.getFullYear().toString(),
+      (populatedExpense.payment.date.getMonth() + 1).toString(),
+      expenseId,
+    ];
+    const deletedKey = [Keys.DELETED_EXPENSES, userId, expenseId];
+
+    const res = await kv
+      .atomic()
+      .check({ key: deletedKey, versionstamp: null })
+      .delete(key)
+      .delete(userKey)
+      .delete(dateKey)
+      .set(deletedKey, rawExpense.value)
+      .commit();
+
+    if (!res.ok) {
+      throw new Deno.errors.Interrupted("Failed to delete expense");
+    }
+
+    return rawExpense.value;
   }
 }
