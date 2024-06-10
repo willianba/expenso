@@ -1,7 +1,10 @@
 import { Handlers } from "$fresh/server.ts";
 import { PaymentType } from "@/utils/constants.ts";
 import { z } from "zod";
-import ExpenseService, { CreateExpenseInput } from "@/db/models/expense.ts";
+import ExpenseService, {
+  CreateExpenseInput,
+  ExpenseWithoutUser,
+} from "@/db/models/expense.ts";
 import { SignedInState } from "@/plugins/session.ts";
 import PaymentMethodService from "@/db/models/paymentMethod.ts";
 import CategoryService from "@/db/models/category.ts";
@@ -32,7 +35,7 @@ const CreateExpenseSchema = z
     { message: "Installments are required for payments over time" },
   );
 
-export const handler: Handlers<undefined, SignedInState> = {
+export const handler: Handlers<ExpenseWithoutUser, SignedInState> = {
   async POST(req, ctx) {
     const body = Object.fromEntries(await req.formData());
     const data = CreateExpenseSchema.parse(body);
