@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from "preact/hooks";
 import { PaymentType } from "@/utils/constants.ts";
 import InputSelector from "@/islands/InputSelector.tsx";
-import { formToday, stripDate, today } from "@/utils/date.ts";
+import { formToday, stripDate } from "@/utils/date.ts";
 import { expenses } from "@/signals/expenses.ts";
 import { ExpenseWithoutUser } from "@/db/models/expense.ts";
+import { activeMonth, activeYear } from "@/signals/menu.ts";
 
 type ExpenseFormProps = {
   paymentType: PaymentType;
@@ -58,9 +59,11 @@ export default function ExpenseForm(props: ExpenseFormProps) {
 
     const addedExpense = await res.json() as ExpenseWithoutUser;
     const addedExpenseDate = stripDate(new Date(addedExpense.payment.date));
-    const { month, year } = today();
 
-    if (addedExpenseDate.month === month && addedExpenseDate.year === year) {
+    if (
+      addedExpenseDate.month === activeMonth.value &&
+      addedExpenseDate.year === activeYear.value
+    ) {
       expenses.value = [...expenses.value, addedExpense];
     }
 

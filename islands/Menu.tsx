@@ -1,9 +1,10 @@
+import { useSignal } from "@preact/signals";
+import { useEffect, useRef } from "preact/hooks";
 import { expenses } from "@/signals/expenses.ts";
 import { ExpenseWithoutUser } from "@/db/models/expense.ts";
-import { useEffect, useRef, useState } from "preact/hooks";
-import { today } from "@/utils/date.ts";
 import { RawIncome } from "@/db/models/income.ts";
 import { income } from "@/signals/income.ts";
+import { activeMonth, activeYear } from "@/signals/menu.ts";
 
 const months = [
   { name: "January", number: 1 },
@@ -30,9 +31,7 @@ const years = [
 const allowedPathnames = ["/app"];
 
 export default function Menu() {
-  const [activeMonth, setActiveMonth] = useState(today().month);
-  const [activeYear, setActiveYear] = useState(today().year);
-  const [showButton, setShowButton] = useState(false);
+  const showButton = useSignal(false);
   const monthRef = useRef<HTMLDetailsElement>(null);
   const yearRef = useRef<HTMLDetailsElement>(null);
 
@@ -48,7 +47,7 @@ export default function Menu() {
     };
 
     document.addEventListener("click", onClickOutside);
-    setShowButton(allowedPathnames.includes(location.pathname));
+    showButton.value = allowedPathnames.includes(location.pathname);
 
     return () => {
       document.removeEventListener("click", onClickOutside);
@@ -56,7 +55,7 @@ export default function Menu() {
   }, []);
 
   const fetchData = (month: number, year: number) => {
-    if (month === activeMonth && year === activeYear) {
+    if (month === activeMonth.value && year === activeYear.value) {
       return;
     }
 
@@ -72,8 +71,8 @@ export default function Menu() {
       income.value = result;
     });
 
-    setActiveMonth(month);
-    setActiveYear(year);
+    activeMonth.value = month;
+    activeYear.value = year;
   };
 
   const closeOpenSummary = (summary: "month" | "year") => {
@@ -87,20 +86,20 @@ export default function Menu() {
   };
 
   return (
-    showButton
+    showButton.value
       ? (
         <ul class="menu menu-horizontal bg-neutral rounded-box gap-1">
           <li>
             <details ref={monthRef}>
               <summary onClick={() => closeOpenSummary("month")}>
-                {months.find((m) => m.number === activeMonth)!.name}
+                {months.find((m) => m.number === activeMonth.value)!.name}
               </summary>
               <ul>
                 {months.map((month) => (
                   <li>
                     <a
-                      class={activeMonth === month.number ? "active" : ""}
-                      onClick={() => fetchData(month.number, activeYear)}
+                      class={activeMonth.value === month.number ? "active" : ""}
+                      onClick={() => fetchData(month.number, activeYear.value)}
                     >
                       {month.name}
                     </a>
@@ -112,14 +111,14 @@ export default function Menu() {
           <li>
             <details ref={yearRef}>
               <summary onClick={() => closeOpenSummary("year")}>
-                {years.find((y) => y === activeYear)}
+                {years.find((y) => y === activeYear.value)}
               </summary>
               <ul>
                 {years.map((year) => (
                   <li>
                     <a
-                      class={activeYear === year ? "active" : ""}
-                      onClick={() => fetchData(activeMonth, year)}
+                      class={activeYear.value === year ? "active" : ""}
+                      onClick={() => fetchData(activeMonth.value, year)}
                     >
                       {year}
                     </a>

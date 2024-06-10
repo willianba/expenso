@@ -1,7 +1,8 @@
 import { useRef, useState } from "preact/hooks";
 import { income } from "@/signals/income.ts";
 import { RawIncome } from "@/db/models/income.ts";
-import { formToday, stripDate, today } from "@/utils/date.ts";
+import { formToday, stripDate } from "@/utils/date.ts";
+import { activeMonth, activeYear } from "@/signals/menu.ts";
 
 type IncomeFormProps = {
   closeModal: () => void;
@@ -31,9 +32,11 @@ export default function IncomeForm(props: IncomeFormProps) {
 
     const addedIncome = await res.json() as RawIncome;
     const addedIncomeDate = stripDate(new Date(addedIncome.date));
-    const { month, year } = today();
 
-    if (addedIncomeDate.month === month && addedIncomeDate.year === year) {
+    if (
+      addedIncomeDate.month === activeMonth.value &&
+      addedIncomeDate.year === activeYear.value
+    ) {
       income.value = [...income.value, addedIncome];
     }
 
