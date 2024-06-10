@@ -39,26 +39,28 @@ export function IncomeStats() {
 }
 
 export function ExpenseStats() {
-  const [categoryMostUsed, setCategoryMostUsed] = useState("None");
+  const [categoryMostSpending, setCategoryMostSpending] = useState("None");
   const [paymentMethodMostUsed, setPaymentMethodMostUsed] = useState("None");
 
-  // TODO this is disgusting, refactor
+  // TODO this is disgusting, refactor. maybe when i have dashboards, these can be new signals
   useEffect(() => {
     const result = expenses.value.reduce(
       (acc, expense) => {
         const category = expense.payment.category as Category;
         const paymentMethod = expense.payment.method as PaymentMethod;
+        const price = expense.price;
 
         acc.categories[category.label] = (acc.categories[category.label] || 0) +
-          1;
+          price;
         acc.paymentMethods[paymentMethod.label] =
-          (acc.paymentMethods[paymentMethod.label] || 0) + 1;
+          (acc.paymentMethods[paymentMethod.label] || 0) + price;
 
         if (
           acc.categories[category.label] >
-            acc.categories[acc.categoryMostUsed] || !acc.categoryMostUsed
+            acc.categories[acc.categoryMostSpending] ||
+          !acc.categoryMostSpending
         ) {
-          acc.categoryMostUsed = category.label;
+          acc.categoryMostSpending = category.label;
         }
 
         if (
@@ -74,17 +76,17 @@ export function ExpenseStats() {
       {
         categories: {} as Record<string, number>,
         paymentMethods: {} as Record<string, number>,
-        categoryMostUsed: "",
+        categoryMostSpending: "",
         paymentMethodMostUsed: "",
       },
     );
 
-    const { categoryMostUsed, paymentMethodMostUsed } = result;
+    const { categoryMostSpending, paymentMethodMostUsed } = result;
 
-    if (categoryMostUsed !== "") {
-      setCategoryMostUsed(categoryMostUsed);
+    if (categoryMostSpending !== "") {
+      setCategoryMostSpending(categoryMostSpending);
     } else {
-      setCategoryMostUsed("None");
+      setCategoryMostSpending("None");
     }
 
     if (paymentMethodMostUsed !== "") {
@@ -103,9 +105,9 @@ export function ExpenseStats() {
         </div>
       </div>
       <div class="stat">
-        <div class="stat-title">Category most used</div>
+        <div class="stat-title">Category with the most spending</div>
         <div class="stat-value text-info">
-          {categoryMostUsed}
+          {categoryMostSpending}
         </div>
       </div>
       <div class="stat">
