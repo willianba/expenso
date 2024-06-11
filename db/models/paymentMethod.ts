@@ -17,6 +17,8 @@ export type RawPaymentMethod = Omit<PaymentMethod, "user"> & {
   userId: string;
 };
 
+export type PaymentMethodWithoutUser = Omit<PaymentMethod, "user">;
+
 type CreatePaymentMethodInput = Omit<RawPaymentMethod, "id">;
 
 export default class PaymentMethodService {

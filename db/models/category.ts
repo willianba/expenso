@@ -17,6 +17,8 @@ export type RawCategory = Omit<Category, "user"> & {
   userId: string;
 };
 
+export type CategoryWithoutUser = Omit<Category, "user">;
+
 type CreateCategoryInput = Omit<RawCategory, "id">;
 
 export default class CategoryService {

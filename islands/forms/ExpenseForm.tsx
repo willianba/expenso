@@ -1,10 +1,15 @@
-import { useEffect, useRef, useState } from "preact/hooks";
+import { useRef, useState } from "preact/hooks";
 import { PaymentType } from "@/utils/constants.ts";
 import InputSelector from "@/islands/InputSelector.tsx";
 import { formToday, stripDate } from "@/utils/date.ts";
 import { expenses } from "@/signals/expenses.ts";
 import { ExpenseWithoutUser } from "@/db/models/expense.ts";
 import { activeMonth, activeYear } from "@/signals/menu.ts";
+import {
+  categories,
+  paymentMethods,
+  updateAfterSubmit,
+} from "@/signals/inputData.ts";
 
 type ExpenseFormProps = {
   paymentType: PaymentType;
@@ -13,37 +18,13 @@ type ExpenseFormProps = {
 
 export default function ExpenseForm(props: ExpenseFormProps) {
   const { paymentType, closeModal } = props;
-
   const [saveDisabled, setSaveDisabled] = useState(false);
-  const [categories, setCategories] = useState([]);
-  const [paymentMethods, setPaymentMethods] = useState([]);
   const formRef = useRef<HTMLFormElement>(null);
 
   const cleanAndClose = () => {
     formRef.current?.reset();
     closeModal();
   };
-
-  useEffect(() => {
-    const fetchCategories = async () => {
-      const res = await fetch("/api/categories");
-      if (res.ok) {
-        const data = await res.json();
-        setCategories(data);
-      }
-    };
-
-    const fetchPaymentMethods = async () => {
-      const res = await fetch("/api/paymentMethods");
-      if (res.ok) {
-        const data = await res.json();
-        setPaymentMethods(data);
-      }
-    };
-
-    fetchCategories();
-    fetchPaymentMethods();
-  }, []);
 
   const onSubmit = async (e: Event) => {
     e.preventDefault();
@@ -68,6 +49,10 @@ export default function ExpenseForm(props: ExpenseFormProps) {
     }
 
     // TODO trigger toast
+    updateAfterSubmit(
+      addedExpense.payment.category.label,
+      addedExpense.payment.method.label,
+    );
     setSaveDisabled(false);
     cleanAndClose();
   };
@@ -111,7 +96,12 @@ export default function ExpenseForm(props: ExpenseFormProps) {
           id="paymentMethod"
           name="paymentMethod"
           placeholder="Credit"
-          options={paymentMethods}
+          options={paymentMethods.value.map((method) => {
+            if (typeof method === "string") {
+              return { label: method };
+            }
+            return method;
+          })}
           required
         />
       </div>
@@ -123,7 +113,12 @@ export default function ExpenseForm(props: ExpenseFormProps) {
           id="paymentCategory"
           name="paymentCategory"
           placeholder="Subscription"
-          options={categories}
+          options={categories.value.map((category) => {
+            if (typeof category === "string") {
+              return { label: category };
+            }
+            return category;
+          })}
           required
         />
       </div>
