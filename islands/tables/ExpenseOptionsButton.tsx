@@ -2,16 +2,25 @@ import { useEffect, useRef, useState } from "preact/hooks";
 import { expenses } from "@/signals/expenses.ts";
 import { ExpenseWithoutUser } from "@/db/models/expense.ts";
 import useModal from "@/islands/hooks/useModal.tsx";
-import { ConfirmationModal } from "@/components/Modal.tsx";
+import { ConfirmationModal, ExpenseModal } from "@/components/Modal.tsx";
 
 type ExpenseOptionButtonProps = {
-  expenseId: string;
+  expense: ExpenseWithoutUser;
 };
 
 export default function ExpenseOptionButton(props: ExpenseOptionButtonProps) {
-  const { expenseId } = props;
+  const { expense } = props;
 
-  const { modalId, openModal, closeModal } = useModal();
+  const {
+    modalId: confirmationModalId,
+    openModal: openConfirmationModal,
+    closeModal: closeConfirmationModal,
+  } = useModal();
+  const {
+    modalId: expenseModalId,
+    openModal: openExpenseModal,
+    closeModal: closeExpenseModal,
+  } = useModal();
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -37,8 +46,18 @@ export default function ExpenseOptionButton(props: ExpenseOptionButtonProps) {
     setIsOpen(false);
   };
 
+  const onClickDelete = () => {
+    openConfirmationModal();
+    closeMenu();
+  };
+
+  const onClickEdit = () => {
+    openExpenseModal();
+    closeMenu();
+  };
+
   const deleteExpense = async () => {
-    const res = await fetch(`/api/expenses/${expenseId}`, {
+    const res = await fetch(`/api/expenses/${expense.id}`, {
       method: "DELETE",
     });
 
@@ -79,6 +98,7 @@ export default function ExpenseOptionButton(props: ExpenseOptionButtonProps) {
               <button
                 class="flex px-3 py-2 text-sm"
                 role="menuitem"
+                onClick={onClickEdit}
               >
                 <svg
                   class="w-5 h-5 mr-1 text-blue-400"
@@ -100,7 +120,7 @@ export default function ExpenseOptionButton(props: ExpenseOptionButtonProps) {
               <button
                 class="flex px-3 py-2 text-sm"
                 role="menuitem"
-                onClick={openModal}
+                onClick={onClickDelete}
               >
                 <svg
                   class="w-5 h-5 mr-1 text-red-400"
@@ -121,9 +141,15 @@ export default function ExpenseOptionButton(props: ExpenseOptionButtonProps) {
           </ul>
         </div>
       )}
+      <ExpenseModal
+        id={expenseModalId}
+        closeModal={closeExpenseModal}
+        expense={expense}
+        paymentType={expense.payment.type}
+      />
       <ConfirmationModal
-        id={modalId}
-        closeModal={closeModal}
+        id={confirmationModalId}
+        closeModal={closeConfirmationModal}
         title="Delete expense"
         message="Are you sure you want to delete this expense?"
         onConfirm={deleteExpense}

@@ -25,7 +25,6 @@ import * as $AppButton from "./islands/AppButton.tsx";
 import * as $AuthButton from "./islands/AuthButton.tsx";
 import * as $BackButton from "./islands/BackButton.tsx";
 import * as $CardTitle from "./islands/CardTitle.tsx";
-import * as $EditIncomeButton from "./islands/EditIncomeButton.tsx";
 import * as $InputSelector from "./islands/InputSelector.tsx";
 import * as $Loader from "./islands/Loader.tsx";
 import * as $Menu from "./islands/Menu.tsx";
@@ -36,7 +35,6 @@ import * as $forms_IncomeForm from "./islands/forms/IncomeForm.tsx";
 import * as $hooks_useModal from "./islands/hooks/useModal.tsx";
 import * as $tables_ExpenseOptionsButton from "./islands/tables/ExpenseOptionsButton.tsx";
 import * as $tables_ExpensesTable from "./islands/tables/ExpensesTable.tsx";
-import * as $tables_IncomeTable from "./islands/tables/IncomeTable.tsx";
 import { type Manifest } from "$fresh/server.ts";
 
 const manifest = {
@@ -66,7 +64,6 @@ const manifest = {
     "./islands/AuthButton.tsx": $AuthButton,
     "./islands/BackButton.tsx": $BackButton,
     "./islands/CardTitle.tsx": $CardTitle,
-    "./islands/EditIncomeButton.tsx": $EditIncomeButton,
     "./islands/InputSelector.tsx": $InputSelector,
     "./islands/Loader.tsx": $Loader,
     "./islands/Menu.tsx": $Menu,
@@ -77,7 +74,6 @@ const manifest = {
     "./islands/hooks/useModal.tsx": $hooks_useModal,
     "./islands/tables/ExpenseOptionsButton.tsx": $tables_ExpenseOptionsButton,
     "./islands/tables/ExpensesTable.tsx": $tables_ExpensesTable,
-    "./islands/tables/IncomeTable.tsx": $tables_IncomeTable,
   },
   baseUrl: import.meta.url,
 } satisfies Manifest;

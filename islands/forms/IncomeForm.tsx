@@ -1,7 +1,7 @@
 import { useRef, useState } from "preact/hooks";
 import { income } from "@/signals/income.ts";
 import { RawIncome } from "@/db/models/income.ts";
-import { formToday, stripDate } from "@/utils/date.ts";
+import { formDate, stripDate } from "@/utils/date.ts";
 import { activeMonth, activeYear } from "@/signals/menu.ts";
 
 type IncomeFormProps = {
@@ -72,7 +72,7 @@ export default function IncomeForm(props: IncomeFormProps) {
           type="date"
           placeholder="Payment date"
           className="input input-sm input-bordered"
-          value={formToday()}
+          value={formDate()}
           required
         />
       </div>

@@ -1,7 +1,7 @@
-import { useState } from "preact/hooks";
+import { useEffect, useState } from "preact/hooks";
 import { JSX } from "preact/jsx-runtime";
 
-type Option = {
+export type Option = {
   id?: string;
   label: string;
 };
@@ -12,14 +12,26 @@ type InputSelectorProps = {
   placeholder: string;
   required: boolean;
   options: Option[];
+  value?: Option;
 };
 
 const InputSelector = (props: InputSelectorProps) => {
-  const { id, name, placeholder, required, options } = props;
-  const [inputValue, setInputValue] = useState<string>("");
-  const [selectedOption, setSelectedOption] = useState<Option | null>(null);
+  const { id, name, placeholder, required, options, value } = props;
+  const [inputValue, setInputValue] = useState<string>(
+    value ? value.label : "",
+  );
+  const [selectedOption, setSelectedOption] = useState<Option | null>(
+    value || null,
+  );
   const [filteredOptions, setFilteredOptions] = useState<Option[]>([]);
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (value) {
+      setInputValue(value.label);
+      setSelectedOption(value);
+    }
+  }, [value]);
 
   const handleChange = (e: JSX.TargetedEvent<HTMLInputElement, Event>) => {
     const { value } = e.target as HTMLInputElement;

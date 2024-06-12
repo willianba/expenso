@@ -10,7 +10,7 @@ import PaymentMethodService from "@/db/models/paymentMethod.ts";
 import CategoryService from "@/db/models/category.ts";
 import logger from "@/utils/logger.ts";
 
-const EntrySchema = z.object({
+export const EntrySchema = z.object({
   id: z.string().optional(),
   label: z.string(),
 });
@@ -89,11 +89,14 @@ export const handler: Handlers<ExpenseWithoutUser, SignedInState> = {
       const promises = [];
 
       for (let i = 1; i <= installments; i++) {
-        const date = i === 1 ? new Date(data.paymentDate) : new Date(
-          new Date(data.paymentDate).setMonth(
-            new Date(data.paymentDate).getMonth() + i - 1,
-          ),
-        );
+        const date =
+          i === 1
+            ? new Date(data.paymentDate)
+            : new Date(
+                new Date(data.paymentDate).setMonth(
+                  new Date(data.paymentDate).getMonth() + i - 1,
+                ),
+              );
 
         promises.push(
           ExpenseService.create({

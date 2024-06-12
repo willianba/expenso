@@ -2,6 +2,7 @@ import { ComponentChildren } from "preact";
 import { PaymentType } from "@/utils/constants.ts";
 import ExpenseForm from "@/islands/forms/ExpenseForm.tsx";
 import IncomeForm from "@/islands/forms/IncomeForm.tsx";
+import { ExpenseWithoutUser } from "@/db/models/expense.ts";
 
 type ModalProps = {
   id: string;
@@ -31,14 +32,19 @@ function Modal(props: ModalProps) {
 
 type ExpenseModalProps = Omit<ModalProps, "children"> & {
   paymentType: PaymentType;
+  expense?: ExpenseWithoutUser;
 };
 
 export function ExpenseModal(props: ExpenseModalProps) {
-  const { id, closeModal, paymentType } = props;
+  const { id, expense, closeModal, paymentType } = props;
 
   return (
     <Modal id={id} closeModal={closeModal}>
-      <ExpenseForm paymentType={paymentType} closeModal={closeModal} />
+      <ExpenseForm
+        expense={expense}
+        paymentType={paymentType}
+        closeModal={closeModal}
+      />
     </Modal>
   );
 }
@@ -87,4 +93,3 @@ export function ConfirmationModal(props: ConfirmationModalProps) {
     </Modal>
   );
 }
-

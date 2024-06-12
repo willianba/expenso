@@ -3,8 +3,11 @@ export const getFormattedDate = (date: Date | string) => {
   return Intl.DateTimeFormat("pt-BR").format(new Date(date));
 };
 
-export const formToday = () => {
-  return new Date().toISOString().split("T")[0];
+export const formDate = (date?: Date) => {
+  if (!date) {
+    return new Date().toISOString().split("T")[0];
+  }
+  return new Date(date).toISOString().split("T")[0];
 };
 
 export const today = () => {
@@ -18,4 +21,9 @@ export const stripDate = (date: Date) => {
   const day = date.getDate();
 
   return { year, month, day };
+};
+
+export const daysInMonth = (month: number, year: number) => {
+  // this is a hack. day 0 returns the last day of the previous month
+  return new Date(year, month, 0).getDate();
 };

@@ -42,7 +42,7 @@ export default function ExpensesTable(props: TableProps) {
                 </td>
               )}
               <td>
-                <ExpenseOptionButton expenseId={expense.id} />
+                <ExpenseOptionButton expense={expense} />
               </td>
             </tr>
           ))}

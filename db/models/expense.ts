@@ -48,6 +48,13 @@ export type RawExpense = Omit<Expense, "user" | "payment"> & {
 };
 
 export type CreateExpenseInput = Omit<RawExpense, "id">;
+export type UpdateExpenseInput = Omit<
+  RawExpense,
+  "payment" | "userId" | "price"
+> & {
+  payment: Partial<RawPayment>;
+  price?: number;
+};
 
 export default class ExpenseService {
   public static async create(input: CreateExpenseInput) {
@@ -144,6 +151,53 @@ export default class ExpenseService {
     });
 
     return expenses;
+  }
+
+  public static async update(userId: string, input: UpdateExpenseInput) {
+    const expenseId = input.id;
+
+    const key = [Keys.EXPENSES, expenseId];
+    const rawExpense = await kv.get<RawExpense>(key);
+
+    if (!rawExpense.value) {
+      throw new Deno.errors.NotFound("Expense not found");
+    }
+
+    const [populatedExpense] = await this.populate([rawExpense.value], userId);
+
+    const userKey = [Keys.EXPENSES_BY_USER, userId, expenseId];
+    const dateKey = [
+      Keys.EXPENSES_BY_DATE,
+      userId,
+      populatedExpense.payment.date.getFullYear().toString(),
+      (populatedExpense.payment.date.getMonth() + 1).toString(),
+      expenseId,
+    ];
+
+    // TODO if expense fixed, also update all the next ones
+    // same for over time expenses
+    const updatedExpense: RawExpense = {
+      ...rawExpense.value,
+      ...input,
+      payment: {
+        ...rawExpense.value.payment,
+        ...input.payment,
+      },
+    };
+
+    const res = await kv
+      .atomic()
+      .set(key, updatedExpense)
+      .set(userKey, updatedExpense)
+      .set(dateKey, updatedExpense)
+      .commit();
+
+    if (!res.ok) {
+      throw new Deno.errors.Interrupted("Failed to update expense");
+    }
+
+    const [newPopulatedExpense] = await this.populate([updatedExpense], userId);
+    return newPopulatedExpense;
   }
 
   public static async delete(userId: string, expenseId: string) {
