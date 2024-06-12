@@ -2,4 +2,3 @@
 . "$(dirname -- "$0")/_/hook.sh"
 
 deno lint --fix
-deno fmt
