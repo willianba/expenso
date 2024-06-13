@@ -12,7 +12,6 @@ export const parseAndRetrievePaymentMethod = async (
   paymentMethod: string,
   userId: string,
 ) => {
-  console.log({ paymentMethod });
   const paymentMethodData = EntrySchema.parse(JSON.parse(paymentMethod));
 
   let paymentMethodId = paymentMethodData.id;
@@ -34,7 +33,6 @@ export const parseAndRetrieveCategory = async (
   category: string,
   userId: string,
 ) => {
-  console.log({ category });
   const categoryData = EntrySchema.parse(JSON.parse(category));
 
   let categoryId = categoryData.id;

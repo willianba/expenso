@@ -33,6 +33,7 @@ export type Expense = {
   price: number;
   payment: Payment;
   user: User;
+  correlationId?: string;
 };
 
 export type ExpenseWithoutUser = Omit<Expense, "user">;

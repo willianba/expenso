@@ -9,7 +9,7 @@ import { z } from "zod";
 import {
   parseAndRetrieveCategory,
   parseAndRetrievePaymentMethod,
-} from "@/utils/expenses.ts";
+} from "@/utils/expenses/paymentMetadata.ts";
 
 const UpdateExpenseSchema = z.object({
   name: z.string(),
