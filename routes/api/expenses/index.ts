@@ -6,14 +6,11 @@ import ExpenseService, {
   ExpenseWithoutUser,
 } from "@/db/models/expense.ts";
 import { SignedInState } from "@/plugins/session.ts";
-import PaymentMethodService from "@/db/models/paymentMethod.ts";
-import CategoryService from "@/db/models/category.ts";
 import logger from "@/utils/logger.ts";
-
-export const EntrySchema = z.object({
-  id: z.string().optional(),
-  label: z.string(),
-});
+import {
+  parseAndRetrieveCategory,
+  parseAndRetrievePaymentMethod,
+} from "@/utils/expenses.ts";
 
 const CreateExpenseSchema = z
   .object({
@@ -39,37 +36,15 @@ export const handler: Handlers<ExpenseWithoutUser, SignedInState> = {
   async POST(req, ctx) {
     const body = Object.fromEntries(await req.formData());
     const data = CreateExpenseSchema.parse(body);
-    logger.info("Creating expense");
-    const paymentMethod = EntrySchema.parse(JSON.parse(data.paymentMethod));
-    const paymentCategory = EntrySchema.parse(JSON.parse(data.paymentCategory));
 
     const userId = ctx.state.sessionUser!.id;
 
-    let paymentMethodId = paymentMethod.id;
-    if (!paymentMethod.id) {
-      logger.info("Creating payment method", {
-        user: userId,
-        paymentMethod: paymentMethod.label,
-      });
-      const newPaymentMethod = await PaymentMethodService.create({
-        label: paymentMethod.label,
-        userId,
-      });
-      paymentMethodId = newPaymentMethod.id;
-    }
+    const [paymentMethodId, categoryId] = await Promise.all([
+      parseAndRetrievePaymentMethod(data.paymentMethod, userId),
+      parseAndRetrieveCategory(data.paymentCategory, userId),
+    ]);
 
-    let categoryId = paymentCategory.id;
-    if (!paymentCategory.id) {
-      logger.info("Creating category", {
-        user: userId,
-        category: paymentCategory.label,
-      });
-      const category = await CategoryService.create({
-        label: paymentCategory.label,
-        userId,
-      });
-      categoryId = category.id;
-    }
+    logger.info("Creating expense");
 
     const createExpenseInput: CreateExpenseInput = {
       name: data.name,

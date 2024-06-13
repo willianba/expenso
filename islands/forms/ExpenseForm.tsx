@@ -59,8 +59,6 @@ export default function ExpenseForm(props: ExpenseFormProps) {
       }
     }
 
-    console.log({ formData: Object.fromEntries(formData) });
-
     const res = await fetch(url, {
       method,
       body: formData,
@@ -68,6 +66,7 @@ export default function ExpenseForm(props: ExpenseFormProps) {
 
     if (!res.ok) {
       // TODO show error message
+      setSaveDisabled(false);
       return;
     }
 
