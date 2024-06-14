@@ -28,6 +28,8 @@ export default function IncomeForm(props: IncomeFormProps) {
 
     if (!res.ok) {
       // TODO show error message
+      setSaveDisabled(false);
+      return;
     }
 
     const addedIncome = await res.json() as RawIncome;

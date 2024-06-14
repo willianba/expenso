@@ -15,6 +15,7 @@ enum Keys {
   EXPENSES = "expenses",
   EXPENSES_BY_USER = "expenses_by_user",
   EXPENSES_BY_DATE = "expenses_by_date",
+  EXPENSES_BY_CORRELATION = "expenses_by_correlation",
   DELETED_EXPENSES = "deleted_expenses",
 }
 
@@ -33,7 +34,7 @@ export type Expense = {
   price: number;
   payment: Payment;
   user: User;
-  correlationId?: string;
+  correlationId: string;
 };
 
 export type ExpenseWithoutUser = Omit<Expense, "user">;
@@ -51,9 +52,9 @@ export type RawExpense = Omit<Expense, "user" | "payment"> & {
 export type CreateExpenseInput = Omit<RawExpense, "id">;
 export type UpdateExpenseInput = Omit<
   RawExpense,
-  "payment" | "userId" | "price"
+  "payment" | "userId" | "price" | "correlationId"
 > & {
-  payment: Partial<RawPayment>;
+  payment: Pick<RawPayment, "methodId" | "categoryId" | "date">;
   price?: number;
 };
 
@@ -64,6 +65,12 @@ export default class ExpenseService {
 
     const key = [Keys.EXPENSES, expenseId];
     const userKey = [Keys.EXPENSES_BY_USER, input.userId, expenseId];
+    const correlationKey = [
+      Keys.EXPENSES_BY_CORRELATION,
+      input.userId,
+      input.correlationId,
+      expenseId,
+    ];
     const dateKey = [
       Keys.EXPENSES_BY_DATE,
       input.userId,
@@ -77,9 +84,11 @@ export default class ExpenseService {
       .check({ key, versionstamp: null })
       .check({ key: userKey, versionstamp: null })
       .check({ key: dateKey, versionstamp: null })
+      .check({ key: correlationKey, versionstamp: null })
       .set(key, expenseWithId)
       .set(userKey, expenseWithId)
       .set(dateKey, expenseWithId)
+      .set(correlationKey, expenseWithId)
       .commit();
 
     if (!rawExpenseRes.ok) {
@@ -164,20 +173,63 @@ export default class ExpenseService {
       throw new Deno.errors.NotFound("Expense not found");
     }
 
-    const [populatedExpense] = await this.populate([rawExpense.value], userId);
+    const correlatedExpensesIterator = kv.list<RawExpense>({
+      prefix: [
+        Keys.EXPENSES_BY_CORRELATION,
+        userId,
+        rawExpense.value.correlationId,
+      ],
+    });
+    const correlatedExpenses = await Array.fromAsync(
+      correlatedExpensesIterator,
+      (entry) => entry.value,
+    );
 
-    const userKey = [Keys.EXPENSES_BY_USER, userId, expenseId];
-    const dateKey = [
-      Keys.EXPENSES_BY_DATE,
-      userId,
-      populatedExpense.payment.date.getFullYear().toString(),
-      (populatedExpense.payment.date.getMonth() + 1).toString(),
-      expenseId,
-    ];
+    let expensesToUpdate: RawExpense[] = correlatedExpenses;
 
-    // TODO if expense fixed, also update all the next ones
-    // same for over time expenses
-    const updatedExpense: RawExpense = {
+    if (rawExpense.value.payment.type === PaymentType.FIXED) {
+      const initialMonth = rawExpense.value.payment.date.getMonth() + 1;
+      expensesToUpdate = correlatedExpenses.filter(
+        (e) => e.payment.date.getMonth() + 1 >= initialMonth,
+      );
+    }
+
+    // TODO make this more atomic. if one fails, all should fail
+    expensesToUpdate.forEach(async (expense) => {
+      const userKey = [Keys.EXPENSES_BY_USER, userId, expense.id];
+      const dateKey = [
+        Keys.EXPENSES_BY_DATE,
+        userId,
+        expense.payment.date.getFullYear().toString(),
+        (expense.payment.date.getMonth() + 1).toString(),
+        expense.id,
+      ];
+
+      // keep the original date, only update the day
+      expense.payment.date.setDate(input.payment.date.getDate());
+      const updatedExpense = {
+        ...expense,
+        ...input,
+        payment: {
+          ...expense.payment,
+          ...input.payment,
+          date: expense.payment.date,
+        },
+      };
+
+      const res = await kv
+        .atomic()
+        .set(key, updatedExpense)
+        .set(userKey, updatedExpense)
+        .set(dateKey, updatedExpense)
+        .commit();
+
+      if (!res.ok) {
+        throw new Deno.errors.Interrupted("Failed to update expense");
+      }
+    });
+
+    const updatedExpense = {
       ...rawExpense.value,
       ...input,
       payment: {
@@ -185,17 +237,6 @@ export default class ExpenseService {
         ...input.payment,
       },
     };
-
-    const res = await kv
-      .atomic()
-      .set(key, updatedExpense)
-      .set(userKey, updatedExpense)
-      .set(dateKey, updatedExpense)
-      .commit();
-
-    if (!res.ok) {
-      throw new Deno.errors.Interrupted("Failed to update expense");
-    }
 
     const [newPopulatedExpense] = await this.populate([updatedExpense], userId);
     return newPopulatedExpense;
@@ -209,30 +250,55 @@ export default class ExpenseService {
       throw new Deno.errors.NotFound("Expense not found");
     }
 
-    const [populatedExpense] = await this.populate([rawExpense.value], userId);
+    const correlatedExpensesIterator = kv.list<RawExpense>({
+      prefix: [
+        Keys.EXPENSES_BY_CORRELATION,
+        userId,
+        rawExpense.value.correlationId,
+      ],
+    });
+    const correlatedExpenses = await Array.fromAsync(
+      correlatedExpensesIterator,
+      (entry) => entry.value,
+    );
 
-    const userKey = [Keys.EXPENSES_BY_USER, userId, expenseId];
-    const dateKey = [
-      Keys.EXPENSES_BY_DATE,
-      userId,
-      populatedExpense.payment.date.getFullYear().toString(),
-      (populatedExpense.payment.date.getMonth() + 1).toString(),
-      expenseId,
-    ];
-    const deletedKey = [Keys.DELETED_EXPENSES, userId, expenseId];
+    let expensesToDelete: RawExpense[] = correlatedExpenses;
 
-    const res = await kv
-      .atomic()
-      .check({ key: deletedKey, versionstamp: null })
-      .delete(key)
-      .delete(userKey)
-      .delete(dateKey)
-      .set(deletedKey, rawExpense.value)
-      .commit();
-
-    if (!res.ok) {
-      throw new Deno.errors.Interrupted("Failed to delete expense");
+    // fixed expenses should be deleted from the selected month onwards
+    // over time expenses should delete all correlated expenses too
+    // ^ same for fixed. but fixed is always one expense, so it's easier
+    if (rawExpense.value.payment.type === PaymentType.FIXED) {
+      const initialMonth = rawExpense.value.payment.date.getMonth() + 1;
+      expensesToDelete = correlatedExpenses.filter(
+        (e) => e.payment.date.getMonth() + 1 >= initialMonth,
+      );
     }
+    // TODO make this more atomic. if one fails, all should fail
+    expensesToDelete.forEach(async (expense) => {
+      const userKey = [Keys.EXPENSES_BY_USER, userId, expense.id];
+      const dateKey = [
+        Keys.EXPENSES_BY_DATE,
+        userId,
+        expense.payment.date.getFullYear().toString(),
+        (expense.payment.date.getMonth() + 1).toString(),
+        expense.id,
+      ];
+      const deletedKey = [Keys.DELETED_EXPENSES, userId, expense.id];
+
+      const res = await kv
+        .atomic()
+        .delete(key)
+        .delete(userKey)
+        .delete(dateKey)
+        .set(deletedKey, expense)
+        .commit();
+
+      if (!res.ok) {
+        throw new Deno.errors.Interrupted(
+          `Failed to delete expense. Expense ID: ${expense.id}`,
+        );
+      }
+    });
 
     return rawExpense.value;
   }

@@ -17,6 +17,7 @@ export default class ExpenseInputFactory {
   }
 
   public async build(): Promise<CreateExpenseInput[]> {
+    const correlationId = monotonicUlid();
     const [paymentMethodId, categoryId] = await Promise.all([
       parseAndRetrievePaymentMethod(this.data.paymentMethod, this.userId),
       parseAndRetrieveCategory(this.data.paymentCategory, this.userId),
@@ -28,10 +29,10 @@ export default class ExpenseInputFactory {
           name: this.data.name,
           price: Number(this.data.price),
           userId: this.userId,
-          correlationId: monotonicUlid(),
+          correlationId,
           payment: {
-            methodId: paymentMethodId!,
-            categoryId: categoryId!,
+            methodId: paymentMethodId,
+            categoryId: categoryId,
             type: this.data.paymentType,
             date: new Date(this.data.paymentDate),
           },
@@ -40,7 +41,6 @@ export default class ExpenseInputFactory {
         return [createExpenseInput];
       }
       case PaymentType.FIXED: {
-        const correlationId = monotonicUlid();
         const month = new Date(this.data.paymentDate).getMonth();
         const missingMonths = 12 - month;
 
@@ -53,8 +53,8 @@ export default class ExpenseInputFactory {
             userId: this.userId,
             correlationId,
             payment: {
-              methodId: paymentMethodId!,
-              categoryId: categoryId!,
+              methodId: paymentMethodId,
+              categoryId: categoryId,
               type: this.data.paymentType,
               date,
             },
@@ -77,8 +77,8 @@ export default class ExpenseInputFactory {
             userId: this.userId,
             correlationId,
             payment: {
-              methodId: paymentMethodId!,
-              categoryId: categoryId!,
+              methodId: paymentMethodId,
+              categoryId: categoryId,
               type: this.data.paymentType,
               date,
               installment: i,

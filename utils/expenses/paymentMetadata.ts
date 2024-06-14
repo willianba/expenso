@@ -26,7 +26,7 @@ export const parseAndRetrievePaymentMethod = async (
     });
     paymentMethodId = newPaymentMethod.id;
   }
-  return paymentMethodId;
+  return paymentMethodId!;
 };
 
 export const parseAndRetrieveCategory = async (
@@ -47,5 +47,5 @@ export const parseAndRetrieveCategory = async (
     });
     categoryId = newCategory.id;
   }
-  return categoryId;
+  return categoryId!;
 };

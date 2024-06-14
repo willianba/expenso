@@ -3,6 +3,7 @@ import { expenses } from "@/signals/expenses.ts";
 import { ExpenseWithoutUser } from "@/db/models/expense.ts";
 import useModal from "@/islands/hooks/useModal.tsx";
 import { ConfirmationModal, ExpenseModal } from "@/components/Modal.tsx";
+import { PaymentType } from "@/utils/constants.ts";
 
 type ExpenseOptionButtonProps = {
   expense: ExpenseWithoutUser;
@@ -22,6 +23,7 @@ export default function ExpenseOptionButton(props: ExpenseOptionButtonProps) {
     closeModal: closeExpenseModal,
   } = useModal();
   const [isOpen, setIsOpen] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -47,6 +49,18 @@ export default function ExpenseOptionButton(props: ExpenseOptionButtonProps) {
   };
 
   const onClickDelete = () => {
+    if (expense.payment.type === PaymentType.CURRENT) {
+      setModalMessage("Are you sure you want to delete this expense?");
+    } else if (expense.payment.type === PaymentType.FIXED) {
+      setModalMessage(
+        "Are you sure you want to delete this expense? This will remove all entires from the next months related to this expense.",
+      );
+    } else {
+      setModalMessage(
+        "Are you sure you want to delete this expense? This will delete all entries from past and future months related to this expense.",
+      );
+    }
+
     openConfirmationModal();
     closeMenu();
   };
@@ -63,6 +77,8 @@ export default function ExpenseOptionButton(props: ExpenseOptionButtonProps) {
 
     if (!res.ok) {
       // TODO show error message
+      closeMenu();
+      return;
     }
 
     const deletedExpense = await res.json() as ExpenseWithoutUser;
@@ -151,7 +167,7 @@ export default function ExpenseOptionButton(props: ExpenseOptionButtonProps) {
         id={confirmationModalId}
         closeModal={closeConfirmationModal}
         title="Delete expense"
-        message="Are you sure you want to delete this expense?"
+        message={modalMessage}
         onConfirm={deleteExpense}
       />
     </div>
