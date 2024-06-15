@@ -9,7 +9,7 @@ type ExpenseOptionButtonProps = {
   expense: ExpenseWithoutUser;
 };
 
-export default function ExpenseOptionButton(props: ExpenseOptionButtonProps) {
+export default function ExpenseOptionsButton(props: ExpenseOptionButtonProps) {
   const { expense } = props;
 
   const {
