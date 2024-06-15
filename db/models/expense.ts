@@ -1,12 +1,4 @@
 import { User } from "@/db/models/user.ts";
-import PaymentMethodService, {
-  PaymentMethod,
-  RawPaymentMethod,
-} from "@/db/models/paymentMethod.ts";
-import CategoryService, {
-  Category,
-  RawCategory,
-} from "@/db/models/category.ts";
 import { PaymentType } from "@/utils/constants.ts";
 import { monotonicUlid } from "@std/ulid";
 import { kv } from "@/db/kv.ts";
@@ -20,8 +12,8 @@ enum Keys {
 }
 
 type Payment = {
-  method: PaymentMethod | RawPaymentMethod;
-  category: Category | RawCategory;
+  method: string;
+  category: string;
   type: PaymentType;
   date: Date;
   installment?: number;
@@ -39,13 +31,7 @@ export type Expense = {
 
 export type ExpenseWithoutUser = Omit<Expense, "user">;
 
-type RawPayment = Omit<Payment, "method" | "category"> & {
-  methodId: string;
-  categoryId: string;
-};
-
-export type RawExpense = Omit<Expense, "user" | "payment"> & {
-  payment: RawPayment;
+export type RawExpense = Omit<Expense, "user"> & {
   userId: string;
 };
 
@@ -54,7 +40,7 @@ export type UpdateExpenseInput = Omit<
   RawExpense,
   "payment" | "userId" | "price" | "correlationId"
 > & {
-  payment: Pick<RawPayment, "methodId" | "categoryId" | "date">;
+  payment: Pick<Payment, "method" | "category" | "date">;
   price?: number;
 };
 
@@ -95,12 +81,7 @@ export default class ExpenseService {
       throw new Deno.errors.AlreadyExists("Expense already exists");
     }
 
-    const [populatedExpense] = await ExpenseService.populate(
-      [expenseWithId],
-      input.userId,
-    );
-
-    return populatedExpense;
+    return expenseWithId;
   }
 
   public static async getByMonth(userId: string, year: number, month: number) {
@@ -118,7 +99,7 @@ export default class ExpenseService {
       (entry) => entry.value,
     );
 
-    return await this.populate(rawExpenses, userId);
+    return rawExpenses;
   }
 
   public static async getByYear(userId: string, year: number) {
@@ -131,36 +112,7 @@ export default class ExpenseService {
       (entry) => entry.value,
     );
 
-    return await this.populate(rawExpenses, userId);
-  }
-
-  private static async populate(rawExpenses: RawExpense[], userId: string) {
-    const [paymentMethods, categories] = await Promise.all([
-      PaymentMethodService.getAllByUserId(userId),
-      CategoryService.getAllByUserId(userId),
-    ]);
-
-    const expenses = rawExpenses.map((re) => {
-      const paymentMethod = paymentMethods.find(
-        (pm) => pm.id === re.payment.methodId,
-      )!;
-      const category = categories.find((c) => c.id === re.payment.categoryId)!;
-
-      const { categoryId: _, methodId: __, ...payment } = re.payment;
-
-      const expense: ExpenseWithoutUser = {
-        ...re,
-        payment: {
-          ...payment,
-          method: paymentMethod,
-          category: category,
-        },
-      };
-
-      return expense;
-    });
-
-    return expenses;
+    return rawExpenses;
   }
 
   public static async update(userId: string, input: UpdateExpenseInput) {
@@ -238,8 +190,7 @@ export default class ExpenseService {
       },
     };
 
-    const [newPopulatedExpense] = await this.populate([updatedExpense], userId);
-    return newPopulatedExpense;
+    return updatedExpense;
   }
 
   public static async delete(userId: string, expenseId: string) {

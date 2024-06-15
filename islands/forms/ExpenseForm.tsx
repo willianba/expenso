@@ -91,8 +91,8 @@ export default function ExpenseForm(props: ExpenseFormProps) {
 
     // TODO trigger toast
     updateAfterSubmit(
-      updatedExpense.payment.category.label,
-      updatedExpense.payment.method.label,
+      updatedExpense.payment.category,
+      updatedExpense.payment.method,
     );
     setSaveDisabled(false);
     closeConfirmationModal();
@@ -141,8 +141,8 @@ export default function ExpenseForm(props: ExpenseFormProps) {
 
     // TODO trigger toast
     updateAfterSubmit(
-      addedExpense.payment.category.label,
-      addedExpense.payment.method.label,
+      addedExpense.payment.category,
+      addedExpense.payment.method,
     );
     setSaveDisabled(false);
     cleanAndClose();
@@ -203,18 +203,8 @@ export default function ExpenseForm(props: ExpenseFormProps) {
             id="paymentMethod"
             name="paymentMethod"
             placeholder="Credit"
-            options={paymentMethods.value.map((method) => {
-              if (typeof method === "string") {
-                return { label: method };
-              }
-              return method;
-            })}
-            value={expense
-              ? {
-                id: expense.payment.method.id,
-                label: expense.payment.method.label,
-              }
-              : undefined}
+            options={paymentMethods.value}
+            value={expense ? expense.payment.method : undefined}
             required
           />
         </div>
@@ -226,18 +216,8 @@ export default function ExpenseForm(props: ExpenseFormProps) {
             id="paymentCategory"
             name="paymentCategory"
             placeholder="Subscription"
-            options={categories.value.map((category) => {
-              if (typeof category === "string") {
-                return { label: category };
-              }
-              return category;
-            })}
-            value={expense
-              ? {
-                id: expense.payment.category.id,
-                label: expense.payment.category.label,
-              }
-              : undefined}
+            options={categories.value}
+            value={expense ? expense.payment.category : undefined}
             required
           />
         </div>

@@ -22,7 +22,17 @@ export type PaymentMethodWithoutUser = Omit<PaymentMethod, "user">;
 type CreatePaymentMethodInput = Omit<RawPaymentMethod, "id">;
 
 export default class PaymentMethodService {
-  public static async create(input: CreatePaymentMethodInput) {
+  public static async findOrCreate(input: CreatePaymentMethodInput) {
+    const existingPaymentMethods = await this.getAllByUserId(input.userId);
+
+    const existingPaymentMethod = existingPaymentMethods.find(
+      (pm) => pm.label === input.label,
+    );
+
+    if (existingPaymentMethod) {
+      return existingPaymentMethod;
+    }
+
     const paymentMethodId = monotonicUlid();
     const paymentMethodWithId: RawPaymentMethod = {
       ...input,

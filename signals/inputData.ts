@@ -1,25 +1,17 @@
 import { batch, signal } from "@preact/signals";
-import { CategoryWithoutUser } from "@/db/models/category.ts";
-import { PaymentMethodWithoutUser } from "@/db/models/paymentMethod.ts";
 
-export const categories = signal<(CategoryWithoutUser | string)[]>([]);
-export const paymentMethods = signal<(PaymentMethodWithoutUser | string)[]>([]);
+export const categories = signal<string[]>([]);
+export const paymentMethods = signal<string[]>([]);
 
 export const updateAfterSubmit = (category: string, paymentMethod: string) => {
   const doesCategoryExist = categories.peek().some((existingCategory) => {
-    if (typeof existingCategory === "string") {
-      return existingCategory === category;
-    }
-    return existingCategory.label === category;
+    return existingCategory === category;
   });
 
   const doesPaymentMethodExist = paymentMethods
     .peek()
     .some((existingPaymentMethod) => {
-      if (typeof existingPaymentMethod === "string") {
-        return existingPaymentMethod === paymentMethod;
-      }
-      return existingPaymentMethod.label === paymentMethod;
+      return existingPaymentMethod === paymentMethod;
     });
 
   const insertCategory = [...categories.peek(), category].sort();

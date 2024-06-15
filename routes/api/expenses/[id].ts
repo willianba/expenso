@@ -6,10 +6,8 @@ import ExpenseService, {
 import { SignedInState } from "@/plugins/session.ts";
 import logger from "@/utils/logger.ts";
 import { z } from "zod";
-import {
-  parseAndRetrieveCategory,
-  parseAndRetrievePaymentMethod,
-} from "@/utils/expenses/paymentMetadata.ts";
+import PaymentMethodService from "@/db/models/paymentMethod.ts";
+import CategoryService from "@/db/models/category.ts";
 
 const UpdateExpenseSchema = z.object({
   name: z.string(),
@@ -27,17 +25,23 @@ export const handler: Handlers<ExpenseWithoutUser, SignedInState> = {
     const data = UpdateExpenseSchema.parse(body);
     const userId = ctx.state.sessionUser!.id;
 
-    const [paymentMethodId, categoryId] = await Promise.all([
-      parseAndRetrievePaymentMethod(data.paymentMethod, userId),
-      parseAndRetrieveCategory(data.paymentCategory, userId),
+    const [paymentMethod, category] = await Promise.all([
+      PaymentMethodService.findOrCreate({
+        label: data.paymentMethod.trim(),
+        userId: userId,
+      }),
+      CategoryService.findOrCreate({
+        label: data.paymentCategory.trim(),
+        userId: userId,
+      }),
     ]);
 
     const updateExpenseInput: UpdateExpenseInput = {
       id: ctx.params.id,
       name: data.name,
       payment: {
-        methodId: paymentMethodId,
-        categoryId: categoryId,
+        method: paymentMethod.label,
+        category: category.label,
         date: new Date(data.paymentDate),
       },
       ...(data.price ? { price: Number(data.price) } : {}),

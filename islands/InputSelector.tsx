@@ -1,34 +1,27 @@
 import { useEffect, useState } from "preact/hooks";
 import { JSX } from "preact/jsx-runtime";
 
-export type Option = {
-  id?: string;
-  label: string;
-};
-
 type InputSelectorProps = {
   id: string;
   name: string;
   placeholder: string;
   required: boolean;
-  options: Option[];
-  value?: Option;
+  options: string[];
+  value?: string;
 };
 
 const InputSelector = (props: InputSelectorProps) => {
   const { id, name, placeholder, required, options, value } = props;
-  const [inputValue, setInputValue] = useState<string>(
-    value ? value.label : "",
-  );
-  const [selectedOption, setSelectedOption] = useState<Option | null>(
+  const [inputValue, setInputValue] = useState<string>(value ?? "");
+  const [selectedOption, setSelectedOption] = useState<string | null>(
     value || null,
   );
-  const [filteredOptions, setFilteredOptions] = useState<Option[]>([]);
+  const [filteredOptions, setFilteredOptions] = useState<string[]>([]);
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
 
   useEffect(() => {
     if (value) {
-      setInputValue(value.label);
+      setInputValue(value);
       setSelectedOption(value);
     }
   }, [value]);
@@ -39,7 +32,7 @@ const InputSelector = (props: InputSelectorProps) => {
     setSelectedOption(null);
     if (value) {
       const filtered = options.filter((option) =>
-        option.label.toLowerCase().includes(value.toLowerCase())
+        option.toLowerCase().includes(value.toLowerCase())
       );
       setFilteredOptions(filtered);
       setShowDropdown(true);
@@ -49,8 +42,8 @@ const InputSelector = (props: InputSelectorProps) => {
     }
   };
 
-  const handleSelect = (option: Option) => {
-    setInputValue(option.label);
+  const handleSelect = (option: string) => {
+    setInputValue(option);
     setSelectedOption(option);
     setShowDropdown(false);
   };
@@ -58,7 +51,7 @@ const InputSelector = (props: InputSelectorProps) => {
   const handleBlur = () => {
     if (!selectedOption) {
       const filtered = options.find((option) =>
-        option.label.toLowerCase().includes(inputValue.toLowerCase())
+        option.toLowerCase().includes(inputValue.toLowerCase())
       );
       if (filtered) {
         handleSelect(filtered);
@@ -97,10 +90,10 @@ const InputSelector = (props: InputSelectorProps) => {
                 filteredOptions.map((option) => (
                   <li
                     class="w-full"
-                    key={option.id || option.label}
+                    key={option}
                     onMouseDown={() => handleSelect(option)}
                   >
-                    <a>{option.label}</a>
+                    <a>{option}</a>
                   </li>
                 ))
               )
@@ -111,7 +104,7 @@ const InputSelector = (props: InputSelectorProps) => {
       <input
         type="hidden"
         name={name}
-        value={JSON.stringify(selectedOption || { label: inputValue })}
+        value={selectedOption || inputValue}
       />
     </div>
   );

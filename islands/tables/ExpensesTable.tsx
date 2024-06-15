@@ -37,8 +37,8 @@ export default function ExpensesTable(props: TableProps) {
           {expenses.value.map((expense) => (
             <tr class="hover">
               <td>{expense.name}</td>
-              <td>{expense.payment.method.label}</td>
-              <td>{expense.payment.category.label}</td>
+              <td>{expense.payment.method}</td>
+              <td>{expense.payment.category}</td>
               <td>
                 {getFormattedDate(expense.payment.date)}
               </td>

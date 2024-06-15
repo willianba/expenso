@@ -43,8 +43,9 @@ export default function Loader() {
       }
 
       const categoryList = await res.json() as CategoryWithoutUser[];
-      categoryList.sort((a, b) => a.label.localeCompare(b.label));
-      categories.value = categoryList;
+      const labels = categoryList.sort((a, b) => a.label.localeCompare(b.label))
+        .map((c) => c.label);
+      categories.value = labels;
     });
 
     fetch("/api/paymentMethods").then(async (res) => {
@@ -54,8 +55,10 @@ export default function Loader() {
       }
 
       const paymentMethodList = await res.json() as PaymentMethodWithoutUser[];
-      paymentMethodList.sort((a, b) => a.label.localeCompare(b.label));
-      paymentMethods.value = paymentMethodList;
+      const labels = paymentMethodList.sort((a, b) =>
+        a.label.localeCompare(b.label)
+      ).map((pm) => pm.label);
+      paymentMethods.value = labels;
     });
   }, []);
 
