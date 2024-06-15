@@ -3,8 +3,6 @@ import { ComponentChildren } from "preact";
 import { formatCurrency } from "@/utils/currency.ts";
 import { expenses, totalExpenses } from "@/signals/expenses.ts";
 import { totalIncome } from "@/signals/income.ts";
-import { Category } from "@/db/models/category.ts";
-import { PaymentMethod } from "@/db/models/paymentMethod.ts";
 import EditIncomeButton from "@/islands/EditIncomeButton.tsx";
 
 type StatsProps = {
@@ -45,29 +43,29 @@ export function ExpenseStats() {
   useEffect(() => {
     const result = expenses.value.reduce(
       (acc, expense) => {
-        const category = expense.payment.category as Category;
-        const paymentMethod = expense.payment.method as PaymentMethod;
+        const category = expense.payment.category;
+        const paymentMethod = expense.payment.method;
         const price = expense.price;
 
-        acc.categories[category.label] = (acc.categories[category.label] || 0) +
+        acc.categories[category] = (acc.categories[category] || 0) +
           price;
-        acc.paymentMethods[paymentMethod.label] =
-          (acc.paymentMethods[paymentMethod.label] || 0) + price;
+        acc.paymentMethods[paymentMethod] =
+          (acc.paymentMethods[paymentMethod] || 0) + price;
 
         if (
-          acc.categories[category.label] >
+          acc.categories[category] >
             acc.categories[acc.categoryMostSpending] ||
           !acc.categoryMostSpending
         ) {
-          acc.categoryMostSpending = category.label;
+          acc.categoryMostSpending = category;
         }
 
         if (
-          acc.paymentMethods[paymentMethod.label] >
+          acc.paymentMethods[paymentMethod] >
             acc.paymentMethods[acc.paymentMethodMostUsed] ||
           !acc.paymentMethodMostUsed
         ) {
-          acc.paymentMethodMostUsed = paymentMethod.label;
+          acc.paymentMethodMostUsed = paymentMethod;
         }
 
         return acc;
