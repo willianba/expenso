@@ -16,7 +16,7 @@ export default function ExpensesTable(props: TableProps) {
     <div class="overflow-y-auto h-full">
       <table class="table table-sm table-pin-rows">
         <thead>
-          <tr class="hover">
+          <tr class="bg-base-300">
             <th class="w-48">Name</th>
             <th>Method</th>
             <th>Category</th>
@@ -27,6 +27,13 @@ export default function ExpensesTable(props: TableProps) {
           </tr>
         </thead>
         <tbody>
+          {expenses.value.length === 0 && (
+            <tr>
+              <td colspan={6} class="text-center">
+                No expenses registered
+              </td>
+            </tr>
+          )}
           {expenses.value.map((expense) => (
             <tr class="hover">
               <td>{expense.name}</td>

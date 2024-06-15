@@ -6,6 +6,7 @@ enum Keys {
   INCOME = "income",
   INCOME_BY_USER = "income_by_user",
   INCOME_BY_DATE = "income_by_date",
+  DELETED_INCOME = "deleted_income",
 }
 
 export type Income = {
@@ -21,6 +22,7 @@ export type RawIncome = Omit<Income, "user"> & {
 };
 
 type CreateIncomeInput = Omit<RawIncome, "id">;
+export type UpdateIncomeInput = Omit<RawIncome, "userId">;
 
 export default class IncomeService {
   public static async create(input: CreateIncomeInput) {
@@ -77,5 +79,72 @@ export default class IncomeService {
     );
 
     return rawIncomeList;
+  }
+
+  public static async update(userId: string, input: UpdateIncomeInput) {
+    const incomeId = input.id;
+    const key = [Keys.INCOME, incomeId];
+    const rawIncome = await kv.get<RawIncome>(key);
+
+    if (!rawIncome.value) {
+      throw new Deno.errors.NotFound("Income not found");
+    }
+
+    const userKey = [Keys.INCOME_BY_USER, userId, incomeId];
+    const dateKey = [
+      Keys.INCOME_BY_DATE,
+      userId,
+      rawIncome.value.date.getFullYear().toString(),
+      (rawIncome.value.date.getMonth() + 1).toString(),
+      incomeId,
+    ];
+
+    const updatedIncome = { ...rawIncome.value, ...input };
+
+    const updateRes = await kv
+      .atomic()
+      .set(key, updatedIncome)
+      .set(userKey, updatedIncome)
+      .set(dateKey, updatedIncome)
+      .commit();
+
+    if (!updateRes.ok) {
+      throw new Deno.errors.Interrupted("Failed to update income");
+    }
+
+    return updatedIncome;
+  }
+
+  public static async delete(userId: string, incomeId: string) {
+    const key = [Keys.INCOME, incomeId];
+    const rawIncome = await kv.get<RawIncome>(key);
+
+    if (!rawIncome.value) {
+      throw new Deno.errors.NotFound("Income not found");
+    }
+
+    const userKey = [Keys.INCOME_BY_USER, userId, incomeId];
+    const dateKey = [
+      Keys.INCOME_BY_DATE,
+      userId,
+      rawIncome.value.date.getFullYear().toString(),
+      (rawIncome.value.date.getMonth() + 1).toString(),
+      incomeId,
+    ];
+    const deleteKey = [Keys.DELETED_INCOME, incomeId];
+
+    const updateRes = await kv
+      .atomic()
+      .delete(key)
+      .delete(userKey)
+      .delete(dateKey)
+      .set(deleteKey, rawIncome.value)
+      .commit();
+
+    if (!updateRes.ok) {
+      throw new Deno.errors.Interrupted("Failed to delete income");
+    }
+
+    return rawIncome.value;
   }
 }

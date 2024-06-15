@@ -9,6 +9,7 @@ import * as $api_categories_index from "./routes/api/categories/index.ts";
 import * as $api_expenses_id_ from "./routes/api/expenses/[id].ts";
 import * as $api_expenses_date from "./routes/api/expenses/date.ts";
 import * as $api_expenses_index from "./routes/api/expenses/index.ts";
+import * as $api_income_id_ from "./routes/api/income/[id].ts";
 import * as $api_income_date from "./routes/api/income/date.ts";
 import * as $api_income_index from "./routes/api/income/index.ts";
 import * as $api_paymentMethods_index from "./routes/api/paymentMethods/index.ts";
@@ -21,6 +22,7 @@ import * as $AppButton from "./islands/AppButton.tsx";
 import * as $AuthButton from "./islands/AuthButton.tsx";
 import * as $BackButton from "./islands/BackButton.tsx";
 import * as $CardTitle from "./islands/CardTitle.tsx";
+import * as $EditIncomeButton from "./islands/EditIncomeButton.tsx";
 import * as $InputSelector from "./islands/InputSelector.tsx";
 import * as $Loader from "./islands/Loader.tsx";
 import * as $Menu from "./islands/Menu.tsx";
@@ -31,6 +33,8 @@ import * as $forms_IncomeForm from "./islands/forms/IncomeForm.tsx";
 import * as $hooks_useModal from "./islands/hooks/useModal.tsx";
 import * as $tables_ExpenseOptionsButton from "./islands/tables/ExpenseOptionsButton.tsx";
 import * as $tables_ExpensesTable from "./islands/tables/ExpensesTable.tsx";
+import * as $tables_IncomeOptionsButton from "./islands/tables/IncomeOptionsButton.tsx";
+import * as $tables_IncomeTable from "./islands/tables/IncomeTable.tsx";
 import { type Manifest } from "$fresh/server.ts";
 
 const manifest = {
@@ -42,6 +46,7 @@ const manifest = {
     "./routes/api/expenses/[id].ts": $api_expenses_id_,
     "./routes/api/expenses/date.ts": $api_expenses_date,
     "./routes/api/expenses/index.ts": $api_expenses_index,
+    "./routes/api/income/[id].ts": $api_income_id_,
     "./routes/api/income/date.ts": $api_income_date,
     "./routes/api/income/index.ts": $api_income_index,
     "./routes/api/paymentMethods/index.ts": $api_paymentMethods_index,
@@ -56,6 +61,7 @@ const manifest = {
     "./islands/AuthButton.tsx": $AuthButton,
     "./islands/BackButton.tsx": $BackButton,
     "./islands/CardTitle.tsx": $CardTitle,
+    "./islands/EditIncomeButton.tsx": $EditIncomeButton,
     "./islands/InputSelector.tsx": $InputSelector,
     "./islands/Loader.tsx": $Loader,
     "./islands/Menu.tsx": $Menu,
@@ -66,6 +72,8 @@ const manifest = {
     "./islands/hooks/useModal.tsx": $hooks_useModal,
     "./islands/tables/ExpenseOptionsButton.tsx": $tables_ExpenseOptionsButton,
     "./islands/tables/ExpensesTable.tsx": $tables_ExpensesTable,
+    "./islands/tables/IncomeOptionsButton.tsx": $tables_IncomeOptionsButton,
+    "./islands/tables/IncomeTable.tsx": $tables_IncomeTable,
   },
   baseUrl: import.meta.url,
 } satisfies Manifest;

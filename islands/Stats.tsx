@@ -5,6 +5,7 @@ import { expenses, totalExpenses } from "@/signals/expenses.ts";
 import { totalIncome } from "@/signals/income.ts";
 import { Category } from "@/db/models/category.ts";
 import { PaymentMethod } from "@/db/models/paymentMethod.ts";
+import EditIncomeButton from "@/islands/EditIncomeButton.tsx";
 
 type StatsProps = {
   children: ComponentChildren;
@@ -30,9 +31,7 @@ export function IncomeStats() {
         <div class="stat-value text-accent">
           {formatCurrency(totalIncome.value)}
         </div>
-        <div class="stat-actions">
-          <button class="btn btn-sm">View & Edit</button>
-        </div>
+        <EditIncomeButton />
       </div>
     </Stats>
   );

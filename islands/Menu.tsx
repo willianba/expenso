@@ -3,7 +3,7 @@ import { useEffect, useRef } from "preact/hooks";
 import { expenses } from "@/signals/expenses.ts";
 import { ExpenseWithoutUser } from "@/db/models/expense.ts";
 import { RawIncome } from "@/db/models/income.ts";
-import { income } from "@/signals/income.ts";
+import { incomeList } from "@/signals/income.ts";
 import { activeMonth, activeYear } from "@/signals/menu.ts";
 
 const months = [
@@ -68,7 +68,7 @@ export default function Menu() {
 
     fetch(`/api/income/date?year=${year}&month=${month}`).then(async (res) => {
       const result = await res.json() as RawIncome[];
-      income.value = result;
+      incomeList.value = result;
     });
 
     activeMonth.value = month;

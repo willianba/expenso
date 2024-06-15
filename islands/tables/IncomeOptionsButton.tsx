@@ -1,16 +1,15 @@
 import { useEffect, useRef, useState } from "preact/hooks";
-import { expenses } from "@/signals/expenses.ts";
-import { ExpenseWithoutUser } from "@/db/models/expense.ts";
 import useModal from "@/islands/hooks/useModal.tsx";
-import { ConfirmationModal, ExpenseModal } from "@/components/Modal.tsx";
-import { PaymentType } from "@/utils/constants.ts";
+import { ConfirmationModal, IncomeModal } from "@/components/Modal.tsx";
+import { RawIncome } from "@/db/models/income.ts";
+import { incomeList } from "@/signals/income.ts";
 
-type ExpenseOptionButtonProps = {
-  expense: ExpenseWithoutUser;
+type IncomeOptionsButtonProps = {
+  income: RawIncome;
 };
 
-export default function ExpenseOptionButton(props: ExpenseOptionButtonProps) {
-  const { expense } = props;
+export default function IncomeOptionsButton(props: IncomeOptionsButtonProps) {
+  const { income } = props;
 
   const {
     modalId: confirmationModalId,
@@ -19,11 +18,10 @@ export default function ExpenseOptionButton(props: ExpenseOptionButtonProps) {
   } = useModal();
   const {
     modalId: expenseModalId,
-    openModal: openExpenseModal,
-    closeModal: closeExpenseModal,
+    openModal: openIncomeModal,
+    closeModal: closeIncomeModal,
   } = useModal();
   const [isOpen, setIsOpen] = useState(false);
-  const [modalMessage, setModalMessage] = useState("");
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -49,29 +47,17 @@ export default function ExpenseOptionButton(props: ExpenseOptionButtonProps) {
   };
 
   const onClickDelete = () => {
-    if (expense.payment.type === PaymentType.CURRENT) {
-      setModalMessage("Are you sure you want to delete this expense?");
-    } else if (expense.payment.type === PaymentType.FIXED) {
-      setModalMessage(
-        "Are you sure you want to delete this expense? This will remove all entries from the next months related to this expense.",
-      );
-    } else {
-      setModalMessage(
-        "Are you sure you want to delete this expense? This will delete all entries from past and future months related to this expense.",
-      );
-    }
-
     openConfirmationModal();
     closeMenu();
   };
 
   const onClickEdit = () => {
-    openExpenseModal();
+    openIncomeModal();
     closeMenu();
   };
 
   const deleteExpense = async () => {
-    const res = await fetch(`/api/expenses/${expense.id}`, {
+    const res = await fetch(`/api/income/${income.id}`, {
       method: "DELETE",
     });
 
@@ -81,9 +67,9 @@ export default function ExpenseOptionButton(props: ExpenseOptionButtonProps) {
       return;
     }
 
-    const deletedExpense = await res.json() as ExpenseWithoutUser;
-    expenses.value = expenses.value.filter(
-      (expense) => expense.id !== deletedExpense.id,
+    const deletedIncome = await res.json() as RawIncome;
+    incomeList.value = incomeList.value.filter(
+      (expense) => expense.id !== deletedIncome.id,
     );
 
     closeMenu();
@@ -157,17 +143,16 @@ export default function ExpenseOptionButton(props: ExpenseOptionButtonProps) {
           </ul>
         </div>
       )}
-      <ExpenseModal
+      <IncomeModal
         id={expenseModalId}
-        closeModal={closeExpenseModal}
-        expense={expense}
-        paymentType={expense.payment.type}
+        closeModal={closeIncomeModal}
+        income={income}
       />
       <ConfirmationModal
         id={confirmationModalId}
         closeModal={closeConfirmationModal}
-        title="Delete expense"
-        message={modalMessage}
+        title="Delete income"
+        message="Confirm to delete this income."
         onConfirm={deleteExpense}
       />
     </div>

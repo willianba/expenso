@@ -2,7 +2,7 @@ import { useEffect } from "preact/hooks";
 import { expenses } from "@/signals/expenses.ts";
 import { today } from "@/utils/date.ts";
 import { RawIncome } from "@/db/models/income.ts";
-import { income } from "@/signals/income.ts";
+import { incomeList } from "@/signals/income.ts";
 import { ExpenseWithoutUser } from "@/db/models/expense.ts";
 import { CategoryWithoutUser } from "@/db/models/category.ts";
 import { categories, paymentMethods } from "@/signals/inputData.ts";
@@ -31,8 +31,8 @@ export default function Loader() {
           return;
         }
 
-        const incomeList = await res.json() as RawIncome[];
-        income.value = incomeList;
+        const income = await res.json() as RawIncome[];
+        incomeList.value = income;
       },
     );
 

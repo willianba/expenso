@@ -3,6 +3,8 @@ import { PaymentType } from "@/utils/constants.ts";
 import ExpenseForm from "@/islands/forms/ExpenseForm.tsx";
 import IncomeForm from "@/islands/forms/IncomeForm.tsx";
 import { ExpenseWithoutUser } from "@/db/models/expense.ts";
+import IncomeTable from "@/islands/tables/IncomeTable.tsx";
+import { RawIncome } from "@/db/models/income.ts";
 
 type ModalProps = {
   id: string;
@@ -49,14 +51,16 @@ export function ExpenseModal(props: ExpenseModalProps) {
   );
 }
 
-type IncomeModalProps = Omit<ModalProps, "children">;
+type IncomeModalProps = Omit<ModalProps, "children"> & {
+  income?: RawIncome;
+};
 
 export function IncomeModal(props: IncomeModalProps) {
-  const { id, closeModal } = props;
+  const { id, income, closeModal } = props;
 
   return (
     <Modal id={id} closeModal={closeModal}>
-      <IncomeForm closeModal={closeModal} />
+      <IncomeForm income={income} closeModal={closeModal} />
     </Modal>
   );
 }
@@ -89,6 +93,18 @@ export function ConfirmationModal(props: ConfirmationModalProps) {
             Confirm
           </button>
         </form>
+      </div>
+    </Modal>
+  );
+}
+
+export function EditIncomeModal(props: IncomeModalProps) {
+  const { id, closeModal } = props;
+
+  return (
+    <Modal id={id} closeModal={closeModal}>
+      <div class="mt-6 max-h-60">
+        <IncomeTable />
       </div>
     </Modal>
   );
