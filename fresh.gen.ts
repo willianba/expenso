@@ -5,9 +5,6 @@
 import * as $_404 from "./routes/_404.tsx";
 import * as $_app from "./routes/_app.tsx";
 import * as $_layout from "./routes/_layout.tsx";
-import * as $api_auth_login from "./routes/api/auth/login.ts";
-import * as $api_auth_logout from "./routes/api/auth/logout.ts";
-import * as $api_auth_password from "./routes/api/auth/password.ts";
 import * as $api_categories_index from "./routes/api/categories/index.ts";
 import * as $api_expenses_id_ from "./routes/api/expenses/[id].ts";
 import * as $api_expenses_date from "./routes/api/expenses/date.ts";
@@ -42,9 +39,6 @@ const manifest = {
     "./routes/_404.tsx": $_404,
     "./routes/_app.tsx": $_app,
     "./routes/_layout.tsx": $_layout,
-    "./routes/api/auth/login.ts": $api_auth_login,
-    "./routes/api/auth/logout.ts": $api_auth_logout,
-    "./routes/api/auth/password.ts": $api_auth_password,
     "./routes/api/categories/index.ts": $api_categories_index,
     "./routes/api/expenses/[id].ts": $api_expenses_id_,
     "./routes/api/expenses/date.ts": $api_expenses_date,

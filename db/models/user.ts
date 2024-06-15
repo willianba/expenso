@@ -1,5 +1,8 @@
 import { kv } from "@/db/kv.ts";
 import { monotonicUlid } from "@std/ulid";
+import logger from "@/utils/logger.ts";
+
+const SESSION_TTL = 90 * 24 * 60 * 60 * 1000; // 90 days
 
 export enum Keys {
   USERS = "users",
@@ -64,5 +67,24 @@ export default class UserService {
 
     const res = await kv.get<User>(key);
     return res.value;
+  }
+
+  public static async setSession(user: User, sessionId: string) {
+    const sessionKey = [Keys.USERS_SESSION, sessionId];
+    const sessionRes = await kv
+      .atomic()
+      .check({ key: sessionKey, versionstamp: null })
+      .set(sessionKey, user, { expireIn: SESSION_TTL })
+      .commit();
+
+    if (!sessionRes.ok) {
+      logger.warn("Failed to set session. User already logged in", {
+        sessionId,
+      });
+    }
+  }
+
+  public static async deleteSession(sessionId: string) {
+    await kv.delete([Keys.USERS_SESSION, sessionId]);
   }
 }

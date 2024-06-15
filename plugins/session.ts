@@ -1,24 +1,13 @@
 import type { Plugin } from "$fresh/server.ts";
 import { FreshContext } from "$fresh/server.ts";
-import { type Cookie, getCookies } from "@std/http";
 import UserService, { User } from "@/db/models/user.ts";
+import { getGitHubSessionId, getGoogleSessionId } from "@/plugins/auth.ts";
 
 export type State = {
   sessionUser?: User;
 };
 
 export type SignedInState = Required<State>;
-
-export const COOKIE_NAME = "expenso-session";
-
-// used on UI to set default values. the actual values are replaced with the signed in user
-export const BASE_COOKIE = {
-  secure: true,
-  path: "/",
-  httpOnly: true,
-  maxAge: 7776000, // 90 days
-  sameSite: "Lax",
-} as Required<Pick<Cookie, "path" | "httpOnly" | "maxAge" | "sameSite">>;
 
 async function setSessionState(req: Request, ctx: FreshContext<State>) {
   if (ctx.destination !== "route") {
@@ -28,10 +17,16 @@ async function setSessionState(req: Request, ctx: FreshContext<State>) {
   // Initial state
   ctx.state.sessionUser = undefined;
 
-  const sessionId = getSessionIdCookie(req);
+  // fetch session id from cookies. try one provider at a time
+  let sessionId = await getGoogleSessionId(req);
+  if (sessionId === undefined) {
+    sessionId = await getGitHubSessionId(req);
+  }
+
   if (sessionId === undefined) {
     return await ctx.next();
   }
+
   const user = await UserService.getBySessionId(sessionId);
   if (user === null) {
     return await ctx.next();
@@ -39,31 +34,6 @@ async function setSessionState(req: Request, ctx: FreshContext<State>) {
 
   ctx.state.sessionUser = user;
   return await ctx.next();
-}
-
-export function getSessionIdCookie(request: Request): string | undefined {
-  const cookieName = getCookieName(COOKIE_NAME, isHttps(request.url));
-  return getCookies(request.headers)[cookieName];
-}
-
-export function generateSessionIdCookie(request: Request, sessionId: string) {
-  const https = isHttps(request.url);
-  const cookieName = getCookieName(COOKIE_NAME, https);
-  const cookie: Cookie = {
-    ...BASE_COOKIE,
-    name: cookieName,
-    value: sessionId,
-    secure: https,
-  };
-  return cookie;
-}
-
-export function getCookieName(name: string, isHttps: boolean): string {
-  return isHttps ? "__Host-" + name : name;
-}
-
-export function isHttps(url: string): boolean {
-  return url.startsWith("https://");
 }
 
 async function redirectIfSignedIn(req: Request, ctx: FreshContext<State>) {
@@ -112,10 +82,6 @@ export default {
     },
     {
       path: "/login",
-      middleware: { handler: redirectIfSignedIn },
-    },
-    {
-      path: "/password",
       middleware: { handler: redirectIfSignedIn },
     },
     {
