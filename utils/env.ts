@@ -3,12 +3,12 @@ import { z } from "zod";
 
 export const envSchema = z.object({
   ENVIRONMENT: z.nativeEnum(Environment).default(Environment.DEVELOPMENT),
-  APP_ORIGIN: z.string(),
   DENO_KV_PATH: z.string().optional(),
   GITHUB_CLIENT_ID: z.string(),
   GITHUB_CLIENT_SECRET: z.string(),
   GOOGLE_CLIENT_ID: z.string(),
   GOOGLE_CLIENT_SECRET: z.string(),
+  GOOGLE_APP_ORIGIN: z.string(),
 });
 
 type Env = z.infer<typeof envSchema>;

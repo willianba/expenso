@@ -20,7 +20,7 @@ export const { getSessionId: getGitHubSessionId } = githubHelpers;
 
 const googleHelpers = createHelpers(
   createGoogleOAuthConfig({
-    redirectUri: `${env.APP_ORIGIN}/api/auth/callback/google`,
+    redirectUri: `${env.GOOGLE_APP_ORIGIN}/api/auth/callback/google`,
     scope: "openid email profile",
   }),
 );
