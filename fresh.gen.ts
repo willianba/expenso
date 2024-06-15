@@ -15,7 +15,6 @@ import * as $api_paymentMethods_index from "./routes/api/paymentMethods/index.ts
 import * as $app from "./routes/app.tsx";
 import * as $index from "./routes/index.tsx";
 import * as $login from "./routes/login.tsx";
-import * as $password from "./routes/password.tsx";
 import * as $AddExpenseButton from "./islands/AddExpenseButton.tsx";
 import * as $AddIncomeButton from "./islands/AddIncomeButton.tsx";
 import * as $AppButton from "./islands/AppButton.tsx";
@@ -49,7 +48,6 @@ const manifest = {
     "./routes/app.tsx": $app,
     "./routes/index.tsx": $index,
     "./routes/login.tsx": $login,
-    "./routes/password.tsx": $password,
   },
   islands: {
     "./islands/AddExpenseButton.tsx": $AddExpenseButton,
