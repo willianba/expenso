@@ -44,6 +44,14 @@ export default {
         const { response, tokens, sessionId } = await handleGitHubCallback(req);
 
         const { email } = await getGitHubUser(tokens.accessToken);
+
+        if (!email) {
+          logger.error("GitHub profile with private email", { tokens });
+          throw new Deno.errors.Interrupted(
+            "GitHub profile with private email. Please, ensure you have a public email and try logging in again",
+          );
+        }
+
         let user = await UserService.getByEmail(email);
         if (!user) {
           logger.warn("User not found, creating it", { email });
