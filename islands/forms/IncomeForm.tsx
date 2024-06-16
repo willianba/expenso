@@ -147,7 +147,7 @@ export default function IncomeForm(props: IncomeFormProps) {
             type="number"
             step="0.01"
             min={0.01}
-            placeholder="Expense price"
+            placeholder="Income price"
             className="input input-sm input-bordered"
             value={income ? income.price : ""}
             required

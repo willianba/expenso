@@ -155,7 +155,7 @@ export default function ExpenseForm(props: ExpenseFormProps) {
         ref={formRef}
       >
         <h3 class="font-bold text-lg">
-          {expense ? "Edit Expense" : "Add Expense"}
+          {expense ? "Edit expense" : "Add expense"}
         </h3>
         <div className="form-control">
           <label for="name" className="label">
