@@ -1,11 +1,9 @@
 import { CreateExpenseData } from "@/routes/api/expenses/index.ts";
-import {
-  parseAndRetrieveCategory,
-  parseAndRetrievePaymentMethod,
-} from "@/utils/expenses/paymentMetadata.ts";
 import { CreateExpenseInput } from "@/db/models/expense.ts";
 import { PaymentType } from "@/utils/constants.ts";
 import { monotonicUlid } from "@std/ulid";
+import PaymentMethodService from "@/db/models/paymentMethod.ts";
+import CategoryService from "@/db/models/category.ts";
 
 export default class ExpenseInputFactory {
   private readonly data: CreateExpenseData;
@@ -18,9 +16,15 @@ export default class ExpenseInputFactory {
 
   public async build(): Promise<CreateExpenseInput[]> {
     const correlationId = monotonicUlid();
-    const [paymentMethodId, categoryId] = await Promise.all([
-      parseAndRetrievePaymentMethod(this.data.paymentMethod, this.userId),
-      parseAndRetrieveCategory(this.data.paymentCategory, this.userId),
+    const [paymentMethod, category] = await Promise.all([
+      PaymentMethodService.findOrCreate({
+        label: this.data.paymentMethod.trim(),
+        userId: this.userId,
+      }),
+      CategoryService.findOrCreate({
+        label: this.data.paymentCategory.trim(),
+        userId: this.userId,
+      }),
     ]);
 
     switch (this.data.paymentType) {
@@ -31,8 +35,8 @@ export default class ExpenseInputFactory {
           userId: this.userId,
           correlationId,
           payment: {
-            methodId: paymentMethodId,
-            categoryId: categoryId,
+            method: paymentMethod.label,
+            category: category.label,
             type: this.data.paymentType,
             date: new Date(this.data.paymentDate),
           },
@@ -53,8 +57,8 @@ export default class ExpenseInputFactory {
             userId: this.userId,
             correlationId,
             payment: {
-              methodId: paymentMethodId,
-              categoryId: categoryId,
+              method: paymentMethod.label,
+              category: category.label,
               type: this.data.paymentType,
               date,
             },
@@ -77,8 +81,8 @@ export default class ExpenseInputFactory {
             userId: this.userId,
             correlationId,
             payment: {
-              methodId: paymentMethodId,
-              categoryId: categoryId,
+              method: paymentMethod.label,
+              category: category.label,
               type: this.data.paymentType,
               date,
               installment: i,

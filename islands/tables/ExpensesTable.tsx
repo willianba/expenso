@@ -2,7 +2,7 @@ import { PaymentType } from "@/utils/constants.ts";
 import { getSignalFromPaymentType } from "@/signals/expenses.ts";
 import { getFormattedDate } from "@/utils/date.ts";
 import { formatCurrency } from "@/utils/currency.ts";
-import ExpenseOptionButton from "@/islands/tables/ExpenseOptionsButton.tsx";
+import ExpenseOptionsButton from "@/islands/tables/ExpenseOptionsButton.tsx";
 
 type TableProps = {
   paymentType: PaymentType;
@@ -37,8 +37,8 @@ export default function ExpensesTable(props: TableProps) {
           {expenses.value.map((expense) => (
             <tr class="hover">
               <td>{expense.name}</td>
-              <td>{expense.payment.method.label}</td>
-              <td>{expense.payment.category.label}</td>
+              <td>{expense.payment.method}</td>
+              <td>{expense.payment.category}</td>
               <td>
                 {getFormattedDate(expense.payment.date)}
               </td>
@@ -49,7 +49,7 @@ export default function ExpensesTable(props: TableProps) {
                 </td>
               )}
               <td>
-                <ExpenseOptionButton expense={expense} />
+                <ExpenseOptionsButton expense={expense} />
               </td>
             </tr>
           ))}

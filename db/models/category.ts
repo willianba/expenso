@@ -22,7 +22,17 @@ export type CategoryWithoutUser = Omit<Category, "user">;
 type CreateCategoryInput = Omit<RawCategory, "id">;
 
 export default class CategoryService {
-  public static async create(input: CreateCategoryInput) {
+  public static async findOrCreate(input: CreateCategoryInput) {
+    const existingCategories = await this.getAllByUserId(input.userId);
+
+    const existingCategory = existingCategories.find(
+      (c) => c.label === input.label,
+    );
+
+    if (existingCategory) {
+      return existingCategory;
+    }
+
     const categoryId = monotonicUlid();
     const categoryWithId: RawCategory = { ...input, id: categoryId };
 
