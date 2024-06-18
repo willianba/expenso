@@ -7,7 +7,10 @@ export default defineRoute<State>((_req, _ctx) => {
       <div className="hero-content flex-col lg:flex-row-reverse">
         <div className="card shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
           <div class="flex flex-col gap-4 m-4">
-            <a class="auth-button github" href="/api/auth/login/github">
+            <a
+              class="auth-button github"
+              href="/api/auth/login/github?success_url=/app"
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="#ffffff"
@@ -18,7 +21,10 @@ export default defineRoute<State>((_req, _ctx) => {
               </svg>
               Continue with GitHub
             </a>
-            <a class="auth-button google" href="/api/auth/login/google">
+            <a
+              class="auth-button google"
+              href="/api/auth/login/google?success_url=/app"
+            >
               <svg
                 class="h-6"
                 xmlns="http://www.w3.org/2000/svg"

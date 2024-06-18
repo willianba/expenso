@@ -6,7 +6,7 @@ import ExpenseService, {
 import { SignedInState } from "@/plugins/session.ts";
 import logger from "@/utils/logger.ts";
 import { z } from "zod";
-import PaymentMethodService from "@/db/models/paymentMethod.ts";
+import PaymentMethodService from "@/db/models/payment-method.ts";
 import CategoryService from "@/db/models/category.ts";
 
 const UpdateExpenseSchema = z.object({

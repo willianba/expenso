@@ -5,7 +5,6 @@ import { kv } from "@/db/kv.ts";
 
 enum Keys {
   EXPENSES = "expenses",
-  EXPENSES_BY_USER = "expenses_by_user",
   EXPENSES_BY_DATE = "expenses_by_date",
   EXPENSES_BY_CORRELATION = "expenses_by_correlation",
   DELETED_EXPENSES = "deleted_expenses",
@@ -49,8 +48,7 @@ export default class ExpenseService {
     const expenseId = monotonicUlid();
     const expenseWithId: RawExpense = { ...input, id: expenseId };
 
-    const key = [Keys.EXPENSES, expenseId];
-    const userKey = [Keys.EXPENSES_BY_USER, input.userId, expenseId];
+    const key = [Keys.EXPENSES, input.userId, expenseId];
     const correlationKey = [
       Keys.EXPENSES_BY_CORRELATION,
       input.userId,
@@ -68,11 +66,9 @@ export default class ExpenseService {
     const rawExpenseRes = await kv
       .atomic()
       .check({ key, versionstamp: null })
-      .check({ key: userKey, versionstamp: null })
       .check({ key: dateKey, versionstamp: null })
       .check({ key: correlationKey, versionstamp: null })
       .set(key, expenseWithId)
-      .set(userKey, expenseWithId)
       .set(dateKey, expenseWithId)
       .set(correlationKey, expenseWithId)
       .commit();
@@ -117,8 +113,7 @@ export default class ExpenseService {
 
   public static async update(userId: string, input: UpdateExpenseInput) {
     const expenseId = input.id;
-
-    const key = [Keys.EXPENSES, expenseId];
+    const key = [Keys.EXPENSES, userId, expenseId];
     const rawExpense = await kv.get<RawExpense>(key);
 
     if (!rawExpense.value) {
@@ -148,7 +143,6 @@ export default class ExpenseService {
 
     // TODO make this more atomic. if one fails, all should fail
     expensesToUpdate.forEach(async (expense) => {
-      const userKey = [Keys.EXPENSES_BY_USER, userId, expense.id];
       const dateKey = [
         Keys.EXPENSES_BY_DATE,
         userId,
@@ -172,7 +166,6 @@ export default class ExpenseService {
       const res = await kv
         .atomic()
         .set(key, updatedExpense)
-        .set(userKey, updatedExpense)
         .set(dateKey, updatedExpense)
         .commit();
 
@@ -194,7 +187,7 @@ export default class ExpenseService {
   }
 
   public static async delete(userId: string, expenseId: string) {
-    const key = [Keys.EXPENSES, expenseId];
+    const key = [Keys.EXPENSES, userId, expenseId];
     const rawExpense = await kv.get<RawExpense>(key);
 
     if (!rawExpense.value) {
@@ -226,7 +219,6 @@ export default class ExpenseService {
     }
     // TODO make this more atomic. if one fails, all should fail
     expensesToDelete.forEach(async (expense) => {
-      const userKey = [Keys.EXPENSES_BY_USER, userId, expense.id];
       const dateKey = [
         Keys.EXPENSES_BY_DATE,
         userId,
@@ -239,7 +231,6 @@ export default class ExpenseService {
       const res = await kv
         .atomic()
         .delete(key)
-        .delete(userKey)
         .delete(dateKey)
         .set(deletedKey, expense)
         .commit();

@@ -12,7 +12,7 @@ import * as $api_expenses_index from "./routes/api/expenses/index.ts";
 import * as $api_income_id_ from "./routes/api/income/[id].ts";
 import * as $api_income_date from "./routes/api/income/date.ts";
 import * as $api_income_index from "./routes/api/income/index.ts";
-import * as $api_paymentMethods_index from "./routes/api/paymentMethods/index.ts";
+import * as $api_payment_methods_index from "./routes/api/payment-methods/index.ts";
 import * as $app from "./routes/app.tsx";
 import * as $index from "./routes/index.tsx";
 import * as $login from "./routes/login.tsx";
@@ -49,7 +49,7 @@ const manifest = {
     "./routes/api/income/[id].ts": $api_income_id_,
     "./routes/api/income/date.ts": $api_income_date,
     "./routes/api/income/index.ts": $api_income_index,
-    "./routes/api/paymentMethods/index.ts": $api_paymentMethods_index,
+    "./routes/api/payment-methods/index.ts": $api_payment_methods_index,
     "./routes/app.tsx": $app,
     "./routes/index.tsx": $index,
     "./routes/login.tsx": $login,

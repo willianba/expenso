@@ -2,9 +2,8 @@ import { User } from "@/db/models/user.ts";
 import { monotonicUlid } from "@std/ulid";
 import { kv } from "@/db/kv.ts";
 
-enum Keys {
+export enum Keys {
   INCOME = "income",
-  INCOME_BY_USER = "income_by_user",
   INCOME_BY_DATE = "income_by_date",
   DELETED_INCOME = "deleted_income",
 }
@@ -29,8 +28,7 @@ export default class IncomeService {
     const incomeId = monotonicUlid();
     const incomeWithId: RawIncome = { ...input, id: incomeId };
 
-    const key = [Keys.INCOME, incomeId];
-    const userKey = [Keys.INCOME_BY_USER, input.userId, incomeId];
+    const key = [Keys.INCOME, input.userId, incomeId];
     const dateKey = [
       Keys.INCOME_BY_DATE,
       input.userId,
@@ -41,10 +39,8 @@ export default class IncomeService {
     const createRes = await kv
       .atomic()
       .check({ key, versionstamp: null })
-      .check({ key: userKey, versionstamp: null })
       .check({ key: dateKey, versionstamp: null })
       .set(key, incomeWithId)
-      .set(userKey, incomeWithId)
       .set(dateKey, incomeWithId)
       .commit();
 
@@ -83,14 +79,13 @@ export default class IncomeService {
 
   public static async update(userId: string, input: UpdateIncomeInput) {
     const incomeId = input.id;
-    const key = [Keys.INCOME, incomeId];
+    const key = [Keys.INCOME, userId, incomeId];
     const rawIncome = await kv.get<RawIncome>(key);
 
     if (!rawIncome.value) {
       throw new Deno.errors.NotFound("Income not found");
     }
 
-    const userKey = [Keys.INCOME_BY_USER, userId, incomeId];
     const dateKey = [
       Keys.INCOME_BY_DATE,
       userId,
@@ -104,7 +99,6 @@ export default class IncomeService {
     const updateRes = await kv
       .atomic()
       .set(key, updatedIncome)
-      .set(userKey, updatedIncome)
       .set(dateKey, updatedIncome)
       .commit();
 
@@ -116,14 +110,13 @@ export default class IncomeService {
   }
 
   public static async delete(userId: string, incomeId: string) {
-    const key = [Keys.INCOME, incomeId];
+    const key = [Keys.INCOME, userId, incomeId];
     const rawIncome = await kv.get<RawIncome>(key);
 
     if (!rawIncome.value) {
       throw new Deno.errors.NotFound("Income not found");
     }
 
-    const userKey = [Keys.INCOME_BY_USER, userId, incomeId];
     const dateKey = [
       Keys.INCOME_BY_DATE,
       userId,
@@ -131,12 +124,11 @@ export default class IncomeService {
       (rawIncome.value.date.getMonth() + 1).toString(),
       incomeId,
     ];
-    const deleteKey = [Keys.DELETED_INCOME, incomeId];
+    const deleteKey = [Keys.DELETED_INCOME, userId, incomeId];
 
     const updateRes = await kv
       .atomic()
       .delete(key)
-      .delete(userKey)
       .delete(dateKey)
       .set(deleteKey, rawIncome.value)
       .commit();

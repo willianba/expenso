@@ -4,7 +4,6 @@ import { kv } from "@/db/kv.ts";
 
 enum Keys {
   PAYMENT_METHODS = "payment_methods",
-  PAYMENT_METHODS_BY_USER = "payment_methods_by_user",
 }
 
 export type PaymentMethod = {
@@ -39,18 +38,11 @@ export default class PaymentMethodService {
       id: paymentMethodId,
     };
 
-    const key = [Keys.PAYMENT_METHODS, paymentMethodId];
-    const userKey = [
-      Keys.PAYMENT_METHODS_BY_USER,
-      input.userId,
-      paymentMethodId,
-    ];
+    const key = [Keys.PAYMENT_METHODS, input.userId, paymentMethodId];
     const createRes = await kv
       .atomic()
       .check({ key, versionstamp: null })
       .set(key, paymentMethodWithId)
-      .check({ key: userKey, versionstamp: null })
-      .set(userKey, paymentMethodWithId)
       .commit();
 
     if (!createRes.ok) {
@@ -62,7 +54,7 @@ export default class PaymentMethodService {
 
   public static async getAllByUserId(userId: string) {
     const entries = kv.list<RawPaymentMethod>({
-      prefix: [Keys.PAYMENT_METHODS_BY_USER, userId],
+      prefix: [Keys.PAYMENT_METHODS, userId],
     });
 
     const paymentMethods: RawPaymentMethod[] = await Array.fromAsync(

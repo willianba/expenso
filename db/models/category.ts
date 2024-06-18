@@ -4,7 +4,6 @@ import { kv } from "@/db/kv.ts";
 
 enum Keys {
   CATEGORIES = "categories",
-  CATEGORIES_BY_USER = "categories_by_user",
 }
 
 export type Category = {
@@ -36,14 +35,11 @@ export default class CategoryService {
     const categoryId = monotonicUlid();
     const categoryWithId: RawCategory = { ...input, id: categoryId };
 
-    const key = [Keys.CATEGORIES, categoryId];
-    const userKey = [Keys.CATEGORIES_BY_USER, input.userId, categoryId];
+    const key = [Keys.CATEGORIES, input.userId, categoryId];
     const createRes = await kv
       .atomic()
       .check({ key, versionstamp: null })
       .set(key, categoryWithId)
-      .check({ key: userKey, versionstamp: null })
-      .set(userKey, categoryWithId)
       .commit();
 
     if (!createRes.ok) {
@@ -55,7 +51,7 @@ export default class CategoryService {
 
   public static async getAllByUserId(userId: string) {
     const entries = kv.list<RawCategory>({
-      prefix: [Keys.CATEGORIES_BY_USER, userId],
+      prefix: [Keys.CATEGORIES, userId],
     });
 
     const categories: RawCategory[] = await Array.fromAsync(

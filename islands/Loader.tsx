@@ -5,8 +5,8 @@ import { RawIncome } from "@/db/models/income.ts";
 import { incomeList } from "@/signals/income.ts";
 import { ExpenseWithoutUser } from "@/db/models/expense.ts";
 import { CategoryWithoutUser } from "@/db/models/category.ts";
-import { categories, paymentMethods } from "@/signals/inputData.ts";
-import { PaymentMethodWithoutUser } from "@/db/models/paymentMethod.ts";
+import { categories, paymentMethods } from "@/signals/input-data.ts";
+import { PaymentMethodWithoutUser } from "@/db/models/payment-method.ts";
 
 export default function Loader() {
   useEffect(() => {

@@ -2,7 +2,7 @@ import { CreateExpenseData } from "@/routes/api/expenses/index.ts";
 import { CreateExpenseInput } from "@/db/models/expense.ts";
 import { PaymentType } from "@/utils/constants.ts";
 import { monotonicUlid } from "@std/ulid";
-import PaymentMethodService from "@/db/models/paymentMethod.ts";
+import PaymentMethodService from "@/db/models/payment-method.ts";
 import CategoryService from "@/db/models/category.ts";
 
 export default class ExpenseInputFactory {

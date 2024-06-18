@@ -9,7 +9,7 @@ import {
   categories,
   paymentMethods,
   updateAfterSubmit,
-} from "@/signals/inputData.ts";
+} from "@/signals/input-data.ts";
 import useModal from "@/islands/hooks/useModal.tsx";
 import { ConfirmationModal } from "@/components/Modal.tsx";
 
