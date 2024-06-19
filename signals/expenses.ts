@@ -1,44 +1,43 @@
 import { computed, signal } from "@preact/signals";
 import { ExpenseWithoutUser } from "@/db/models/expense.ts";
 import { PaymentType } from "@/utils/constants.ts";
+import { stripDate } from "@/utils/date.ts";
+import { activeMonth } from "@/signals/menu.ts";
+import { SignalLike } from "$fresh/src/types.ts";
 
 export const expenses = signal<ExpenseWithoutUser[]>([]);
 
-export const fixedExpenses = computed(() => {
-  return expenses.value.filter(
-    (expense) => expense.payment.type === PaymentType.FIXED,
-  );
-});
-export const totalFixedExpenses = computed(() => {
-  return fixedExpenses.value.reduce((acc, expense) => acc + expense.price, 0);
-});
+const filterExpensesByType = (type: PaymentType) => {
+  return computed(() => {
+    return expenses.value.filter(
+      (expense) =>
+        stripDate(new Date(expense.payment.date)).month === activeMonth.value &&
+        expense.payment.type === type,
+    );
+  });
+};
 
-export const overTimeExpenses = computed(() => {
-  return expenses.value.filter(
-    (expense) => expense.payment.type === PaymentType.OVER_TIME,
-  );
-});
-export const totalOverTimeExpenses = computed(() => {
-  return overTimeExpenses.value.reduce(
-    (acc, expense) => acc + expense.price,
-    0,
-  );
-});
+export const fixedExpenses = filterExpensesByType(PaymentType.FIXED);
+export const overTimeExpenses = filterExpensesByType(PaymentType.OVER_TIME);
+export const currentMonthExpenses = filterExpensesByType(PaymentType.CURRENT);
 
-export const currentMonthExpenses = computed(() => {
-  return expenses.value.filter(
-    (expense) => expense.payment.type === PaymentType.CURRENT,
-  );
-});
-export const totalCurrentMonthExpenses = computed(() => {
-  return currentMonthExpenses.value.reduce(
-    (acc, expense) => acc + expense.price,
-    0,
-  );
-});
+const computeTotal = (expenseSignal: SignalLike<ExpenseWithoutUser[]>) => {
+  return computed(() => {
+    return expenseSignal.value.reduce((acc, expense) => acc + expense.price, 0);
+  });
+};
+
+export const totalFixedExpenses = computeTotal(fixedExpenses);
+export const totalOverTimeExpenses = computeTotal(overTimeExpenses);
+export const totalCurrentMonthExpenses = computeTotal(currentMonthExpenses);
 
 export const totalExpenses = computed(() => {
-  return expenses.value.reduce((acc, expense) => acc + expense.price, 0);
+  return expenses.value
+    .filter(
+      (expense) =>
+        stripDate(new Date(expense.payment.date)).month === activeMonth.value,
+    )
+    .reduce((acc, expense) => acc + expense.price, 0);
 });
 
 export function getSignalFromPaymentType(type: PaymentType) {

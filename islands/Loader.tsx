@@ -48,7 +48,7 @@ export default function Loader() {
       categories.value = labels;
     });
 
-    fetch("/api/paymentMethods").then(async (res) => {
+    fetch("/api/payment-methods").then(async (res) => {
       if (!res.ok) {
         // TODO show error message
         return;
