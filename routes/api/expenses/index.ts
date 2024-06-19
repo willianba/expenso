@@ -1,10 +1,14 @@
 import { Handlers } from "$fresh/server.ts";
 import { PaymentType } from "@/utils/constants.ts";
 import { z } from "zod";
-import ExpenseService, { ExpenseWithoutUser } from "@/db/models/expense.ts";
+import ExpenseService, {
+  ExpenseWithoutUser,
+  RawExpense,
+} from "@/db/models/expense.ts";
 import { SignedInState } from "@/plugins/session.ts";
 import logger from "@/utils/logger.ts";
 import ExpenseInputFactory from "@/utils/expenses/factory.ts";
+import { stripDate, today } from "@/utils/date.ts";
 
 const CreateExpenseSchema = z
   .object({
@@ -39,12 +43,24 @@ export const handler: Handlers<ExpenseWithoutUser, SignedInState> = {
     const factory = new ExpenseInputFactory(data, userId);
     const inputs = await factory.build();
     const promises = inputs.map((input) => ExpenseService.create(input));
-    const expenses = await Promise.all(promises);
+    const expenses: RawExpense[] = await Promise.all(promises);
     logger.info("Expenses created", { amount: expenses.length });
 
-    const firstExpense = expenses.sort(
-      (a, b) => a.payment.date.getTime() - b.payment.date.getTime(),
-    )[0];
-    return Response.json(firstExpense, { status: 201 });
+    let currentMonthExpense: RawExpense = expenses[0];
+    if (expenses.length > 0) {
+      const found = expenses.find((expense) => {
+        const { month } = today();
+        const { month: expenseMonth } = stripDate(
+          new Date(expense.payment.date),
+        );
+        return expenseMonth === month;
+      });
+
+      if (found) {
+        currentMonthExpense = found;
+      }
+    }
+
+    return Response.json(currentMonthExpense, { status: 201 });
   },
 };

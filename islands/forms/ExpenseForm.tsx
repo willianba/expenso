@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "preact/hooks";
 import { PaymentType } from "@/utils/constants.ts";
 import InputSelector from "@/islands/InputSelector.tsx";
-import { daysInMonth, formDate, stripDate } from "@/utils/date.ts";
+import { daysInMonth, formDate } from "@/utils/date.ts";
 import { expenses } from "@/signals/expenses.ts";
 import { ExpenseWithoutUser } from "@/db/models/expense.ts";
 import { activeMonth, activeYear } from "@/signals/menu.ts";
@@ -78,16 +78,9 @@ export default function ExpenseForm(props: ExpenseFormProps) {
     }
 
     const updatedExpense = await res.json() as ExpenseWithoutUser;
-    const updatedExpenseDate = stripDate(new Date(updatedExpense.payment.date));
-
-    if (
-      updatedExpenseDate.month === activeMonth.value &&
-      updatedExpenseDate.year === activeYear.value
-    ) {
-      expenses.value = expenses.value.map((exp) =>
-        exp.id === updatedExpense.id ? updatedExpense : exp
-      );
-    }
+    expenses.value = expenses.value.map((exp) =>
+      exp.id === updatedExpense.id ? updatedExpense : exp
+    );
 
     // TODO trigger toast
     updateAfterSubmit(
@@ -130,14 +123,7 @@ export default function ExpenseForm(props: ExpenseFormProps) {
     }
 
     const addedExpense = await res.json() as ExpenseWithoutUser;
-    const addedExpenseDate = stripDate(new Date(addedExpense.payment.date));
-
-    if (
-      addedExpenseDate.month === activeMonth.value &&
-      addedExpenseDate.year === activeYear.value
-    ) {
-      expenses.value = [...expenses.value, addedExpense];
-    }
+    expenses.value = [...expenses.value, addedExpense];
 
     // TODO trigger toast
     updateAfterSubmit(
