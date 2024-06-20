@@ -2,6 +2,7 @@ import { User } from "@/db/models/user.ts";
 import { PaymentType } from "@/utils/constants.ts";
 import { monotonicUlid } from "@std/ulid";
 import { kv } from "@/db/kv.ts";
+import { stripDate } from "@/utils/date.ts";
 
 enum Keys {
   EXPENSES = "expenses",
@@ -112,7 +113,7 @@ export default class ExpenseService {
   }
 
   public static async update(userId: string, input: UpdateExpenseInput) {
-    const expenseId = input.id;
+    const { id: expenseId, ...payload } = input;
     const key = [Keys.EXPENSES, userId, expenseId];
     const rawExpense = await kv.get<RawExpense>(key);
 
@@ -133,16 +134,24 @@ export default class ExpenseService {
     );
 
     let expensesToUpdate: RawExpense[] = correlatedExpenses;
-
     if (rawExpense.value.payment.type === PaymentType.FIXED) {
-      const initialMonth = rawExpense.value.payment.date.getMonth() + 1;
-      expensesToUpdate = correlatedExpenses.filter(
-        (e) => e.payment.date.getMonth() + 1 >= initialMonth,
+      const { month: initialMonth } = stripDate(
+        new Date(rawExpense.value.payment.date),
       );
+      expensesToUpdate = correlatedExpenses.filter((e) => {
+        return stripDate(e.payment.date).month >= initialMonth;
+      });
     }
 
     // TODO make this more atomic. if one fails, all should fail
     expensesToUpdate.forEach(async (expense) => {
+      const expenseKey = [Keys.EXPENSES, userId, expense.id];
+      const correlationKey = [
+        Keys.EXPENSES_BY_CORRELATION,
+        userId,
+        expense.correlationId,
+        expense.id,
+      ];
       const dateKey = [
         Keys.EXPENSES_BY_DATE,
         userId,
@@ -155,18 +164,19 @@ export default class ExpenseService {
       expense.payment.date.setDate(input.payment.date.getDate());
       const updatedExpense = {
         ...expense,
-        ...input,
+        ...payload,
         payment: {
           ...expense.payment,
-          ...input.payment,
+          ...payload.payment,
           date: expense.payment.date,
         },
       };
 
       const res = await kv
         .atomic()
-        .set(key, updatedExpense)
+        .set(expenseKey, updatedExpense)
         .set(dateKey, updatedExpense)
+        .set(correlationKey, updatedExpense)
         .commit();
 
       if (!res.ok) {
@@ -219,6 +229,13 @@ export default class ExpenseService {
     }
     // TODO make this more atomic. if one fails, all should fail
     expensesToDelete.forEach(async (expense) => {
+      const expenseKey = [Keys.EXPENSES, userId, expense.id];
+      const correlationKey = [
+        Keys.EXPENSES_BY_CORRELATION,
+        userId,
+        expense.correlationId,
+        expense.id,
+      ];
       const dateKey = [
         Keys.EXPENSES_BY_DATE,
         userId,
@@ -230,8 +247,9 @@ export default class ExpenseService {
 
       const res = await kv
         .atomic()
-        .delete(key)
+        .delete(expenseKey)
         .delete(dateKey)
+        .delete(correlationKey)
         .set(deletedKey, expense)
         .commit();
 

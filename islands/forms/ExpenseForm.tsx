@@ -167,7 +167,8 @@ export default function ExpenseForm(props: ExpenseFormProps) {
             type="date"
             placeholder="Payment date"
             className="input input-sm input-bordered"
-            value={expense ? formDate(expense.payment.date) : formDate()}
+            value={expense ? undefined : formDate()}
+            defaultValue={expense ? formDate(expense.payment.date) : undefined}
             min={expense
               ? `${activeYear.value}-${
                 activeMonth.value.toString().padStart(2, "0")
