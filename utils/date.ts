@@ -19,7 +19,14 @@ export const getFormattedDate = (date: Date | string) => {
 export const formDate = (date?: Date) => {
   if (!date) {
     const d = new Date();
-    d.setMonth(activeMonth.value);
+    const formMonth = activeMonth.value - 1;
+
+    // change the date for day 1 if the month is different from the active month
+    if (formMonth !== d.getMonth()) {
+      d.setDate(1);
+    }
+
+    d.setMonth(activeMonth.value - 1);
     return d.toISOString().split("T")[0];
   }
   return new Date(date).toISOString().split("T")[0];
