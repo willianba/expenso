@@ -109,7 +109,7 @@ export default function IncomeForm(props: IncomeFormProps) {
             placeholder="1/2 salary"
             className="input input-sm input-bordered"
             autoFocus={true}
-            value={income ? income.source : ""}
+            defaultValue={income ? income.source : undefined}
             required
           />
         </div>
@@ -123,7 +123,8 @@ export default function IncomeForm(props: IncomeFormProps) {
             type="date"
             placeholder="Date"
             className="input input-sm input-bordered"
-            value={income ? formDate(income.date) : formDate()}
+            value={income ? undefined : formDate()}
+            defaultValue={income ? formDate(income.date) : undefined}
             min={income
               ? `${activeYear.value}-${
                 activeMonth.value.toString().padStart(2, "0")
@@ -149,7 +150,7 @@ export default function IncomeForm(props: IncomeFormProps) {
             min={0.01}
             placeholder="Income price"
             className="input input-sm input-bordered"
-            value={income ? income.price : ""}
+            defaultValue={income ? `${income.price}` : undefined}
             required
           />
         </div>
