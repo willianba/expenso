@@ -32,8 +32,8 @@ export default class IncomeService {
     const dateKey = [
       Keys.INCOME_BY_DATE,
       input.userId,
-      input.date.getFullYear().toString(),
-      (input.date.getMonth() + 1).toString(),
+      input.date.getFullYear(),
+      input.date.getMonth() + 1,
       incomeId,
     ];
     const createRes = await kv
@@ -89,8 +89,8 @@ export default class IncomeService {
     const dateKey = [
       Keys.INCOME_BY_DATE,
       userId,
-      rawIncome.value.date.getFullYear().toString(),
-      (rawIncome.value.date.getMonth() + 1).toString(),
+      rawIncome.value.date.getFullYear(),
+      rawIncome.value.date.getMonth() + 1,
       incomeId,
     ];
 
@@ -120,8 +120,8 @@ export default class IncomeService {
     const dateKey = [
       Keys.INCOME_BY_DATE,
       userId,
-      rawIncome.value.date.getFullYear().toString(),
-      (rawIncome.value.date.getMonth() + 1).toString(),
+      rawIncome.value.date.getFullYear(),
+      rawIncome.value.date.getMonth() + 1,
       incomeId,
     ];
     const deleteKey = [Keys.DELETED_INCOME, userId, incomeId];

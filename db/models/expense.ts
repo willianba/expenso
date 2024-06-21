@@ -59,8 +59,8 @@ export default class ExpenseService {
     const dateKey = [
       Keys.EXPENSES_BY_DATE,
       input.userId,
-      input.payment.date.getFullYear().toString(),
-      (input.payment.date.getMonth() + 1).toString(),
+      input.payment.date.getFullYear(),
+      input.payment.date.getMonth() + 1,
       expenseId,
     ];
 
@@ -83,12 +83,7 @@ export default class ExpenseService {
 
   public static async getByMonth(userId: string, year: number, month: number) {
     const entries = kv.list<RawExpense>({
-      prefix: [
-        Keys.EXPENSES_BY_DATE,
-        userId,
-        year.toString(),
-        month.toString(),
-      ],
+      prefix: [Keys.EXPENSES_BY_DATE, userId, year, month],
     });
 
     const rawExpenses: RawExpense[] = await Array.fromAsync(
@@ -155,8 +150,8 @@ export default class ExpenseService {
       const dateKey = [
         Keys.EXPENSES_BY_DATE,
         userId,
-        expense.payment.date.getFullYear().toString(),
-        (expense.payment.date.getMonth() + 1).toString(),
+        expense.payment.date.getFullYear(),
+        expense.payment.date.getMonth() + 1,
         expense.id,
       ];
 
@@ -239,8 +234,8 @@ export default class ExpenseService {
       const dateKey = [
         Keys.EXPENSES_BY_DATE,
         userId,
-        expense.payment.date.getFullYear().toString(),
-        (expense.payment.date.getMonth() + 1).toString(),
+        expense.payment.date.getFullYear(),
+        expense.payment.date.getMonth() + 1,
         expense.id,
       ];
       const deletedKey = [Keys.DELETED_EXPENSES, userId, expense.id];
