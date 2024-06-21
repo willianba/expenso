@@ -53,6 +53,6 @@ for (const index of indexes) {
     console.error("Failed to update data.");
     Deno.exit(1);
   }
-
-  await writeMigration(migrationName);
 }
+
+await writeMigration(migrationName);
