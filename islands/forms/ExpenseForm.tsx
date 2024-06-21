@@ -11,7 +11,7 @@ import {
   updateAfterSubmit,
 } from "@/signals/input-data.ts";
 import useModal from "@/islands/hooks/useModal.tsx";
-import { ConfirmationModal } from "@/components/Modal.tsx";
+import { ConfirmationModalContent } from "@/components/ConfirmationModalContent.tsx";
 
 type ExpenseFormProps = {
   expense?: ExpenseWithoutUser;
@@ -25,7 +25,8 @@ export default function ExpenseForm(props: ExpenseFormProps) {
   const [modalMessage, setModalMessage] = useState("");
   const formRef = useRef<HTMLFormElement>(null);
   const {
-    modalId: confirmationModalId,
+    Modal: ConfirmationModal,
+    isOpen: isConfirmationModalOpen,
     openModal: openConfirmationModal,
     closeModal: closeConfirmationModal,
   } = useModal();
@@ -255,13 +256,16 @@ export default function ExpenseForm(props: ExpenseFormProps) {
           </button>
         </div>
       </form>
-      <ConfirmationModal
-        id={confirmationModalId}
-        closeModal={closeConfirmationModal}
-        title="Edit expense"
-        message={modalMessage}
-        onConfirm={submitUpdate}
-      />
+      {isConfirmationModalOpen && (
+        <ConfirmationModal>
+          <ConfirmationModalContent
+            closeModal={closeConfirmationModal}
+            title="Edit expense"
+            message={modalMessage}
+            onConfirm={submitUpdate}
+          />
+        </ConfirmationModal>
+      )}
     </>
   );
 }

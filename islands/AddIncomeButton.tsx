@@ -1,8 +1,8 @@
 import useModal from "@/islands/hooks/useModal.tsx";
-import { IncomeModal } from "@/components/Modal.tsx";
+import IncomeForm from "@/islands/forms/IncomeForm.tsx";
 
 export default function AddIncomeButton() {
-  const { modalId, openModal, closeModal } = useModal();
+  const { Modal, openModal, closeModal, isOpen: isModalOpen } = useModal();
 
   return (
     <>
@@ -19,10 +19,11 @@ export default function AddIncomeButton() {
           </path>
         </svg>
       </button>
-      <IncomeModal
-        id={modalId}
-        closeModal={closeModal}
-      />
+      {isModalOpen && (
+        <Modal>
+          <IncomeForm closeModal={closeModal} />
+        </Modal>
+      )}
     </>
   );
 }

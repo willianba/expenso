@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from "preact/hooks";
 import useModal from "@/islands/hooks/useModal.tsx";
-import { ConfirmationModal, IncomeModal } from "@/components/Modal.tsx";
+import { ConfirmationModalContent } from "@/components/ConfirmationModalContent.tsx";
 import { RawIncome } from "@/db/models/income.ts";
 import { incomeList } from "@/signals/income.ts";
+import IncomeForm from "@/islands/forms/IncomeForm.tsx";
 
 type IncomeOptionsButtonProps = {
   income: RawIncome;
@@ -12,12 +13,14 @@ export default function IncomeOptionsButton(props: IncomeOptionsButtonProps) {
   const { income } = props;
 
   const {
-    modalId: confirmationModalId,
+    Modal: ConfirmationModal,
+    isOpen: isConfirmationModalOpen,
     openModal: openConfirmationModal,
     closeModal: closeConfirmationModal,
   } = useModal();
   const {
-    modalId: expenseModalId,
+    Modal: IncomeModal,
+    isOpen: isIncomeModalOpen,
     openModal: openIncomeModal,
     closeModal: closeIncomeModal,
   } = useModal();
@@ -143,18 +146,21 @@ export default function IncomeOptionsButton(props: IncomeOptionsButtonProps) {
           </ul>
         </div>
       )}
-      <IncomeModal
-        id={expenseModalId}
-        closeModal={closeIncomeModal}
-        income={income}
-      />
-      <ConfirmationModal
-        id={confirmationModalId}
-        closeModal={closeConfirmationModal}
-        title="Delete income"
-        message="Confirm to delete this income."
-        onConfirm={deleteExpense}
-      />
+      {isIncomeModalOpen && (
+        <IncomeModal>
+          <IncomeForm income={income} closeModal={closeIncomeModal} />
+        </IncomeModal>
+      )}
+      {isConfirmationModalOpen && (
+        <ConfirmationModal>
+          <ConfirmationModalContent
+            closeModal={closeConfirmationModal}
+            title="Delete income"
+            message="Confirm to delete this income."
+            onConfirm={deleteExpense}
+          />
+        </ConfirmationModal>
+      )}
     </div>
   );
 }

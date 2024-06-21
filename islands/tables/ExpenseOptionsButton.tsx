@@ -2,8 +2,9 @@ import { useEffect, useRef, useState } from "preact/hooks";
 import { expenses } from "@/signals/expenses.ts";
 import { ExpenseWithoutUser } from "@/db/models/expense.ts";
 import useModal from "@/islands/hooks/useModal.tsx";
-import { ConfirmationModal, ExpenseModal } from "@/components/Modal.tsx";
+import { ConfirmationModalContent } from "@/components/ConfirmationModalContent.tsx";
 import { PaymentType } from "@/utils/constants.ts";
+import ExpenseForm from "@/islands/forms/ExpenseForm.tsx";
 
 type ExpenseOptionButtonProps = {
   expense: ExpenseWithoutUser;
@@ -13,12 +14,14 @@ export default function ExpenseOptionsButton(props: ExpenseOptionButtonProps) {
   const { expense } = props;
 
   const {
-    modalId: confirmationModalId,
+    Modal: ConfirmationModal,
+    isOpen: isConfirmationModalOpen,
     openModal: openConfirmationModal,
     closeModal: closeConfirmationModal,
   } = useModal();
   const {
-    modalId: expenseModalId,
+    Modal: ExpenseModal,
+    isOpen: isExpenseModalOpen,
     openModal: openExpenseModal,
     closeModal: closeExpenseModal,
   } = useModal();
@@ -157,19 +160,25 @@ export default function ExpenseOptionsButton(props: ExpenseOptionButtonProps) {
           </ul>
         </div>
       )}
-      <ExpenseModal
-        id={expenseModalId}
-        closeModal={closeExpenseModal}
-        expense={expense}
-        paymentType={expense.payment.type}
-      />
-      <ConfirmationModal
-        id={confirmationModalId}
-        closeModal={closeConfirmationModal}
-        title="Delete expense"
-        message={modalMessage}
-        onConfirm={deleteExpense}
-      />
+      {isExpenseModalOpen && (
+        <ExpenseModal>
+          <ExpenseForm
+            expense={expense}
+            paymentType={expense.payment.type}
+            closeModal={closeExpenseModal}
+          />
+        </ExpenseModal>
+      )}
+      {isConfirmationModalOpen && (
+        <ConfirmationModal>
+          <ConfirmationModalContent
+            closeModal={closeConfirmationModal}
+            title="Delete expense"
+            message={modalMessage}
+            onConfirm={deleteExpense}
+          />
+        </ConfirmationModal>
+      )}
     </div>
   );
 }

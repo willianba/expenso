@@ -1,18 +1,49 @@
-import { monotonicUlid } from "@std/ulid";
-import { useState } from "preact/hooks";
+import { ComponentChildren } from "preact";
+import { useEffect, useRef, useState } from "preact/hooks";
+
+type ModalProps = {
+  children: ComponentChildren;
+};
 
 export default function useModal() {
-  const [modalId] = useState(monotonicUlid());
+  const ref = useRef<HTMLDialogElement>(null);
+  const [isOpen, setIsOpen] = useState(false);
 
   const openModal = () => {
-    const dialog = document.getElementById(modalId) as HTMLDialogElement;
-    dialog.showModal();
+    setIsOpen(true);
   };
 
   const closeModal = () => {
-    const dialog = document.getElementById(modalId) as HTMLDialogElement;
-    dialog.close();
+    setIsOpen(false);
   };
 
-  return { modalId, openModal, closeModal };
+  useEffect(() => {
+    if (isOpen && ref.current) {
+      ref.current.showModal();
+    } else if (ref.current) {
+      ref.current.close();
+    }
+  }, [isOpen]);
+
+  const Modal = (props: ModalProps) => {
+    const { children } = props;
+
+    return (
+      <dialog ref={ref} class="modal modal-bottom sm:modal-middle">
+        <div class="modal-box">
+          <form method="dialog">
+            <button
+              class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+              onClick={closeModal}
+            >
+              ✕
+            </button>
+          </form>
+          {children}
+        </div>
+      </dialog>
+    );
+  };
+
+  return { openModal, closeModal, Modal, isOpen };
 }
