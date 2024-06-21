@@ -96,7 +96,7 @@ export default class ExpenseService {
 
   public static async getByYear(userId: string, year: number) {
     const entries = kv.list<RawExpense>({
-      prefix: [Keys.EXPENSES_BY_DATE, userId, year.toString()],
+      prefix: [Keys.EXPENSES_BY_DATE, userId, year],
     });
 
     const rawExpenses: RawExpense[] = await Array.fromAsync(

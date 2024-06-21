@@ -53,7 +53,7 @@ export default class IncomeService {
 
   public static async getByMonth(userId: string, year: number, month: number) {
     const entries = kv.list<RawIncome>({
-      prefix: [Keys.INCOME_BY_DATE, userId, year.toString(), month.toString()],
+      prefix: [Keys.INCOME_BY_DATE, userId, year, month],
     });
 
     const rawIncomeList: RawIncome[] = await Array.fromAsync(
@@ -66,7 +66,7 @@ export default class IncomeService {
 
   public static async getByYear(userId: string, year: number) {
     const entries = kv.list<RawIncome>({
-      prefix: [Keys.INCOME_BY_DATE, userId, year.toString()],
+      prefix: [Keys.INCOME_BY_DATE, userId, year],
     });
 
     const rawIncomeList: RawIncome[] = await Array.fromAsync(
