@@ -97,7 +97,7 @@ export default function IncomeOptionsButton(props: IncomeOptionsButtonProps) {
         </svg>
       </button>
       {isOpen && (
-        <div class="absolute right-0 mt-2 overflow-hidden shadow-md rounded-box z-10">
+        <div class="fixed right-1 bottom-1 mt-2 overflow-hidden shadow-md rounded-box z-50">
           <ul class="menu bg-base-200 rounded-box gap-1">
             <li>
               <button

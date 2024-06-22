@@ -111,7 +111,7 @@ export default function ExpenseOptionsButton(props: ExpenseOptionButtonProps) {
         </svg>
       </button>
       {isOpen && (
-        <div class="absolute right-0 mt-2 overflow-hidden shadow-md rounded-box z-10">
+        <div class="fixed mt-2 overflow-hidden shadow-md rounded-box z-50">
           <ul class="menu bg-base-200 rounded-box gap-1">
             <li>
               <button
