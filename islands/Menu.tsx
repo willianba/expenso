@@ -41,8 +41,7 @@ export default function Menu() {
         monthRef.current && !monthRef.current.contains(e.target as Node) &&
         yearRef.current && !yearRef.current.contains(e.target as Node)
       ) {
-        closeOpenSummary("month");
-        closeOpenSummary("year");
+        closeOpenSummary();
       }
     };
 
@@ -54,33 +53,31 @@ export default function Menu() {
     };
   }, []);
 
-  const fetchData = (month: number, year: number) => {
+  const fetchData = async (month: number, year: number) => {
     if (month === activeMonth.value && year === activeYear.value) {
       return;
     }
 
-    fetch(`/api/expenses/date?year=${year}&month=${month}`).then(
-      async (res) => {
-        const result = await res.json() as ExpenseWithoutUser[];
-        expenses.value = result;
-      },
-    );
+    const [expenseRes, incomeRes] = await Promise.all([
+      fetch(`/api/expenses/date?year=${year}&month=${month}`).then((res) =>
+        res.json() as Promise<ExpenseWithoutUser[]>
+      ),
+      fetch(`/api/income/date?year=${year}&month=${month}`).then((res) =>
+        res.json() as Promise<RawIncome[]>
+      ),
+    ]);
 
-    fetch(`/api/income/date?year=${year}&month=${month}`).then(async (res) => {
-      const result = await res.json() as RawIncome[];
-      incomeList.value = result;
-    });
-
+    expenses.value = expenseRes;
+    incomeList.value = incomeRes;
     activeMonth.value = month;
     activeYear.value = year;
+
+    closeOpenSummary();
   };
 
-  const closeOpenSummary = (summary: "month" | "year") => {
-    if (yearRef.current && yearRef.current.open && summary === "month") {
+  const closeOpenSummary = () => {
+    if (yearRef.current && monthRef.current) {
       yearRef.current.open = false;
-    } else if (
-      monthRef.current && monthRef.current.open && summary === "year"
-    ) {
       monthRef.current.open = false;
     }
   };
@@ -91,7 +88,7 @@ export default function Menu() {
         <ul class="menu menu-horizontal bg-neutral rounded-box gap-1">
           <li>
             <details ref={monthRef}>
-              <summary onClick={() => closeOpenSummary("month")}>
+              <summary>
                 {months.find((m) => m.number === activeMonth.value)!.name}
               </summary>
               <ul>
@@ -110,7 +107,7 @@ export default function Menu() {
           </li>
           <li>
             <details ref={yearRef}>
-              <summary onClick={() => closeOpenSummary("year")}>
+              <summary>
                 {years.find((y) => y === activeYear.value)}
               </summary>
               <ul>
