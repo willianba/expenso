@@ -73,6 +73,7 @@ const InputSelector = (props: InputSelectorProps) => {
     <div class="relative form-control">
       <input
         id={id}
+        autocomplete="off"
         placeholder={placeholder}
         required={required}
         type="text"
@@ -97,7 +98,7 @@ const InputSelector = (props: InputSelectorProps) => {
                   </li>
                 ))
               )
-              : <li class="px-3 py-1">No results</li>}
+              : <li class="px-3 py-1">"{inputValue}" will be created</li>}
           </ul>
         </div>
       )}
