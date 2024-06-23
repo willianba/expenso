@@ -11,11 +11,11 @@ export function ConfirmationModalContent(props: ConfirmationModalProps) {
   const { closeModal, title, message, onConfirm, showPropagate, buttonText } =
     props;
 
-  const saveAndClose = () => {
+  const confirmAndClose = () => {
     onConfirm(false);
   };
 
-  const saveAndPropagate = () => {
+  const confirmAndPropagate = () => {
     onConfirm(true);
   };
 
@@ -34,14 +34,14 @@ export function ConfirmationModalContent(props: ConfirmationModalProps) {
           {showPropagate && (
             <button
               class="btn btn-accent"
-              onClick={saveAndPropagate}
+              onClick={confirmAndPropagate}
             >
               {buttonText} and propagate
             </button>
           )}
           <button
             class="btn btn-primary"
-            onClick={saveAndClose}
+            onClick={confirmAndClose}
           >
             {buttonText}
           </button>
