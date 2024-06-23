@@ -1,4 +1,6 @@
+import { SignalLike } from "$fresh/src/types.ts";
 import { useEffect, useState } from "preact/hooks";
+import { useSignalEffect } from "@preact/signals";
 import { JSX } from "preact/jsx-runtime";
 
 type InputSelectorProps = {
@@ -8,10 +10,12 @@ type InputSelectorProps = {
   required: boolean;
   options: string[];
   value?: string;
+  formSubmitted: SignalLike<boolean>;
 };
 
 const InputSelector = (props: InputSelectorProps) => {
-  const { id, name, placeholder, required, options, value } = props;
+  const { id, name, placeholder, required, options, value, formSubmitted } =
+    props;
   const [inputValue, setInputValue] = useState<string>(value ?? "");
   const [selectedOption, setSelectedOption] = useState<string | null>(
     value || null,
@@ -25,6 +29,14 @@ const InputSelector = (props: InputSelectorProps) => {
       setSelectedOption(value);
     }
   }, [value]);
+
+  useSignalEffect(() => {
+    if (formSubmitted.value) {
+      setInputValue("");
+      setSelectedOption(null);
+      setShowDropdown(false);
+    }
+  });
 
   const handleChange = (e: JSX.TargetedEvent<HTMLInputElement, Event>) => {
     const { value } = e.target as HTMLInputElement;
@@ -85,7 +97,7 @@ const InputSelector = (props: InputSelectorProps) => {
         class="input input-sm input-bordered"
       />
       {showDropdown && (
-        <div class="absolute top-full left-0 right-0 mt-1 w-full shadow-md z-50">
+        <div class="absolute top-full left-0 right-0 mt-1 w-full shadow-md rounded-lg z-50">
           <ul class="menu menu-sm menu-horizontal bg-base-200 gap-1 rounded-lg w-full">
             {filteredOptions.length > 0
               ? (

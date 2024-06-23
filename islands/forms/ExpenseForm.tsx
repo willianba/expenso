@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "preact/hooks";
+import { useSignal } from "@preact/signals";
 import { PaymentType } from "@/utils/constants.ts";
 import InputSelector from "@/islands/InputSelector.tsx";
 import { daysInMonth, formDate } from "@/utils/date.ts";
@@ -21,7 +22,7 @@ type ExpenseFormProps = {
 
 export default function ExpenseForm(props: ExpenseFormProps) {
   const { expense, paymentType, closeModal } = props;
-  const [saveDisabled, setSaveDisabled] = useState(false);
+  const formSubmitted = useSignal(false);
   const [modalMessage, setModalMessage] = useState("");
   const formRef = useRef<HTMLFormElement>(null);
   const {
@@ -51,12 +52,12 @@ export default function ExpenseForm(props: ExpenseFormProps) {
   };
 
   const submitUpdate = async (propagate?: boolean) => {
-    setSaveDisabled(true);
+    formSubmitted.value = true;
 
     if (!expense) {
       // TODO show error message
       closeConfirmationModal();
-      setSaveDisabled(false);
+      formSubmitted.value = false;
       return;
     }
 
@@ -79,7 +80,7 @@ export default function ExpenseForm(props: ExpenseFormProps) {
     if (!res.ok) {
       // TODO show error message
       closeConfirmationModal();
-      setSaveDisabled(false);
+      formSubmitted.value = false;
       return;
     }
 
@@ -93,13 +94,17 @@ export default function ExpenseForm(props: ExpenseFormProps) {
       updatedExpense.payment.category,
       updatedExpense.payment.method,
     );
-    setSaveDisabled(false);
+    formSubmitted.value = false;
     closeConfirmationModal();
     cleanAndClose();
   };
 
-  const onSubmitUpdate = (e: Event) => {
-    e.preventDefault();
+  const onSubmitUpdate = () => {
+    const isFormValid = formRef.current?.reportValidity();
+
+    if (!isFormValid) {
+      return;
+    }
 
     if (expense && expense.payment.type !== PaymentType.CURRENT) {
       setModalMessage(
@@ -112,9 +117,22 @@ export default function ExpenseForm(props: ExpenseFormProps) {
     }
   };
 
-  const onSubmitCreate = async (e: Event) => {
-    e.preventDefault();
-    setSaveDisabled(true);
+  const submitAndCreateNew = () => {
+    onSubmitCreate(true);
+  };
+
+  const submitAndClose = () => {
+    onSubmitCreate(false);
+  };
+
+  const onSubmitCreate = async (keepOpen: boolean) => {
+    const isFormValid = formRef.current?.reportValidity();
+
+    if (!isFormValid) {
+      return;
+    }
+
+    formSubmitted.value = true;
     const formData = new FormData(formRef.current!);
 
     const res = await fetch("/api/expenses", {
@@ -124,7 +142,7 @@ export default function ExpenseForm(props: ExpenseFormProps) {
 
     if (!res.ok) {
       // TODO show error message
-      setSaveDisabled(false);
+      formSubmitted.value = false;
       return;
     }
 
@@ -136,16 +154,22 @@ export default function ExpenseForm(props: ExpenseFormProps) {
       addedExpense.payment.category,
       addedExpense.payment.method,
     );
-    setSaveDisabled(false);
-    cleanAndClose();
+
+    formSubmitted.value = false;
+    if (keepOpen) {
+      formRef.current?.reset();
+      const nameInput = formRef.current?.elements.namedItem(
+        "name",
+      ) as HTMLInputElement;
+      nameInput.focus();
+    } else {
+      cleanAndClose();
+    }
   };
 
   return (
     <>
-      <form
-        onSubmit={expense ? onSubmitUpdate : onSubmitCreate}
-        ref={formRef}
-      >
+      <form ref={formRef}>
         <h3 class="font-bold text-lg">
           {expense ? "Edit expense" : "Add expense"}
         </h3>
@@ -198,6 +222,7 @@ export default function ExpenseForm(props: ExpenseFormProps) {
             placeholder="Credit"
             options={paymentMethods.value}
             value={expense ? expense.payment.method : undefined}
+            formSubmitted={formSubmitted}
             required
           />
         </div>
@@ -211,6 +236,7 @@ export default function ExpenseForm(props: ExpenseFormProps) {
             placeholder="Subscription"
             options={categories.value}
             value={expense ? expense.payment.category : undefined}
+            formSubmitted={formSubmitted}
             required
           />
         </div>
@@ -251,11 +277,20 @@ export default function ExpenseForm(props: ExpenseFormProps) {
         {!expense && (
           <input type="hidden" name="paymentType" value={paymentType} />
         )}
-        <div className="flex justify-end mt-6">
+        <div className="flex justify-end gap-2 mt-6">
+          {!expense && (
+            <button
+              className="btn btn-md btn-accent"
+              onClick={submitAndCreateNew}
+              disabled={formSubmitted.value}
+            >
+              Save & New
+            </button>
+          )}
           <button
             className="btn btn-md btn-primary"
-            type="submit"
-            disabled={saveDisabled}
+            onClick={expense ? onSubmitUpdate : submitAndClose}
+            disabled={formSubmitted.value}
           >
             Save
           </button>
