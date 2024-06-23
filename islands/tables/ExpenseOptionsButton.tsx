@@ -75,9 +75,10 @@ export default function ExpenseOptionsButton(props: ExpenseOptionButtonProps) {
     closeMenu();
   };
 
-  const deleteExpense = async () => {
+  const deleteExpense = async (propagate: boolean) => {
     const res = await fetch(`/api/expenses/${expense.id}`, {
       method: "DELETE",
+      body: JSON.stringify({ propagate }),
     });
 
     if (!res.ok) {
