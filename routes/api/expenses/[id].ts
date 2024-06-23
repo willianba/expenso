@@ -22,10 +22,7 @@ const UpdateExpenseSchema = z.object({
 });
 
 const DeleteExpenseSchema = z.object({
-  propagate: z
-    .string()
-    .optional()
-    .transform((v) => v === "true"),
+  propagate: z.boolean().optional().default(false),
 });
 
 export const handler: Handlers<ExpenseWithoutUser, SignedInState> = {
@@ -67,7 +64,7 @@ export const handler: Handlers<ExpenseWithoutUser, SignedInState> = {
     return Response.json(updatedExpense, { status: 200 });
   },
   async DELETE(req, ctx) {
-    const data = DeleteExpenseSchema.parse(req.body);
+    const data = DeleteExpenseSchema.parse(await req.json());
 
     logger.info("Deleting expense");
 
