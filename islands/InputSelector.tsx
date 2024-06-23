@@ -1,6 +1,6 @@
 import { SignalLike } from "$fresh/src/types.ts";
 import { useEffect, useState } from "preact/hooks";
-import { useSignalEffect } from "@preact/signals";
+import { useSignal, useSignalEffect } from "@preact/signals";
 import { JSX } from "preact/jsx-runtime";
 
 type InputSelectorProps = {
@@ -21,7 +21,7 @@ const InputSelector = (props: InputSelectorProps) => {
     value || null,
   );
   const [filteredOptions, setFilteredOptions] = useState<string[]>([]);
-  const [showDropdown, setShowDropdown] = useState<boolean>(false);
+  const showDropdown = useSignal(false);
 
   useEffect(() => {
     if (value) {
@@ -34,7 +34,7 @@ const InputSelector = (props: InputSelectorProps) => {
     if (formSubmitted.value) {
       setInputValue("");
       setSelectedOption(null);
-      setShowDropdown(false);
+      showDropdown.value = false;
     }
   });
 
@@ -47,17 +47,17 @@ const InputSelector = (props: InputSelectorProps) => {
         option.toLowerCase().includes(value.toLowerCase())
       );
       setFilteredOptions(filtered);
-      setShowDropdown(true);
+      showDropdown.value = true;
     } else {
       setFilteredOptions([]);
-      setShowDropdown(false);
+      showDropdown.value = false;
     }
   };
 
   const handleSelect = (option: string) => {
     setInputValue(option);
     setSelectedOption(option);
-    setShowDropdown(false);
+    showDropdown.value = false;
   };
 
   const handleBlur = () => {
@@ -69,16 +69,39 @@ const InputSelector = (props: InputSelectorProps) => {
         handleSelect(filtered);
       }
     }
-    setTimeout(() => {
-      setShowDropdown(false);
-    }, 100);
+    showDropdown.value = false;
   };
 
   const handleFocus = () => {
     setInputValue("");
     setSelectedOption(null);
     setFilteredOptions(options);
-    setShowDropdown(true);
+    showDropdown.value = true;
+  };
+
+  const shouldShowDropdown = () => {
+    if (showDropdown.value) {
+      return filteredOptions.length > 0 || inputValue;
+    }
+    return false;
+  };
+
+  const renderListItems = () => {
+    if (filteredOptions.length > 0) {
+      return filteredOptions.map((option) => (
+        <li
+          class="w-full"
+          key={option}
+          onMouseDown={() => handleSelect(option)}
+        >
+          <a>{option}</a>
+        </li>
+      ));
+    }
+
+    if (inputValue) {
+      return <li class="px-3 py-1">"{inputValue}" will be created</li>;
+    }
   };
 
   return (
@@ -96,22 +119,10 @@ const InputSelector = (props: InputSelectorProps) => {
         onFocus={handleFocus}
         class="input input-sm input-bordered"
       />
-      {showDropdown && (
+      {shouldShowDropdown() && (
         <div class="absolute top-full left-0 right-0 mt-1 w-full shadow-md rounded-lg z-50">
           <ul class="menu menu-sm menu-horizontal bg-base-200 gap-1 rounded-lg w-full">
-            {filteredOptions.length > 0
-              ? (
-                filteredOptions.map((option) => (
-                  <li
-                    class="w-full"
-                    key={option}
-                    onMouseDown={() => handleSelect(option)}
-                  >
-                    <a>{option}</a>
-                  </li>
-                ))
-              )
-              : <li class="px-3 py-1">"{inputValue}" will be created</li>}
+            {renderListItems()}
           </ul>
         </div>
       )}
