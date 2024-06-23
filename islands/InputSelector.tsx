@@ -77,6 +77,7 @@ const InputSelector = (props: InputSelectorProps) => {
         placeholder={placeholder}
         required={required}
         type="text"
+        value={inputValue}
         defaultValue={inputValue}
         onInput={handleChange}
         onBlur={handleBlur}
