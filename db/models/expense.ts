@@ -36,13 +36,15 @@ export type RawExpense = Omit<Expense, "user"> & {
 };
 
 export type CreateExpenseInput = Omit<RawExpense, "id">;
-export type UpdateExpenseInput = Omit<
-  RawExpense,
-  "payment" | "userId" | "price" | "correlationId"
-> & {
-  payment: Pick<Payment, "method" | "category" | "date">;
-  price?: number;
-};
+export type UpdateExpenseInput =
+  & Omit<
+    RawExpense,
+    "payment" | "userId" | "price" | "correlationId"
+  >
+  & {
+    payment: Pick<Payment, "method" | "category" | "date">;
+    price?: number;
+  };
 
 export default class ExpenseService {
   public static async create(input: CreateExpenseInput) {
@@ -107,13 +109,62 @@ export default class ExpenseService {
     return rawExpenses;
   }
 
-  public static async update(userId: string, input: UpdateExpenseInput) {
+  public static async update(
+    userId: string,
+    input: UpdateExpenseInput,
+    propagate?: boolean,
+  ) {
     const { id: expenseId, ...payload } = input;
     const key = [Keys.EXPENSES, userId, expenseId];
     const rawExpense = await kv.get<RawExpense>(key);
 
     if (!rawExpense.value) {
       throw new Deno.errors.NotFound("Expense not found");
+    }
+
+    const paymentType = rawExpense.value.payment.type;
+    if (paymentType === PaymentType.CURRENT && propagate) {
+      throw new Deno.errors.WouldBlock(
+        `Expenses of type ${paymentType} cannot be propagated when updated`,
+      );
+    }
+
+    if (!propagate) {
+      const updatedExpense = {
+        ...rawExpense.value,
+        ...input,
+        payment: {
+          ...rawExpense.value.payment,
+          ...input.payment,
+        },
+      };
+
+      const correlationKey = [
+        Keys.EXPENSES_BY_CORRELATION,
+        userId,
+        rawExpense.value.correlationId,
+        rawExpense.value.id,
+      ];
+      const dateKey = [
+        Keys.EXPENSES_BY_DATE,
+        userId,
+        rawExpense.value.payment.date.getFullYear(),
+        rawExpense.value.payment.date.getMonth() + 1,
+        rawExpense.value.id,
+      ];
+
+      const res = await kv
+        .atomic()
+        .set(key, updatedExpense)
+        .set(dateKey, updatedExpense)
+        .set(correlationKey, updatedExpense)
+        .commit();
+
+      if (!res.ok) {
+        throw new Deno.errors.Interrupted("Failed to update expense");
+      }
+
+      return updatedExpense;
     }
 
     const correlatedExpensesIterator = kv.list<RawExpense>({
@@ -191,12 +242,55 @@ export default class ExpenseService {
     return updatedExpense;
   }
 
-  public static async delete(userId: string, expenseId: string) {
+  public static async delete(
+    userId: string,
+    expenseId: string,
+    propagate?: boolean,
+  ) {
     const key = [Keys.EXPENSES, userId, expenseId];
     const rawExpense = await kv.get<RawExpense>(key);
 
     if (!rawExpense.value) {
       throw new Deno.errors.NotFound("Expense not found");
+    }
+
+    const paymentType = rawExpense.value.payment.type;
+    if (paymentType !== PaymentType.FIXED && propagate) {
+      throw new Deno.errors.WouldBlock(
+        `Expenses of type ${paymentType} cannot be propagated when deleted`,
+      );
+    }
+
+    if (!propagate) {
+      const correlationKey = [
+        Keys.EXPENSES_BY_CORRELATION,
+        userId,
+        rawExpense.value.correlationId,
+        rawExpense.value.id,
+      ];
+      const dateKey = [
+        Keys.EXPENSES_BY_DATE,
+        userId,
+        rawExpense.value.payment.date.getFullYear(),
+        rawExpense.value.payment.date.getMonth() + 1,
+        rawExpense.value.id,
+      ];
+      const deletedKey = [Keys.DELETED_EXPENSES, userId, rawExpense.value.id];
+      const res = await kv
+        .atomic()
+        .delete(key)
+        .delete(dateKey)
+        .delete(correlationKey)
+        .set(deletedKey, rawExpense.value)
+        .commit();
+
+      if (!res.ok) {
+        throw new Deno.errors.Interrupted(
+          `Failed to delete expense. Expense ID: ${expenseId}`,
+        );
+      }
+
+      return rawExpense.value;
     }
 
     const correlatedExpensesIterator = kv.list<RawExpense>({
@@ -215,7 +309,7 @@ export default class ExpenseService {
 
     // fixed expenses should be deleted from the selected month onwards
     // over time expenses should delete all correlated expenses too
-    // ^ same for fixed. but fixed is always one expense, so it's easier
+    // ^ same for current. but fixed is always one expense, so it's easier
     if (rawExpense.value.payment.type === PaymentType.FIXED) {
       const initialMonth = rawExpense.value.payment.date.getMonth() + 1;
       expensesToDelete = correlatedExpenses.filter(

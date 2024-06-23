@@ -53,14 +53,16 @@ export default function ExpenseOptionsButton(props: ExpenseOptionButtonProps) {
 
   const onClickDelete = () => {
     if (expense.payment.type === PaymentType.CURRENT) {
-      setModalMessage("Are you sure you want to delete this expense?");
+      setModalMessage(
+        `Confirm the deletion of expense "${expense.name}" for the current month.`,
+      );
     } else if (expense.payment.type === PaymentType.FIXED) {
       setModalMessage(
-        "Are you sure you want to delete this expense? This will remove all entries from the next months related to this expense.",
+        "Would you like to delete this expense only for the current month or propagate the deletion for all future months as well?",
       );
     } else {
       setModalMessage(
-        "Are you sure you want to delete this expense? This will delete all entries from past and future months related to this expense.",
+        "This will delete all entries from past and future months related to this expense.",
       );
     }
 
@@ -176,6 +178,8 @@ export default function ExpenseOptionsButton(props: ExpenseOptionButtonProps) {
             title="Delete expense"
             message={modalMessage}
             onConfirm={deleteExpense}
+            showPropagate={expense.payment.type === PaymentType.FIXED}
+            buttonText="Delete"
           />
         </ConfirmationModal>
       )}

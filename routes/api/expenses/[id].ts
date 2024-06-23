@@ -15,14 +15,25 @@ const UpdateExpenseSchema = z.object({
   paymentMethod: z.string(),
   paymentCategory: z.string(),
   price: z.string().optional(),
+  propagate: z
+    .string()
+    .optional()
+    .transform((v) => v === "true"),
+});
+
+const DeleteExpenseSchema = z.object({
+  propagate: z
+    .string()
+    .optional()
+    .transform((v) => v === "true"),
 });
 
 export const handler: Handlers<ExpenseWithoutUser, SignedInState> = {
   async PUT(req, ctx) {
-    logger.info("Updating expense");
-
     const body = Object.fromEntries(await req.formData());
     const data = UpdateExpenseSchema.parse(body);
+
+    logger.info("Updating expense");
     const userId = ctx.state.sessionUser!.id;
 
     const [paymentMethod, category] = await Promise.all([
@@ -50,17 +61,24 @@ export const handler: Handlers<ExpenseWithoutUser, SignedInState> = {
     const updatedExpense = await ExpenseService.update(
       userId,
       updateExpenseInput,
+      data.propagate,
     );
     logger.info("Expense updated", { expense: updatedExpense.id });
     return Response.json(updatedExpense, { status: 200 });
   },
-  async DELETE(_req, ctx) {
+  async DELETE(req, ctx) {
+    const data = DeleteExpenseSchema.parse(req.body);
+
     logger.info("Deleting expense");
 
     const userId = ctx.state.sessionUser!.id;
     const expenseId = ctx.params.id;
 
-    const deletedExpense = await ExpenseService.delete(userId, expenseId);
+    const deletedExpense = await ExpenseService.delete(
+      userId,
+      expenseId,
+      data.propagate,
+    );
     logger.info("Expense deleted", { expense: deletedExpense.id });
     return Response.json(deletedExpense, { status: 200 });
   },

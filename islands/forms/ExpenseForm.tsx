@@ -50,7 +50,7 @@ export default function ExpenseForm(props: ExpenseFormProps) {
     closeModal();
   };
 
-  const submitUpdate = async () => {
+  const submitUpdate = async (propagate?: boolean) => {
     setSaveDisabled(true);
 
     if (!expense) {
@@ -61,6 +61,11 @@ export default function ExpenseForm(props: ExpenseFormProps) {
     }
 
     const formData = new FormData(formRef.current!);
+
+    if (propagate !== undefined) {
+      formData.append("propagate", propagate.toString());
+    }
+
     if (expense.payment.type === PaymentType.OVER_TIME) {
       formData.delete("installments");
       formData.delete("price");
@@ -263,6 +268,8 @@ export default function ExpenseForm(props: ExpenseFormProps) {
             title="Edit expense"
             message={modalMessage}
             onConfirm={submitUpdate}
+            showPropagate={true}
+            buttonText="Edit"
           />
         </ConfirmationModal>
       )}

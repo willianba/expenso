@@ -158,6 +158,7 @@ export default function IncomeOptionsButton(props: IncomeOptionsButtonProps) {
             title="Delete income"
             message="Confirm to delete this income."
             onConfirm={deleteExpense}
+            buttonText="Delete"
           />
         </ConfirmationModal>
       )}
