@@ -41,7 +41,7 @@ export default function Menu() {
         monthRef.current && !monthRef.current.contains(e.target as Node) &&
         yearRef.current && !yearRef.current.contains(e.target as Node)
       ) {
-        closeOpenSummary();
+        closeAllDetails();
       }
     };
 
@@ -72,13 +72,23 @@ export default function Menu() {
     activeMonth.value = month;
     activeYear.value = year;
 
-    closeOpenSummary();
+    closeAllDetails();
   };
 
-  const closeOpenSummary = () => {
-    if (yearRef.current && monthRef.current) {
-      yearRef.current.open = false;
+  const closeAllDetails = () => {
+    closeMonthSummary();
+    closeYearSummary();
+  };
+
+  const closeMonthSummary = () => {
+    if (monthRef.current) {
       monthRef.current.open = false;
+    }
+  };
+
+  const closeYearSummary = () => {
+    if (yearRef.current) {
+      yearRef.current.open = false;
     }
   };
 
@@ -88,7 +98,7 @@ export default function Menu() {
         <ul class="menu menu-horizontal bg-neutral rounded-box gap-1">
           <li>
             <details ref={monthRef}>
-              <summary>
+              <summary onClick={closeYearSummary}>
                 {months.find((m) => m.number === activeMonth.value)!.name}
               </summary>
               <ul>
@@ -107,7 +117,7 @@ export default function Menu() {
           </li>
           <li>
             <details ref={yearRef}>
-              <summary>
+              <summary onClick={closeMonthSummary}>
                 {years.find((y) => y === activeYear.value)}
               </summary>
               <ul>
