@@ -28,6 +28,9 @@ export default function ExpenseOptionsButton(props: ExpenseOptionButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
   const menuRef = useRef<HTMLDivElement>(null);
+  const [buttonPosition, setButtonPosition] = useState<
+    { top: number; left: number }
+  >({ top: 0, left: 0 });
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -45,6 +48,12 @@ export default function ExpenseOptionsButton(props: ExpenseOptionButtonProps) {
 
   const toggleMenu = () => {
     setIsOpen((prev) => !prev);
+    if (!isOpen) {
+      const rect = menuRef.current?.getBoundingClientRect();
+      if (rect) {
+        setButtonPosition({ top: rect.top + rect.height, left: rect.left });
+      }
+    }
   };
 
   const closeMenu = () => {
@@ -114,7 +123,13 @@ export default function ExpenseOptionsButton(props: ExpenseOptionButtonProps) {
         </svg>
       </button>
       {isOpen && (
-        <div class="fixed mt-2 overflow-hidden shadow-md rounded-box z-50">
+        <div
+          class="fixed mt-2 shadow-md rounded-box z-50 bg-base-200"
+          style={{
+            top: `${buttonPosition.top}px`,
+            left: `${buttonPosition.left}px`,
+          }}
+        >
           <ul class="menu bg-base-200 rounded-box gap-1">
             <li>
               <button
