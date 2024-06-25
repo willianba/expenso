@@ -22,10 +22,9 @@ export default defineRoute<State>((_req, _ctx) => {
   return (
     <>
       <Loader />
-      <div class="grid grid-cols-5 gap-4 min-h-full">
-        <div class="gap-4 col-span-2 flex flex-col">
+      <div class="grid grid-cols-5 grid-rows-10 gap-4 max-h-full">
+        <div class="col-span-2 row-span-5">
           <Card
-            classes="h-2/4"
             title={<FixedCardTitle />}
             actionButton={<AddExpenseButton paymentType={PaymentType.FIXED} />}
           >
@@ -33,8 +32,9 @@ export default defineRoute<State>((_req, _ctx) => {
               paymentType={PaymentType.FIXED}
             />
           </Card>
+        </div>
+        <div class="col-span-2 row-span-5 col-start-1 row-start-6">
           <Card
-            classes="h-2/4"
             title={<OverTimeCardTitle />}
             actionButton={
               <AddExpenseButton paymentType={PaymentType.OVER_TIME} />
@@ -45,9 +45,8 @@ export default defineRoute<State>((_req, _ctx) => {
             />
           </Card>
         </div>
-        <div class="gap-4 col-span-2 flex flex-col">
+        <div class="col-span-2 row-span-10 col-start-3 row-start-1">
           <Card
-            classes="h-no-nav"
             title={<CurrentMonthCardTitle />}
             actionButton={
               <AddExpenseButton paymentType={PaymentType.CURRENT} />
@@ -58,23 +57,21 @@ export default defineRoute<State>((_req, _ctx) => {
             />
           </Card>
         </div>
-        <div class="gap-4 col-span-1 min-h-full flex flex-col">
+        <div class="row-span-3 col-start-5 row-start-1">
           <Card
             title="Income"
             actionButton={<AddIncomeButton />}
           >
             <IncomeStats />
           </Card>
-          <Card
-            classes="flex-grow"
-            title="Expenses"
-          >
+        </div>
+        <div class="row-span-4 col-start-5 row-start-4">
+          <Card title="Expenses">
             <ExpenseStats />
           </Card>
-          <Card
-            classes="flex-grow"
-            title="Balance"
-          >
+        </div>
+        <div class="row-span-3 col-start-5 row-start-8">
+          <Card title="Balance">
             <BalanceStats />
           </Card>
         </div>
