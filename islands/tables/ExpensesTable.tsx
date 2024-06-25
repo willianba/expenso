@@ -68,7 +68,7 @@ export default function ExpensesTable(props: TableProps) {
   };
 
   return (
-    <div class="overflow-y-auto">
+    <div class="overflow-y-auto max-h-full">
       <table class="table table-sm table-pin-rows">
         <thead>
           <tr class="[&>*]:hover:cursor-pointer bg-base-300">
