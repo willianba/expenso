@@ -167,9 +167,13 @@ export default function ExpenseForm(props: ExpenseFormProps) {
     }
   };
 
+  const preventDefault = (e: Event) => {
+    e.preventDefault();
+  };
+
   return (
     <>
-      <form ref={formRef}>
+      <form ref={formRef} onSubmit={preventDefault}>
         <h3 class="font-bold text-lg">
           {expense ? "Edit expense" : "Add expense"}
         </h3>
