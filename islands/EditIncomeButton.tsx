@@ -11,7 +11,7 @@ export default function EditIncomeButton() {
       </div>
       {isModalOpen && (
         <EditIncomeModal>
-          <div class="mt-6 max-h-60">
+          <div class="max-h-60">
             <IncomeTable />
           </div>
         </EditIncomeModal>

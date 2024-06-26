@@ -5,21 +5,7 @@ import { ExpenseWithoutUser } from "@/db/models/expense.ts";
 import { RawIncome } from "@/db/models/income.ts";
 import { incomeList } from "@/signals/income.ts";
 import { activeMonth, activeYear } from "@/signals/menu.ts";
-
-const months = [
-  { name: "January", number: 1 },
-  { name: "February", number: 2 },
-  { name: "March", number: 3 },
-  { name: "April", number: 4 },
-  { name: "May", number: 5 },
-  { name: "June", number: 6 },
-  { name: "July", number: 7 },
-  { name: "August", number: 8 },
-  { name: "September", number: 9 },
-  { name: "October", number: 10 },
-  { name: "November", number: 11 },
-  { name: "December", number: 12 },
-];
+import { months } from "@/utils/constants.ts";
 
 // TODO make this dynamic
 const years = [
@@ -99,19 +85,25 @@ export default function Menu() {
           <li>
             <details ref={monthRef}>
               <summary onClick={closeYearSummary}>
-                {months.find((m) => m.number === activeMonth.value)!.name}
+                {months[activeMonth.value]}
               </summary>
               <ul>
-                {months.map((month) => (
-                  <li>
-                    <a
-                      class={activeMonth.value === month.number ? "active" : ""}
-                      onClick={() => fetchData(month.number, activeYear.value)}
-                    >
-                      {month.name}
-                    </a>
-                  </li>
-                ))}
+                {Object.entries(months).map(([key, value]) => {
+                  const monthNumber = Number(key);
+
+                  return (
+                    <li>
+                      <a
+                        class={activeMonth.value === monthNumber
+                          ? "active"
+                          : ""}
+                        onClick={() => fetchData(monthNumber, activeYear.value)}
+                      >
+                        {value}
+                      </a>
+                    </li>
+                  );
+                })}
               </ul>
             </details>
           </li>
