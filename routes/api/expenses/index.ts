@@ -1,5 +1,4 @@
 import { Handlers } from "$fresh/server.ts";
-import { PaymentType } from "@/utils/constants.ts";
 import { z } from "zod";
 import ExpenseService, {
   ExpenseWithoutUser,
@@ -9,26 +8,7 @@ import { SignedInState } from "@/plugins/session.ts";
 import logger from "@/utils/logger.ts";
 import ExpenseInputFactory from "@/utils/expenses/factory.ts";
 import { stripDate, today } from "@/utils/date.ts";
-
-const CreateExpenseSchema = z
-  .object({
-    name: z.string(),
-    price: z.string(),
-    paymentDate: z.string().date(),
-    paymentMethod: z.string(),
-    paymentCategory: z.string(),
-    paymentType: z.nativeEnum(PaymentType),
-    installments: z.string().optional(),
-  })
-  .refine(
-    (schema) => {
-      if (schema.paymentType === PaymentType.OVER_TIME) {
-        return schema.installments !== undefined;
-      }
-      return true;
-    },
-    { message: "Installments are required for payments over time" },
-  );
+import { CreateExpenseSchema } from "@/utils/expenses/validators.ts";
 
 export type CreateExpenseData = z.infer<typeof CreateExpenseSchema>;
 

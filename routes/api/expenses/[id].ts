@@ -5,25 +5,12 @@ import ExpenseService, {
 } from "@/db/models/expense.ts";
 import { SignedInState } from "@/plugins/session.ts";
 import logger from "@/utils/logger.ts";
-import { z } from "zod";
 import PaymentMethodService from "@/db/models/payment-method.ts";
 import CategoryService from "@/db/models/category.ts";
-
-const UpdateExpenseSchema = z.object({
-  name: z.string(),
-  paymentDate: z.string().date(),
-  paymentMethod: z.string(),
-  paymentCategory: z.string(),
-  price: z.string().optional(),
-  propagate: z
-    .string()
-    .optional()
-    .transform((v) => v === "true"),
-});
-
-const DeleteExpenseSchema = z.object({
-  propagate: z.boolean().optional().default(false),
-});
+import {
+  DeleteExpenseSchema,
+  UpdateExpenseSchema,
+} from "@/utils/expenses/validators.ts";
 
 export const handler: Handlers<ExpenseWithoutUser, SignedInState> = {
   async PUT(req, ctx) {

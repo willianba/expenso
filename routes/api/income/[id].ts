@@ -1,17 +1,11 @@
 import { Handlers } from "$fresh/server.ts";
 import { SignedInState } from "@/plugins/session.ts";
 import logger from "@/utils/logger.ts";
-import { z } from "zod";
 import IncomeService, {
   RawIncome,
   UpdateIncomeInput,
 } from "@/db/models/income.ts";
-
-const UpdateIncomeSchema = z.object({
-  source: z.string(),
-  date: z.string().date(),
-  price: z.string(),
-});
+import { UpdateIncomeSchema } from "@/utils/income/validators.ts";
 
 export const handler: Handlers<RawIncome, SignedInState> = {
   async PUT(req, ctx) {

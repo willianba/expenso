@@ -1,12 +1,7 @@
 import { Handlers } from "$fresh/server.ts";
 import ExpenseService, { Expense } from "@/db/models/expense.ts";
 import { SignedInState } from "@/plugins/session.ts";
-import { z } from "zod";
-
-const ExpensesByMonthSchema = z.object({
-  year: z.string(),
-  month: z.string().optional(),
-});
+import { ExpensesByMonthSchema } from "@/utils/expenses/validators.ts";
 
 export const handler: Handlers<Expense, SignedInState> = {
   async GET(_req, ctx) {
