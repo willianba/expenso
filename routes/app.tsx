@@ -57,23 +57,25 @@ export default defineRoute<State>((_req, _ctx) => {
             />
           </Card>
         </div>
-        <div class="row-span-3 col-start-5 row-start-1">
-          <Card
-            title="Income"
-            actionButton={<AddIncomeButton />}
-          >
-            <IncomeStats />
-          </Card>
-        </div>
-        <div class="row-span-4 col-start-5 row-start-4">
-          <Card title="Expenses">
-            <ExpenseStats />
-          </Card>
-        </div>
-        <div class="row-span-3 col-start-5 row-start-8">
-          <Card title="Balance">
-            <BalanceStats />
-          </Card>
+        <div class="flex flex-col gap-4 row-span-10 col-start-5 row-start-1">
+          <div class="flex-none">
+            <Card
+              title="Income"
+              actionButton={<AddIncomeButton />}
+            >
+              <IncomeStats />
+            </Card>
+          </div>
+          <div class="grow">
+            <Card title="Expenses">
+              <ExpenseStats />
+            </Card>
+          </div>
+          <div class="shrink">
+            <Card title="Balance">
+              <BalanceStats />
+            </Card>
+          </div>
         </div>
       </div>
     </>
