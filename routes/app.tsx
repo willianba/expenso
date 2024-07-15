@@ -22,7 +22,7 @@ export default defineRoute<State>((_req, _ctx) => {
   return (
     <>
       <Loader />
-      <div class="grid grid-cols-5 grid-rows-10 gap-4 max-h-full">
+      <div class="grid grid-cols-5 grid-rows-10 gap-4 h-full max-h-full">
         <div class="col-span-2 row-span-5">
           <Card
             title={<FixedCardTitle />}
