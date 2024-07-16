@@ -6,13 +6,13 @@ export default defineRoute<State>((_req, _ctx) => {
     <div class="flex flex-col items-center">
       <img
         class="my-6"
-        src="/logo.svg"
-        width="128"
-        height="128"
+        src="/logo.png"
+        width="200"
+        height="200"
         alt="the Fresh logo: a sliced lemon dripping with juice"
       />
       <h1 class="text-4xl font-bold">Welcome to Expenso</h1>
-      <h2>This is a default page and logo, but the app works!</h2>
+      <h2>Sign in on the top-right button!</h2>
     </div>
   );
 });
