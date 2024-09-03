@@ -99,12 +99,10 @@ export default class ExpenseInputFactory {
   }
 
   private getInstallmentDate(installment: number) {
-    return installment === 1
-      ? new Date(this.data.paymentDate)
-      : new Date(
-          new Date(this.data.paymentDate).setMonth(
-            new Date(this.data.paymentDate).getMonth() + installment - 1,
-          ),
-        );
+    return installment === 1 ? new Date(this.data.paymentDate) : new Date(
+      new Date(this.data.paymentDate).setMonth(
+        new Date(this.data.paymentDate).getMonth() + installment - 1,
+      ),
+    );
   }
 }

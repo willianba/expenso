@@ -36,9 +36,11 @@ for (const index of indexes) {
 
   const addOperations = kv.atomic();
 
-  for await (const entry of kv.list<RawIncome>({
-    prefix: [oldKey],
-  })) {
+  for await (
+    const entry of kv.list<RawIncome>({
+      prefix: [oldKey],
+    })
+  ) {
     const income = entry.value;
     addOperations.set([newKey, income.userId, income.id], income);
   }
