@@ -1,18 +1,30 @@
 {
   "lock": false,
+  "unstable": [
+    "kv"
+  ],
   "tasks": {
     "check": "deno fmt --check && deno lint && deno check **/*.ts && deno check **/*.tsx",
     "cli": "echo \"import '\\$fresh/src/dev/cli.ts'\" | deno run --unstable -A -",
     "db:migrate": "deno run --allow-read --allow-env --allow-net --allow-run tasks/db-migrate.ts",
     "hook": "deno run --allow-read --allow-run --allow-write https://deno.land/x/deno_hooks@0.1.1/mod.ts",
     "manifest": "deno task cli manifest $(pwd)",
-    "start": "deno run -A --unstable-kv --watch=static/,routes/ dev.ts",
-    "build": "deno run -A --unstable-kv dev.ts build",
-    "preview": "deno run -A --unstable-kv main.ts",
+    "start": "deno run -A --watch=static/,routes/ dev.ts",
+    "build": "deno run -A dev.ts build",
+    "preview": "deno run -A main.ts",
     "update": "deno run -A -r https://fresh.deno.dev/update ."
   },
-  "lint": { "rules": { "tags": ["fresh", "recommended"] } },
-  "exclude": ["**/_fresh/*"],
+  "lint": {
+    "rules": {
+      "tags": [
+        "fresh",
+        "recommended"
+      ]
+    }
+  },
+  "exclude": [
+    "**/_fresh/*"
+  ],
   "imports": {
     "$fresh/": "https://deno.land/x/fresh@1.6.8/",
     "@/": "./",
@@ -45,7 +57,9 @@
   },
   "deploy": {
     "project": "a5faed4e-ddaf-4198-9b02-e379b4f89a5b",
-    "exclude": ["**/node_modules"],
+    "exclude": [
+      "**/node_modules"
+    ],
     "include": [],
     "entrypoint": "main.ts"
   }
