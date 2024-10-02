@@ -1,4 +1,5 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/hook.sh"
 
+deno fmt
 deno lint --fix
