@@ -1,7 +1,7 @@
 import { useEffect, useState } from "preact/hooks";
 import { ComponentChildren } from "preact";
 import { formatCurrency } from "@/utils/currency.ts";
-import { expenses, totalExpenses } from "@/signals/expenses.ts";
+import { totalExpenses } from "@/signals/expenses.ts";
 import { totalIncome } from "@/signals/income.ts";
 import EditIncomeButton from "@/islands/EditIncomeButton.tsx";
 
@@ -9,7 +9,7 @@ type StatsProps = {
   children: ComponentChildren;
 };
 
-export default function Stats(props: StatsProps) {
+function Stats(props: StatsProps) {
   const { children } = props;
 
   return (
@@ -21,103 +21,40 @@ export default function Stats(props: StatsProps) {
   );
 }
 
-export function IncomeStats() {
+export function Statistics() {
   return (
     <Stats>
-      <div class="stat">
-        <div class="stat-title">Total income</div>
-        <div class="stat-value text-accent">
-          {formatCurrency(totalIncome.value)}
-        </div>
-        <EditIncomeButton />
-      </div>
+      <TotalIncome />
+      <TotalSpent />
+      <Balance />
     </Stats>
   );
 }
 
-export function ExpenseStats() {
-  const [categoryMostSpending, setCategoryMostSpending] = useState("None");
-  const [paymentMethodMostUsed, setPaymentMethodMostUsed] = useState("None");
-
-  // TODO this is disgusting, refactor. maybe when i have dashboards, these can be new signals
-  useEffect(() => {
-    const result = expenses.value.reduce(
-      (acc, expense) => {
-        const category = expense.payment.category;
-        const paymentMethod = expense.payment.method;
-        const price = expense.price;
-
-        acc.categories[category] = (acc.categories[category] || 0) +
-          price;
-        acc.paymentMethods[paymentMethod] =
-          (acc.paymentMethods[paymentMethod] || 0) + price;
-
-        if (
-          acc.categories[category] >
-            acc.categories[acc.categoryMostSpending] ||
-          !acc.categoryMostSpending
-        ) {
-          acc.categoryMostSpending = category;
-        }
-
-        if (
-          acc.paymentMethods[paymentMethod] >
-            acc.paymentMethods[acc.paymentMethodMostUsed] ||
-          !acc.paymentMethodMostUsed
-        ) {
-          acc.paymentMethodMostUsed = paymentMethod;
-        }
-
-        return acc;
-      },
-      {
-        categories: {} as Record<string, number>,
-        paymentMethods: {} as Record<string, number>,
-        categoryMostSpending: "",
-        paymentMethodMostUsed: "",
-      },
-    );
-
-    const { categoryMostSpending, paymentMethodMostUsed } = result;
-
-    if (categoryMostSpending !== "") {
-      setCategoryMostSpending(categoryMostSpending);
-    } else {
-      setCategoryMostSpending("None");
-    }
-
-    if (paymentMethodMostUsed !== "") {
-      setPaymentMethodMostUsed(paymentMethodMostUsed);
-    } else {
-      setPaymentMethodMostUsed("None");
-    }
-  }, [expenses.value]);
-
+function TotalIncome() {
   return (
-    <Stats>
-      <div class="stat">
-        <div class="stat-title">Total spent</div>
-        <div class="stat-value text-accent">
-          {formatCurrency(totalExpenses.value)}
-        </div>
+    <div class="stat">
+      <div class="stat-title">Total income</div>
+      <div class="stat-value text-accent">
+        {formatCurrency(totalIncome.value)}
       </div>
-      <div class="stat">
-        <div class="stat-title">Category with the most spending</div>
-        <div class="stat-value text-info">
-          {categoryMostSpending}
-        </div>
-      </div>
-      <div class="stat">
-        <div class="stat-title">Payment method most used</div>
-        <div class="stat-value text-info">
-          {paymentMethodMostUsed}
-        </div>
-      </div>
-    </Stats>
+      <EditIncomeButton />
+    </div>
   );
 }
 
-export function BalanceStats() {
+function TotalSpent() {
+  return (
+    <div class="stat">
+      <div class="stat-title">Total spent</div>
+      <div class="stat-value text-accent">
+        {formatCurrency(totalExpenses.value)}
+      </div>
+    </div>
+  );
+}
+
+function Balance() {
   const [textStyle, setTextStyle] = useState("text-info");
 
   useEffect(() => {
@@ -133,13 +70,11 @@ export function BalanceStats() {
   }, [totalIncome.value, totalExpenses.value]);
 
   return (
-    <Stats>
-      <div class="stat">
-        <div class="stat-title">Balance</div>
-        <div class={`stat-value ${textStyle}`}>
-          {formatCurrency(totalIncome.value - totalExpenses.value)}
-        </div>
+    <div class="stat">
+      <div class="stat-title">Balance</div>
+      <div class={`stat-value ${textStyle}`}>
+        {formatCurrency(totalIncome.value - totalExpenses.value)}
       </div>
-    </Stats>
+    </div>
   );
 }

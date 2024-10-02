@@ -7,12 +7,13 @@ import Loader from "@/islands/Loader.tsx";
 import AddExpenseButton from "@/islands/AddExpenseButton.tsx";
 import ExpensesTable from "@/islands/tables/ExpensesTable.tsx";
 import AddIncomeButton from "@/islands/AddIncomeButton.tsx";
-import { BalanceStats, ExpenseStats, IncomeStats } from "@/islands/Stats.tsx";
+import { Statistics } from "@/islands/Stats.tsx";
 import {
   CurrentMonthCardTitle,
   FixedCardTitle,
   OverTimeCardTitle,
 } from "@/islands/CardTitle.tsx";
+import { Grouping } from "@/islands/Grouping.tsx";
 
 export const config: RouteConfig = {
   skipInheritedLayouts: true,
@@ -57,25 +58,18 @@ export default defineRoute<State>((_req, _ctx) => {
             />
           </Card>
         </div>
-        <div class="flex flex-col gap-4 row-span-10 col-start-5 row-start-1">
-          <div class="flex-none">
-            <Card
-              title="Income"
-              actionButton={<AddIncomeButton />}
-            >
-              <IncomeStats />
-            </Card>
-          </div>
-          <div class="grow">
-            <Card title="Expenses">
-              <ExpenseStats />
-            </Card>
-          </div>
-          <div class="shrink">
-            <Card title="Balance">
-              <BalanceStats />
-            </Card>
-          </div>
+        <div class="col-span-1 row-span-5 col-start-5 row-start-1">
+          <Card
+            title="Statistics"
+            actionButton={<AddIncomeButton />}
+          >
+            <Statistics />
+          </Card>
+        </div>
+        <div class="col-span-1 row-span-5 col-start-5 row-start-6">
+          <Card title="Grouping">
+            <Grouping />
+          </Card>
         </div>
       </div>
     </>

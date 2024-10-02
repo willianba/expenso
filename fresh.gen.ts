@@ -23,6 +23,7 @@ import * as $AuthButton from "./islands/AuthButton.tsx";
 import * as $BackButton from "./islands/BackButton.tsx";
 import * as $CardTitle from "./islands/CardTitle.tsx";
 import * as $EditIncomeButton from "./islands/EditIncomeButton.tsx";
+import * as $Grouping from "./islands/Grouping.tsx";
 import * as $InputSelector from "./islands/InputSelector.tsx";
 import * as $Loader from "./islands/Loader.tsx";
 import * as $Menu from "./islands/Menu.tsx";
@@ -62,6 +63,7 @@ const manifest = {
     "./islands/BackButton.tsx": $BackButton,
     "./islands/CardTitle.tsx": $CardTitle,
     "./islands/EditIncomeButton.tsx": $EditIncomeButton,
+    "./islands/Grouping.tsx": $Grouping,
     "./islands/InputSelector.tsx": $InputSelector,
     "./islands/Loader.tsx": $Loader,
     "./islands/Menu.tsx": $Menu,
