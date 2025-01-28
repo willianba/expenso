@@ -36,7 +36,7 @@ import * as $tables_ExpenseOptionsButton from "./islands/tables/ExpenseOptionsBu
 import * as $tables_ExpensesTable from "./islands/tables/ExpensesTable.tsx";
 import * as $tables_IncomeOptionsButton from "./islands/tables/IncomeOptionsButton.tsx";
 import * as $tables_IncomeTable from "./islands/tables/IncomeTable.tsx";
-import { type Manifest } from "$fresh/server.ts";
+import type { Manifest } from "$fresh/server.ts";
 
 const manifest = {
   routes: {

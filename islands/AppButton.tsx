@@ -12,7 +12,9 @@ export default function AppButton(props: AppButtonProps) {
   const [showButton, setShowButton] = useState(false);
 
   useEffect(() => {
-    if (sessionUser && whitelistedPathnames.includes(location.pathname)) {
+    if (
+      sessionUser && whitelistedPathnames.includes(globalThis.location.pathname)
+    ) {
       setShowButton(true);
     }
   }, []);

@@ -6,11 +6,11 @@ export default function BackButton() {
   const [showButton, setShowButton] = useState(false);
 
   useEffect(() => {
-    setShowButton(!blacklistedPathnames.includes(location.pathname));
+    setShowButton(!blacklistedPathnames.includes(globalThis.location.pathname));
   }, []);
 
   const goBack = () => {
-    window.history.back();
+    globalThis.history.back();
   };
 
   return (showButton

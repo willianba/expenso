@@ -32,7 +32,7 @@ export default function Menu() {
     };
 
     document.addEventListener("click", onClickOutside);
-    showButton.value = allowedPathnames.includes(location.pathname);
+    showButton.value = allowedPathnames.includes(globalThis.location.pathname);
 
     return () => {
       document.removeEventListener("click", onClickOutside);

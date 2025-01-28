@@ -23,7 +23,7 @@ export default function AuthButton(props: AuthButtonProps) {
   });
 
   useEffect(() => {
-    setShowButton(!blacklistedPathnames.includes(location.pathname));
+    setShowButton(!blacklistedPathnames.includes(globalThis.location.pathname));
   }, []);
 
   useEffect(() => {
