@@ -25,7 +25,7 @@ export const handler: RouteHandler<User, State> = {
     await kv.set(
       key,
       { password: encryptedPassword },
-      { expireIn: 10 * 1000 }, // 10 minutes
+      { expireIn: 600000 }, // 10 minutes
     );
 
     const { error } = await mailer.client.emails.send({
