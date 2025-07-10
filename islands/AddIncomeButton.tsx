@@ -6,7 +6,7 @@ export default function AddIncomeButton() {
 
   return (
     <>
-      <button class="btn btn-sm btn-primary" onClick={openModal}>
+      <button type="button" class="btn btn-sm btn-primary" onClick={openModal}>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           className="fill-current w-3 h-3"

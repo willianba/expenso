@@ -21,9 +21,15 @@ export default function AppButton(props: AppButtonProps) {
 
   return (showButton
     ? (
-      <a href="/app" class="btn btn-primary">
+      <button
+        type="button"
+        class="btn btn-primary"
+        onClick={() => {
+          location.href = "/app";
+        }}
+      >
         Go to app
-      </a>
+      </button>
     )
     : null);
 }

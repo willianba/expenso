@@ -10,7 +10,7 @@ export default function Card(props: CardProps) {
   const { title, actionButton, children } = props;
 
   return (
-    <div class="card card-compact w-full bg-base-100 shadow-s h-full">
+    <div class="card card-sm w-full bg-base-100 shadow-xs h-full">
       <div class="card-body h-full overflow-hidden flex flex-col">
         <div class="flex justify-between">
           {typeof title === "string"

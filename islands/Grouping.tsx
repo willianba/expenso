@@ -7,14 +7,14 @@ import { formatCurrency } from "@/utils/currency.ts";
 export function Grouping() {
   return (
     <div class="overflow-y-auto">
-      <div role="tablist" class="tabs tabs-bordered">
+      <div role="tablist" class="tabs tabs-border">
         <input
           type="radio"
           name="report-tabs"
           role="tab"
           class="tab whitespace-nowrap"
           aria-label="By category"
-          checked={true}
+          checked
         />
         <div role="tabpanel" class="tab-content pt-4">
           <table class="table table-sm table-pin-rows">
@@ -36,7 +36,7 @@ export function Grouping() {
               {expensesByCategory.value.map((
                 [expense, { price, percentage }],
               ) => (
-                <tr class="hover">
+                <tr class="hover:bg-base-200">
                   <td>{expense}</td>
                   <td>{`${percentage.toFixed(2)}%`}</td>
                   <td>{formatCurrency(price)}</td>
@@ -73,7 +73,7 @@ export function Grouping() {
               {expensesByPaymentMethod.value.map((
                 [expense, { price, percentage }],
               ) => (
-                <tr class="hover">
+                <tr class="hover:bg-base-200">
                   <td>{expense}</td>
                   <td>{`${percentage.toFixed(2)}%`}</td>
                   <td>{formatCurrency(price)}</td>

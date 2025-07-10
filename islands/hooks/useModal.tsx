@@ -43,10 +43,11 @@ export default function useModal() {
     const { children } = props;
 
     return (
-      <dialog ref={ref} class="modal modal-bottom sm:modal-middle">
-        <div class="modal-box">
+      <dialog ref={ref} class="modal">
+        <div class="modal-box w-sm">
           <form method="dialog">
             <button
+              type="button"
               class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
               onClick={closeModal}
             >

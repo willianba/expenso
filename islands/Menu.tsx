@@ -81,7 +81,7 @@ export default function Menu() {
   return (
     showButton.value
       ? (
-        <ul class="menu menu-horizontal bg-neutral rounded-box gap-1">
+        <ul class="menu menu-horizontal bg-base-200 rounded-box gap-1">
           <li>
             <details ref={monthRef}>
               <summary onClick={closeYearSummary}>
@@ -95,7 +95,7 @@ export default function Menu() {
                     <li>
                       <a
                         class={activeMonth.value === monthNumber
-                          ? "active"
+                          ? "menu-active"
                           : ""}
                         onClick={() => fetchData(monthNumber, activeYear.value)}
                       >
@@ -116,7 +116,7 @@ export default function Menu() {
                 {years.map((year) => (
                   <li>
                     <a
-                      class={activeYear.value === year ? "active" : ""}
+                      class={activeYear.value === year ? "menu-active" : ""}
                       onClick={() => fetchData(activeMonth.value, year)}
                     >
                       {year}

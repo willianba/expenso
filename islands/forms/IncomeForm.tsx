@@ -98,7 +98,7 @@ export default function IncomeForm(props: IncomeFormProps) {
         <h3 class="font-bold text-lg">
           {income ? "Edit income" : "Add income"}
         </h3>
-        <div className="form-control">
+        <fieldset className="fieldset">
           <label for="source" className="label">
             <span className="label-text">Source</span>
           </label>
@@ -107,13 +107,13 @@ export default function IncomeForm(props: IncomeFormProps) {
             type="text"
             name="source"
             placeholder="1/2 salary"
-            className="input input-sm input-bordered"
-            autoFocus={true}
+            className="input input-sm w-full"
+            autoFocus
             defaultValue={income ? income.source : undefined}
             required
           />
-        </div>
-        <div className="form-control">
+        </fieldset>
+        <fieldset className="fieldset">
           <label for="date" className="label">
             <span className="label-text">Date</span>
           </label>
@@ -122,7 +122,7 @@ export default function IncomeForm(props: IncomeFormProps) {
             name="date"
             type="date"
             placeholder="Date"
-            className="input input-sm input-bordered"
+            className="input input-sm w-full"
             value={income ? undefined : formDate()}
             defaultValue={income ? formDate(income.date) : undefined}
             min={income
@@ -137,8 +137,8 @@ export default function IncomeForm(props: IncomeFormProps) {
               : undefined}
             required
           />
-        </div>
-        <div className="form-control">
+        </fieldset>
+        <fieldset className="fieldset">
           <label for="price" className="label">
             <span className="label-text">Price</span>
           </label>
@@ -149,11 +149,11 @@ export default function IncomeForm(props: IncomeFormProps) {
             step="0.01"
             min={0.01}
             placeholder="Income price"
-            className="input input-sm input-bordered"
+            className="input input-sm w-full"
             defaultValue={income ? `${income.price}` : undefined}
             required
           />
-        </div>
+        </fieldset>
         <div className="flex justify-end mt-6">
           <button
             className="btn btn-md btn-primary"

@@ -22,7 +22,7 @@ export default function NavBar(props: NavBarProps) {
         <a class="text-xl font-semibold" href="/">Expenso</a>
       </div>
       <div class="navbar-end">
-        <div class="flex space-x-2">
+        <div class="flex gap-x-2">
           <ThemeController />
           <AuthButton sessionUser={sessionUser} />
           <AppButton sessionUser={sessionUser} />

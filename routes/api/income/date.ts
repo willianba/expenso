@@ -1,10 +1,10 @@
-import { Handlers } from "$fresh/server.ts";
-import { SignedInState } from "@/plugins/session.ts";
+import { RouteHandler } from "fresh";
 import IncomeService, { Income } from "@/db/models/income.ts";
 import { IncomeByDateSchema } from "@/utils/income/validators.ts";
+import { SignedInState } from "@/utils/state.ts";
 
-export const handler: Handlers<Income, SignedInState> = {
-  async GET(_req, ctx) {
+export const handler: RouteHandler<Income, SignedInState> = {
+  async GET(ctx) {
     const { sessionUser } = ctx.state;
     const searchParams = Object.fromEntries(ctx.url.searchParams.entries());
     const { year, month } = IncomeByDateSchema.parse(searchParams);

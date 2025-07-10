@@ -1,14 +1,15 @@
-import { Handlers } from "$fresh/server.ts";
-import { SignedInState } from "@/plugins/session.ts";
+import { RouteHandler } from "fresh";
 import logger from "@/utils/logger.ts";
 import IncomeService, {
   RawIncome,
   UpdateIncomeInput,
 } from "@/db/models/income.ts";
 import { UpdateIncomeSchema } from "@/utils/income/validators.ts";
+import { SignedInState } from "@/utils/state.ts";
 
-export const handler: Handlers<RawIncome, SignedInState> = {
-  async PUT(req, ctx) {
+export const handler: RouteHandler<RawIncome, SignedInState> = {
+  async PUT(ctx) {
+    const req = ctx.req;
     const body = Object.fromEntries(await req.formData());
     const data = UpdateIncomeSchema.parse(body);
     const userId = ctx.state.sessionUser!.id;
@@ -28,7 +29,7 @@ export const handler: Handlers<RawIncome, SignedInState> = {
     logger.info("Income updated", { income: updatedIncome.id });
     return Response.json(updatedIncome, { status: 200 });
   },
-  async DELETE(_req, ctx) {
+  async DELETE(ctx) {
     const userId = ctx.state.sessionUser!.id;
     const incomeId = ctx.params.id;
 

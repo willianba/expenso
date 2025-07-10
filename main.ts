@@ -1,14 +1,18 @@
-/// <reference no-default-lib="true" />
-/// <reference lib="dom" />
-/// <reference lib="dom.iterable" />
-/// <reference lib="dom.asynciterable" />
-/// <reference lib="deno.ns" />
-/// <reference lib="deno.unstable" />
+import { App, fsRoutes, staticFiles } from "fresh";
 
 import "@std/dotenv/load";
 
-import { start } from "$fresh/server.ts";
-import manifest from "@/fresh.gen.ts";
-import config from "@/fresh.config.ts";
+export const app = new App();
 
-await start(manifest, config);
+app.use(staticFiles());
+
+// Enable file-system based routing
+await fsRoutes(app, {
+  loadIsland: (path) => import(`./islands/${path}`),
+  loadRoute: (path) => import(`./routes/${path}`),
+});
+
+// If this module is called directly, start the server
+if (import.meta.main) {
+  await app.listen();
+}

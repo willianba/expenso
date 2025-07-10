@@ -1,11 +1,12 @@
-import { Handlers } from "$fresh/server.ts";
-import { SignedInState } from "@/plugins/session.ts";
+import { RouteHandler } from "fresh";
 import IncomeService, { Income } from "@/db/models/income.ts";
 import logger from "@/utils/logger.ts";
 import { CreateIncomeSchema } from "@/utils/income/validators.ts";
+import { SignedInState } from "@/utils/state.ts";
 
-export const handler: Handlers<Income, SignedInState> = {
-  async POST(req, ctx) {
+export const handler: RouteHandler<Income, SignedInState> = {
+  async POST(ctx) {
+    const req = ctx.req;
     const body = Object.fromEntries(await req.formData());
     const { source, price, date } = CreateIncomeSchema.parse(body);
 

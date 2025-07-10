@@ -1,6 +1,5 @@
-import { SignalLike } from "$fresh/src/types.ts";
 import { useEffect, useState } from "preact/hooks";
-import { useSignal, useSignalEffect } from "@preact/signals";
+import { Signal, useSignal, useSignalEffect } from "@preact/signals";
 import { JSX } from "preact/jsx-runtime";
 
 type InputSelectorProps = {
@@ -10,7 +9,7 @@ type InputSelectorProps = {
   required: boolean;
   options: string[];
   value?: string;
-  formSubmitted: SignalLike<boolean>;
+  formSubmitted: Signal<boolean>;
 };
 
 const InputSelector = (props: InputSelectorProps) => {
@@ -105,7 +104,7 @@ const InputSelector = (props: InputSelectorProps) => {
   };
 
   return (
-    <div class="relative form-control">
+    <fieldset class="relative fieldset">
       <input
         id={id}
         autocomplete="off"
@@ -117,7 +116,7 @@ const InputSelector = (props: InputSelectorProps) => {
         onInput={handleChange}
         onBlur={handleBlur}
         onFocus={handleFocus}
-        class="input input-sm input-bordered"
+        class="input input-sm w-full"
       />
       {shouldShowDropdown() && (
         <div class="absolute top-full left-0 right-0 mt-1 w-full shadow-md rounded-lg z-50">
@@ -131,7 +130,7 @@ const InputSelector = (props: InputSelectorProps) => {
         name={name}
         value={selectedOption || inputValue}
       />
-    </div>
+    </fieldset>
   );
 };
 

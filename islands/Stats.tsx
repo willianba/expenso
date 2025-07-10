@@ -14,7 +14,7 @@ function Stats(props: StatsProps) {
 
   return (
     <div class="w-full h-full text-center">
-      <div class="w-full h-full stats stats-vertical shadow bg-base-200">
+      <div class="w-full h-full stats stats-vertical shadow-sm bg-base-200">
         {children}
       </div>
     </div>

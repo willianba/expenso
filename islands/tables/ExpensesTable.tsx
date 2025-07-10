@@ -122,7 +122,7 @@ export default function ExpensesTable(props: TableProps) {
             </tr>
           )}
           {sortedExpenses.map((expense) => (
-            <tr class="hover" key={expense.id}>
+            <tr class="hover:bg-base-200" key={expense.id}>
               <td>{expense.name}</td>
               <td>{expense.payment.method}</td>
               <td>{expense.payment.category}</td>

@@ -1,9 +1,8 @@
-import { computed, signal } from "@preact/signals";
+import { computed, Signal, signal } from "@preact/signals";
 import { ExpenseWithoutUser } from "@/db/models/expense.ts";
 import { PaymentType } from "@/utils/constants.ts";
 import { stripDate } from "@/utils/date.ts";
 import { activeMonth } from "@/signals/menu.ts";
-import { SignalLike } from "$fresh/src/types.ts";
 
 export const expenses = signal<ExpenseWithoutUser[]>([]);
 
@@ -51,7 +50,7 @@ const filterExpensesByType = (type: PaymentType) => {
   });
 };
 
-const computeTotal = (expenseSignal: SignalLike<ExpenseWithoutUser[]>) => {
+const computeTotal = (expenseSignal: Signal<ExpenseWithoutUser[]>) => {
   return computed(() => {
     return expenseSignal.value.reduce((acc, expense) => acc + expense.price, 0);
   });

@@ -7,7 +7,9 @@ export default function EditIncomeButton() {
   return (
     <>
       <div class="stat-actions">
-        <button class="btn btn-sm" onClick={openModal}>View & Edit</button>
+        <button type="button" class="btn btn-sm btn-ghost" onClick={openModal}>
+          View & Edit
+        </button>
       </div>
       {isModalOpen && (
         <EditIncomeModal>

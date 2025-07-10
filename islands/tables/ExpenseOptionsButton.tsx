@@ -107,6 +107,7 @@ export default function ExpenseOptionsButton(props: ExpenseOptionButtonProps) {
   return (
     <div class="relative" ref={menuRef}>
       <button
+        type="button"
         class="flex btn btn-xs btn-ghost"
         onClick={toggleMenu}
       >
@@ -133,6 +134,7 @@ export default function ExpenseOptionsButton(props: ExpenseOptionButtonProps) {
           <ul class="menu bg-base-200 rounded-box gap-1">
             <li>
               <button
+                type="button"
                 class="flex px-3 py-2 text-sm"
                 role="menuitem"
                 onClick={onClickEdit}
@@ -155,6 +157,7 @@ export default function ExpenseOptionsButton(props: ExpenseOptionButtonProps) {
             </li>
             <li>
               <button
+                type="button"
                 class="flex px-3 py-2 text-sm"
                 role="menuitem"
                 onClick={onClickDelete}

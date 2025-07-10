@@ -31,7 +31,7 @@ export default function IncomeTable() {
               </tr>
             )}
             {incomeList.value.map((inc) => (
-              <tr class="hover">
+              <tr class="hover:bg-base-200">
                 <td>{inc.source}</td>
                 <td>{getFormattedDate(inc.date)}</td>
                 <td>{formatCurrency(inc.price)}</td>

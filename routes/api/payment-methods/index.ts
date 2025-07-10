@@ -1,11 +1,11 @@
-import { Handlers } from "$fresh/server.ts";
-import { SignedInState } from "@/plugins/session.ts";
+import { RouteHandler } from "fresh";
 import PaymentMethodService, {
   PaymentMethod,
 } from "@/db/models/payment-method.ts";
+import { SignedInState } from "@/utils/state.ts";
 
-export const handler: Handlers<PaymentMethod, SignedInState> = {
-  async GET(_req, ctx) {
+export const handler: RouteHandler<PaymentMethod, SignedInState> = {
+  async GET(ctx) {
     const paymentMethods = await PaymentMethodService.getAllByUserId(
       ctx.state.sessionUser!.id,
     );

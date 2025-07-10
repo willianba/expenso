@@ -1,19 +1,20 @@
-import { Handlers } from "$fresh/server.ts";
+import { RouteHandler } from "fresh";
 import { z } from "zod";
 import ExpenseService, {
   ExpenseWithoutUser,
   RawExpense,
 } from "@/db/models/expense.ts";
-import { SignedInState } from "@/plugins/session.ts";
 import logger from "@/utils/logger.ts";
 import ExpenseInputFactory from "@/utils/expenses/factory.ts";
 import { stripDate, today } from "@/utils/date.ts";
 import { CreateExpenseSchema } from "@/utils/expenses/validators.ts";
+import { SignedInState } from "@/utils/state.ts";
 
 export type CreateExpenseData = z.infer<typeof CreateExpenseSchema>;
 
-export const handler: Handlers<ExpenseWithoutUser, SignedInState> = {
-  async POST(req, ctx) {
+export const handler: RouteHandler<ExpenseWithoutUser, SignedInState> = {
+  async POST(ctx) {
+    const req = ctx.req;
     const body = Object.fromEntries(await req.formData());
     const data = CreateExpenseSchema.parse(body);
 

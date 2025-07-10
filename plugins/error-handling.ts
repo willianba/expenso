@@ -1,4 +1,4 @@
-import type { Plugin } from "$fresh/server.ts";
+import type { Plugin } from "fresh";
 import { STATUS_CODE, STATUS_TEXT } from "@std/http/status";
 import { ZodError } from "zod";
 import { fromError } from "zod-validation-error";

@@ -26,6 +26,7 @@ export function ConfirmationModalContent(props: ConfirmationModalProps) {
       <div class="modal-action">
         <form method="dialog" class="flex gap-1">
           <button
+            type="button"
             class="btn btn-neutral"
             onClick={closeModal}
           >
@@ -33,6 +34,7 @@ export function ConfirmationModalContent(props: ConfirmationModalProps) {
           </button>
           {showPropagate && (
             <button
+              type="button"
               class="btn btn-accent"
               onClick={confirmAndPropagate}
             >
@@ -40,6 +42,7 @@ export function ConfirmationModalContent(props: ConfirmationModalProps) {
             </button>
           )}
           <button
+            type="button"
             class="btn btn-primary"
             onClick={confirmAndClose}
           >

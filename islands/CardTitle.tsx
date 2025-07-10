@@ -1,14 +1,14 @@
-import { SignalLike } from "$fresh/src/types.ts";
 import {
   totalCurrentMonthExpenses,
   totalFixedExpenses,
   totalOverTimeExpenses,
 } from "@/signals/expenses.ts";
 import { formatCurrency } from "@/utils/currency.ts";
+import { Signal } from "@preact/signals";
 
 type CardTitleProps = {
   title: string;
-  signal: SignalLike<number>;
+  signal: Signal<number>;
 };
 
 function CardTitle(props: CardTitleProps) {

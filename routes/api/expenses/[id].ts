@@ -1,9 +1,8 @@
-import { Handlers } from "$fresh/server.ts";
+import { RouteHandler } from "fresh";
 import ExpenseService, {
   ExpenseWithoutUser,
   UpdateExpenseInput,
 } from "@/db/models/expense.ts";
-import { SignedInState } from "@/plugins/session.ts";
 import logger from "@/utils/logger.ts";
 import PaymentMethodService from "@/db/models/payment-method.ts";
 import CategoryService from "@/db/models/category.ts";
@@ -11,9 +10,11 @@ import {
   DeleteExpenseSchema,
   UpdateExpenseSchema,
 } from "@/utils/expenses/validators.ts";
+import { SignedInState } from "@/utils/state.ts";
 
-export const handler: Handlers<ExpenseWithoutUser, SignedInState> = {
-  async PUT(req, ctx) {
+export const handler: RouteHandler<ExpenseWithoutUser, SignedInState> = {
+  async PUT(ctx) {
+    const req = ctx.req;
     const body = Object.fromEntries(await req.formData());
     const data = UpdateExpenseSchema.parse(body);
 
@@ -50,7 +51,8 @@ export const handler: Handlers<ExpenseWithoutUser, SignedInState> = {
     logger.info("Expense updated", { expense: updatedExpense.id });
     return Response.json(updatedExpense, { status: 200 });
   },
-  async DELETE(req, ctx) {
+  async DELETE(ctx) {
+    const req = ctx.req;
     const data = DeleteExpenseSchema.parse(await req.json());
 
     logger.info("Deleting expense");

@@ -1,8 +1,6 @@
-import { defineRoute } from "$fresh/server.ts";
-import { State } from "@/plugins/session.ts";
 import Card from "@/components/Card.tsx";
 import { PaymentType } from "@/utils/constants.ts";
-import { RouteConfig } from "$fresh/server.ts";
+import { RouteConfig } from "fresh";
 import Loader from "@/islands/Loader.tsx";
 import AddExpenseButton from "@/islands/AddExpenseButton.tsx";
 import ExpensesTable from "@/islands/tables/ExpensesTable.tsx";
@@ -14,12 +12,13 @@ import {
   OverTimeCardTitle,
 } from "@/islands/CardTitle.tsx";
 import { Grouping } from "@/islands/Grouping.tsx";
+import { define } from "@/utils/state.ts";
 
 export const config: RouteConfig = {
   skipInheritedLayouts: true,
 };
 
-export default defineRoute<State>((_req, _ctx) => {
+export default define.page(() => {
   return (
     <>
       <Loader />

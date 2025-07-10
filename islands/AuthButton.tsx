@@ -45,9 +45,15 @@ export default function AuthButton(props: AuthButtonProps) {
   return (
     showButton
       ? (
-        <a href={data.href} class={`btn btn-md ${data.class}`}>
+        <button
+          type="button"
+          class={`btn btn-md ${data.class}`}
+          onClick={() => {
+            location.href = data.href;
+          }}
+        >
           {data.title}
-        </a>
+        </button>
       )
       : null
   );

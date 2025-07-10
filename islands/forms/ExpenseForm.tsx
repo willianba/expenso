@@ -177,7 +177,7 @@ export default function ExpenseForm(props: ExpenseFormProps) {
         <h3 class="font-bold text-lg">
           {expense ? "Edit expense" : "Add expense"}
         </h3>
-        <div className="form-control">
+        <fieldset className="fieldset w-full">
           <label for="name" className="label">
             <span className="label-text">Name</span>
           </label>
@@ -186,12 +186,12 @@ export default function ExpenseForm(props: ExpenseFormProps) {
             type="text"
             name="name"
             placeholder="Expense name"
-            className="input input-sm input-bordered"
-            autoFocus={true}
+            className="input input-sm w-full"
+            autoFocus
             required
           />
-        </div>
-        <div className="form-control">
+        </fieldset>
+        <fieldset className="fieldset">
           <label for="paymentDate" className="label">
             <span className="label-text">Payment date</span>
           </label>
@@ -200,7 +200,7 @@ export default function ExpenseForm(props: ExpenseFormProps) {
             name="paymentDate"
             type="date"
             placeholder="Payment date"
-            className="input input-sm input-bordered"
+            className="input input-sm w-full"
             value={expense ? undefined : formDate()}
             defaultValue={expense ? formDate(expense.payment.date) : undefined}
             min={expense
@@ -215,8 +215,8 @@ export default function ExpenseForm(props: ExpenseFormProps) {
               : undefined}
             required
           />
-        </div>
-        <div className="form-control">
+        </fieldset>
+        <fieldset className="fieldset">
           <label for="paymentMethod" className="label">
             <span className="label-text">Payment method</span>
           </label>
@@ -229,8 +229,8 @@ export default function ExpenseForm(props: ExpenseFormProps) {
             formSubmitted={formSubmitted}
             required
           />
-        </div>
-        <div className="form-control">
+        </fieldset>
+        <fieldset className="fieldset">
           <label for="paymentCategory" className="label">
             <span className="label-text">Category</span>
           </label>
@@ -243,9 +243,9 @@ export default function ExpenseForm(props: ExpenseFormProps) {
             formSubmitted={formSubmitted}
             required
           />
-        </div>
+        </fieldset>
         {paymentType === PaymentType.OVER_TIME && !expense && (
-          <div className="form-control">
+          <fieldset className="fieldset">
             <label for="installments" className="label">
               <span className="label-text">Installments</span>
             </label>
@@ -256,13 +256,13 @@ export default function ExpenseForm(props: ExpenseFormProps) {
               step="1"
               min={1}
               placeholder="How many installments?"
-              className="input input-sm input-bordered"
+              className="input input-sm w-full"
               required
             />
-          </div>
+          </fieldset>
         )}
         {expense?.payment.type !== PaymentType.OVER_TIME && (
-          <div className="form-control">
+          <fieldset className="fieldset">
             <label for="price" className="label">
               <span className="label-text">Price</span>
             </label>
@@ -273,10 +273,10 @@ export default function ExpenseForm(props: ExpenseFormProps) {
               step="0.01"
               min={0.01}
               placeholder="Expense price"
-              className="input input-sm input-bordered"
+              className="input input-sm w-full"
               required
             />
-          </div>
+          </fieldset>
         )}
         {!expense && (
           <input type="hidden" name="paymentType" value={paymentType} />
@@ -284,6 +284,7 @@ export default function ExpenseForm(props: ExpenseFormProps) {
         <div className="flex justify-end gap-2 mt-6">
           {!expense && (
             <button
+              type="button"
               className="btn btn-md btn-accent"
               onClick={submitAndCreateNew}
               disabled={formSubmitted.value}
@@ -292,6 +293,7 @@ export default function ExpenseForm(props: ExpenseFormProps) {
             </button>
           )}
           <button
+            type="button"
             className="btn btn-md btn-primary"
             onClick={expense ? onSubmitUpdate : submitAndClose}
             disabled={formSubmitted.value}
@@ -307,7 +309,7 @@ export default function ExpenseForm(props: ExpenseFormProps) {
             title="Edit expense"
             message={modalMessage}
             onConfirm={submitUpdate}
-            showPropagate={true}
+            showPropagate
             buttonText="Edit"
           />
         </ConfirmationModal>
