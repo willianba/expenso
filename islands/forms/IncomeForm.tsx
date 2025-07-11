@@ -98,31 +98,31 @@ export default function IncomeForm(props: IncomeFormProps) {
         <h3 class="font-bold text-lg">
           {income ? "Edit income" : "Add income"}
         </h3>
-        <fieldset className="fieldset">
-          <label for="source" className="label">
-            <span className="label-text">Source</span>
+        <fieldset class="fieldset">
+          <label for="source" class="label">
+            <span class="label-text">Source</span>
           </label>
           <input
             id="source"
             type="text"
             name="source"
             placeholder="1/2 salary"
-            className="input input-sm w-full"
+            class="input input-sm w-full"
             autoFocus
             defaultValue={income ? income.source : undefined}
             required
           />
         </fieldset>
-        <fieldset className="fieldset">
-          <label for="date" className="label">
-            <span className="label-text">Date</span>
+        <fieldset class="fieldset">
+          <label for="date" class="label">
+            <span class="label-text">Date</span>
           </label>
           <input
             id="date"
             name="date"
             type="date"
             placeholder="Date"
-            className="input input-sm w-full"
+            class="input input-sm w-full"
             value={income ? undefined : formDate()}
             defaultValue={income ? formDate(income.date) : undefined}
             min={income
@@ -138,9 +138,9 @@ export default function IncomeForm(props: IncomeFormProps) {
             required
           />
         </fieldset>
-        <fieldset className="fieldset">
-          <label for="price" className="label">
-            <span className="label-text">Price</span>
+        <fieldset class="fieldset">
+          <label for="price" class="label">
+            <span class="label-text">Price</span>
           </label>
           <input
             id="price"
@@ -149,14 +149,14 @@ export default function IncomeForm(props: IncomeFormProps) {
             step="0.01"
             min={0.01}
             placeholder="Income price"
-            className="input input-sm w-full"
+            class="input input-sm w-full"
             defaultValue={income ? `${income.price}` : undefined}
             required
           />
         </fieldset>
-        <div className="flex justify-end mt-6">
+        <div class="flex justify-end mt-6">
           <button
-            className="btn btn-md btn-primary"
+            class="btn btn-md btn-primary"
             type="submit"
             disabled={saveDisabled}
           >

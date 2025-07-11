@@ -18,10 +18,10 @@ export default function ThemeController() {
   };
 
   return (
-    <label className="swap swap-rotate">
+    <label class="swap swap-rotate">
       <input
         type="checkbox"
-        className="theme-controller"
+        class="theme-controller"
         checked={theme === Themes.LATTE}
         onChange={handleToggle}
         value={theme}
@@ -35,7 +35,7 @@ export default function ThemeController() {
 function SwapOffIcon() {
   return (
     <svg
-      className="swap-off fill-current w-8 h-8"
+      class="swap-off fill-current w-8 h-8"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
     >
@@ -47,7 +47,7 @@ function SwapOffIcon() {
 function SwapOnIcon() {
   return (
     <svg
-      className="swap-on fill-current w-8 h-8"
+      class="swap-on fill-current w-8 h-8"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
     >
