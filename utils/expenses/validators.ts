@@ -15,6 +15,7 @@ export const CreateExpenseSchema = z
     paymentCategory: z.string(),
     paymentType: z.nativeEnum(PaymentType),
     installments: z.string().optional(),
+    timezoneOffset: z.string().transform((v) => parseInt(v, 10)),
   })
   .refine(
     (schema) => {
@@ -32,6 +33,7 @@ export const UpdateExpenseSchema = z.object({
   paymentMethod: z.string(),
   paymentCategory: z.string(),
   price: z.string().optional(),
+  timezoneOffset: z.string().transform((v) => parseInt(v, 10)),
   propagate: z
     .string()
     .optional()
