@@ -4,6 +4,7 @@ import { PaymentType } from "@/utils/constants.ts";
 import { monotonicUlid } from "@std/ulid";
 import PaymentMethodService from "@/db/models/payment-method.ts";
 import CategoryService from "@/db/models/category.ts";
+import { parseUserTimezoneAsUTC } from "@/utils/date.ts";
 
 export default class ExpenseInputFactory {
   private readonly data: CreateExpenseData;
@@ -38,14 +39,15 @@ export default class ExpenseInputFactory {
             method: paymentMethod.label,
             category: category.label,
             type: this.data.paymentType,
-            date: new Date(this.data.paymentDate),
+            date: parseUserTimezoneAsUTC(this.data.paymentDate),
           },
         };
 
         return [createExpenseInput];
       }
       case PaymentType.FIXED: {
-        const month = new Date(this.data.paymentDate).getMonth();
+        const baseDate = parseUserTimezoneAsUTC(this.data.paymentDate);
+        const month = baseDate.getMonth();
         const missingMonths = 12 - month;
 
         const inputs: CreateExpenseInput[] = [];
@@ -99,10 +101,14 @@ export default class ExpenseInputFactory {
   }
 
   private getInstallmentDate(installment: number) {
-    return installment === 1 ? new Date(this.data.paymentDate) : new Date(
-      new Date(this.data.paymentDate).setMonth(
-        new Date(this.data.paymentDate).getMonth() + installment - 1,
-      ),
-    );
+    const baseDate = parseUserTimezoneAsUTC(this.data.paymentDate);
+    if (installment === 1) {
+      return baseDate;
+    }
+    
+    // For subsequent installments, add months while preserving the timezone handling
+    const nextMonthDate = new Date(baseDate);
+    nextMonthDate.setMonth(baseDate.getMonth() + installment - 1);
+    return nextMonthDate;
   }
 }

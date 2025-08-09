@@ -58,3 +58,20 @@ export const stripDate = (date: Date) => {
 export const daysInMonth = (month: number, year: number) => {
   return new Date(year, month, 0).getDate();
 };
+
+/**
+ * Convert a date string from the user's timezone (GMT-3) to UTC for storage
+ * This ensures that when the user inputs a local time, it gets stored as the
+ * equivalent UTC time that will display correctly in their timezone
+ */
+export const parseUserTimezoneAsUTC = (dateString: string): Date => {
+  // Parse the date as if it's in local time
+  const localDate = new Date(dateString);
+  
+  // Adjust for GMT-3 timezone offset
+  // GMT-3 means 3 hours behind UTC, so we add 3 hours to convert local time to UTC
+  // This way, when the UI displays the UTC time in GMT-3, it shows the original time
+  const gmtMinusThreeOffsetMs = 3 * 60 * 60 * 1000; // 3 hours in milliseconds
+  
+  return new Date(localDate.getTime() + gmtMinusThreeOffsetMs);
+};

@@ -6,6 +6,7 @@ import IncomeService, {
 } from "@/db/models/income.ts";
 import { UpdateIncomeSchema } from "@/utils/income/validators.ts";
 import { SignedInState } from "@/utils/state.ts";
+import { parseUserTimezoneAsUTC } from "@/utils/date.ts";
 
 export const handler: RouteHandler<RawIncome, SignedInState> = {
   async PUT(ctx) {
@@ -18,7 +19,7 @@ export const handler: RouteHandler<RawIncome, SignedInState> = {
     const updateExpenseInput: UpdateIncomeInput = {
       id: ctx.params.id,
       source: data.source,
-      date: new Date(data.date),
+      date: parseUserTimezoneAsUTC(data.date),
       price: Number(data.price),
     };
 

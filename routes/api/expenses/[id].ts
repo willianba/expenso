@@ -11,6 +11,7 @@ import {
   UpdateExpenseSchema,
 } from "@/utils/expenses/validators.ts";
 import { SignedInState } from "@/utils/state.ts";
+import { parseUserTimezoneAsUTC } from "@/utils/date.ts";
 
 export const handler: RouteHandler<ExpenseWithoutUser, SignedInState> = {
   async PUT(ctx) {
@@ -38,7 +39,7 @@ export const handler: RouteHandler<ExpenseWithoutUser, SignedInState> = {
       payment: {
         method: paymentMethod.label,
         category: category.label,
-        date: new Date(data.paymentDate),
+        date: parseUserTimezoneAsUTC(data.paymentDate),
       },
       ...(data.price ? { price: Number(data.price) } : {}),
     };
