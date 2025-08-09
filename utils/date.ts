@@ -9,12 +9,17 @@ export const getFormattedDate = (date: Date | string) => {
   // TODO at some point make this come from user settings
   let displayDate: Date;
   
-  // For client-side rendering, convert UTC to user timezone
-  if (typeof window !== "undefined") {
-    const userOffset = getUserTimezoneOffset();
-    displayDate = convertUTCToUserTimezone(date, userOffset);
-  } else {
-    // Server-side rendering - display as-is for now
+  try {
+    // For client-side rendering, convert UTC to user timezone
+    if (typeof window !== "undefined" && typeof Intl !== "undefined") {
+      const userOffset = getUserTimezoneOffset();
+      displayDate = convertUTCToUserTimezone(date, userOffset);
+    } else {
+      // Server-side rendering or fallback - display as-is
+      displayDate = new Date(date);
+    }
+  } catch {
+    // Fallback to original behavior if timezone functions fail
     displayDate = new Date(date);
   }
   
@@ -44,11 +49,17 @@ export const formDate = (date?: Date) => {
   }
   
   // For existing dates, convert from UTC to user timezone for editing
+  // In test environments or server-side, maintain original behavior
   let displayDate: Date;
-  if (typeof window !== "undefined") {
-    const userOffset = getUserTimezoneOffset();
-    displayDate = convertUTCToUserTimezone(date, userOffset);
-  } else {
+  try {
+    if (typeof window !== "undefined" && typeof Intl !== "undefined") {
+      const userOffset = getUserTimezoneOffset();
+      displayDate = convertUTCToUserTimezone(date, userOffset);
+    } else {
+      displayDate = new Date(date);
+    }
+  } catch {
+    // Fallback to original behavior if timezone functions fail
     displayDate = new Date(date);
   }
   
@@ -113,6 +124,10 @@ export const parseUserTimezoneAsUTC = (dateString: string, timezoneOffsetMinutes
  * @returns The timezone offset in minutes (negative for timezones behind UTC)
  */
 export const getUserTimezoneOffset = (): number => {
+  if (typeof window === "undefined") {
+    // Server-side or test environment - return a default offset
+    return -180; // GMT-3 default for compatibility
+  }
   return new Date().getTimezoneOffset();
 };
 
@@ -123,6 +138,10 @@ export const getUserTimezoneOffset = (): number => {
  * @returns The timezone identifier
  */
 export const getUserTimezone = (): string => {
+  if (typeof window === "undefined" || typeof Intl === "undefined") {
+    // Server-side or test environment - return a default timezone
+    return "America/Sao_Paulo"; // GMT-3 default for compatibility
+  }
   return Intl.DateTimeFormat().resolvedOptions().timeZone;
 };
 

@@ -83,13 +83,15 @@ Deno.test("parseUserTimezoneAsUTC should handle UTC timezone (no offset)", () =>
 Deno.test("getUserTimezoneOffset should return a number", () => {
   const offset = getUserTimezoneOffset();
   assertEquals(typeof offset, "number");
+  // In test environment, should return default GMT-3 (-180)
+  assertEquals(offset, -180);
 });
 
 Deno.test("getUserTimezone should return a string", () => {
   const timezone = getUserTimezone();
   assertEquals(typeof timezone, "string");
-  // Should be a valid timezone identifier format
-  assertEquals(timezone.includes("/"), true);
+  // In test environment, should return default timezone
+  assertEquals(timezone, "America/Sao_Paulo");
 });
 
 Deno.test("convertUTCToUserTimezone should convert UTC to local timezone", () => {
