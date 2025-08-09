@@ -19,7 +19,7 @@ export const handler: RouteHandler<RawIncome, SignedInState> = {
     const updateExpenseInput: UpdateIncomeInput = {
       id: ctx.params.id,
       source: data.source,
-      date: parseUserTimezoneAsUTC(data.date),
+      date: parseUserTimezoneAsUTC(data.date, data.timezoneOffset),
       price: Number(data.price),
     };
 

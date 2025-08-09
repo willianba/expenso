@@ -39,14 +39,14 @@ export default class ExpenseInputFactory {
             method: paymentMethod.label,
             category: category.label,
             type: this.data.paymentType,
-            date: parseUserTimezoneAsUTC(this.data.paymentDate),
+            date: parseUserTimezoneAsUTC(this.data.paymentDate, this.data.timezoneOffset),
           },
         };
 
         return [createExpenseInput];
       }
       case PaymentType.FIXED: {
-        const baseDate = parseUserTimezoneAsUTC(this.data.paymentDate);
+        const baseDate = parseUserTimezoneAsUTC(this.data.paymentDate, this.data.timezoneOffset);
         const month = baseDate.getMonth();
         const missingMonths = 12 - month;
 
@@ -101,7 +101,7 @@ export default class ExpenseInputFactory {
   }
 
   private getInstallmentDate(installment: number) {
-    const baseDate = parseUserTimezoneAsUTC(this.data.paymentDate);
+    const baseDate = parseUserTimezoneAsUTC(this.data.paymentDate, this.data.timezoneOffset);
     if (installment === 1) {
       return baseDate;
     }

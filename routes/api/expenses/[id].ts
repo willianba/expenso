@@ -39,7 +39,7 @@ export const handler: RouteHandler<ExpenseWithoutUser, SignedInState> = {
       payment: {
         method: paymentMethod.label,
         category: category.label,
-        date: parseUserTimezoneAsUTC(data.paymentDate),
+        date: parseUserTimezoneAsUTC(data.paymentDate, data.timezoneOffset),
       },
       ...(data.price ? { price: Number(data.price) } : {}),
     };

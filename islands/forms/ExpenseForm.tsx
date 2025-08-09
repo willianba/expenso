@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "preact/hooks";
 import { useSignal } from "@preact/signals";
 import { PaymentType } from "@/utils/constants.ts";
 import InputSelector from "@/islands/InputSelector.tsx";
-import { daysInMonth, formDate } from "@/utils/date.ts";
+import { daysInMonth, formDate, getUserTimezoneOffset } from "@/utils/date.ts";
 import { expenses } from "@/signals/expenses.ts";
 import { ExpenseWithoutUser } from "@/db/models/expense.ts";
 import { activeMonth, activeYear } from "@/signals/menu.ts";
@@ -62,6 +62,10 @@ export default function ExpenseForm(props: ExpenseFormProps) {
     }
 
     const formData = new FormData(formRef.current!);
+
+    // Add timezone information
+    const userTimezoneOffset = getUserTimezoneOffset();
+    formData.append("timezoneOffset", userTimezoneOffset.toString());
 
     if (propagate !== undefined) {
       formData.append("propagate", propagate.toString());
@@ -134,6 +138,10 @@ export default function ExpenseForm(props: ExpenseFormProps) {
 
     formSubmitted.value = true;
     const formData = new FormData(formRef.current!);
+
+    // Add timezone information
+    const userTimezoneOffset = getUserTimezoneOffset();
+    formData.append("timezoneOffset", userTimezoneOffset.toString());
 
     const res = await fetch("/api/expenses", {
       method: "POST",
