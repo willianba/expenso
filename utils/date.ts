@@ -60,18 +60,49 @@ export const daysInMonth = (month: number, year: number) => {
 };
 
 /**
- * Convert a date string from the user's timezone (GMT-3) to UTC for storage
+ * Convert a date string from the user's timezone to UTC for storage
  * This ensures that when the user inputs a local time, it gets stored as the
  * equivalent UTC time that will display correctly in their timezone
+ * 
+ * @param dateString - The date string to convert
+ * @param timezoneOffsetMinutes - The timezone offset in minutes from UTC (optional, defaults to -180 for GMT-3)
+ *                               - Negative values = behind UTC (e.g., GMT-3 = -180)
+ *                               - Positive values = ahead of UTC (e.g., GMT+5 = 300)
+ *                               - Same as Date.getTimezoneOffset() convention
+ * @returns Date object adjusted for the timezone offset
  */
-export const parseUserTimezoneAsUTC = (dateString: string): Date => {
+export const parseUserTimezoneAsUTC = (dateString: string, timezoneOffsetMinutes?: number): Date => {
   // Parse the date as if it's in local time
   const localDate = new Date(dateString);
   
-  // Adjust for GMT-3 timezone offset
-  // GMT-3 means 3 hours behind UTC, so we add 3 hours to convert local time to UTC
-  // This way, when the UI displays the UTC time in GMT-3, it shows the original time
-  const gmtMinusThreeOffsetMs = 3 * 60 * 60 * 1000; // 3 hours in milliseconds
+  // Default to GMT-3 (180 minutes behind UTC) for backward compatibility
+  // Negative values mean behind UTC, positive values mean ahead of UTC
+  const offsetMinutes = timezoneOffsetMinutes ?? -180; // GMT-3 = -180 minutes
   
-  return new Date(localDate.getTime() + gmtMinusThreeOffsetMs);
+  // Convert minutes to milliseconds and adjust the date
+  // If timezone is behind UTC (negative offset), we add the absolute value to convert to UTC
+  // If timezone is ahead of UTC (positive offset), we subtract to convert to UTC
+  const offsetMs = -offsetMinutes * 60 * 1000;
+  
+  return new Date(localDate.getTime() + offsetMs);
+};
+
+/**
+ * Get the user's timezone offset in minutes from the browser
+ * This can be called from the client side to get the actual user timezone
+ * 
+ * @returns The timezone offset in minutes (negative for timezones behind UTC)
+ */
+export const getUserTimezoneOffset = (): number => {
+  return new Date().getTimezoneOffset();
+};
+
+/**
+ * Detect the user's timezone using Intl API
+ * This provides the timezone identifier (e.g., "America/Sao_Paulo")
+ * 
+ * @returns The timezone identifier
+ */
+export const getUserTimezone = (): string => {
+  return Intl.DateTimeFormat().resolvedOptions().timeZone;
 };
