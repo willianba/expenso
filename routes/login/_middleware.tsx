@@ -1,7 +1,7 @@
-import { FreshContext } from "fresh";
+import { Context } from "fresh";
 import { State } from "@/utils/state.ts";
 
-export async function handler(ctx: FreshContext<State>) {
+export async function handler(ctx: Context<State>) {
   if (ctx.state.sessionUser) {
     const url = new URL(ctx.req.url);
     url.pathname = "/app";

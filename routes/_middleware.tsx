@@ -1,9 +1,9 @@
-import { FreshContext } from "fresh";
+import { Context } from "fresh";
 import { State } from "@/utils/state.ts";
 import UserService from "@/db/models/user.ts";
 import { getSessionIdCookie } from "@/utils/auth.ts";
 
-export async function handler(ctx: FreshContext<State>) {
+export async function handler(ctx: Context<State>) {
   ctx.state.sessionUser = undefined;
 
   // fetch session id from cookies. try one provider at a time

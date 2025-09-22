@@ -1,4 +1,4 @@
-import { FreshContext } from "fresh";
+import { Context } from "fresh";
 import { SignedInState, State } from "@/utils/state.ts";
 
 function assertSignedIn(ctx: {
@@ -9,7 +9,7 @@ function assertSignedIn(ctx: {
   }
 }
 
-export async function handler(ctx: FreshContext<State>) {
+export async function handler(ctx: Context<State>) {
   if (ctx.url.pathname.startsWith("/api/auth")) {
     // Skip authentication for auth routes
     return await ctx.next();
