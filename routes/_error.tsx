@@ -1,10 +1,29 @@
 import { HttpError, PageProps } from "fresh";
 import { asset } from "fresh/runtime";
+import { STATUS_CODE, STATUS_TEXT } from "@std/http/status";
+import { ZodError } from "zod";
+import { fromError } from "zod-validation-error";
 
 type ErrorPageProps = {
   title: string;
   description: string;
 };
+
+function getStatusCode(error: Error) {
+  if (error instanceof Deno.errors.NotFound) {
+    return STATUS_CODE.NotFound;
+  }
+  if (error instanceof Deno.errors.AlreadyExists) {
+    return STATUS_CODE.Conflict;
+  }
+  if (error instanceof Deno.errors.PermissionDenied) {
+    return STATUS_CODE.Unauthorized;
+  }
+  if (error instanceof Deno.errors.InvalidData || error instanceof ZodError) {
+    return STATUS_CODE.BadRequest;
+  }
+  return STATUS_CODE.InternalServerError;
+}
 
 function ErrorPage(props: ErrorPageProps) {
   return (
@@ -36,6 +55,18 @@ export default function NotFoundError(props: PageProps) {
         />
       );
     }
+  }
+
+  if (error instanceof ZodError) {
+    const status = getStatusCode(error);
+    const validationError = fromError(error);
+
+    return (
+      <ErrorPage
+        title={`${status} - ${STATUS_TEXT[status]}`}
+        description={validationError.message}
+      />
+    );
   }
 
   return (
