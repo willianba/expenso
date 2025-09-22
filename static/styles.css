@@ -8,21 +8,8 @@
 @plugin "./themes/catppuccin.macchiato.ts";
 
 /* TODO remove once daisyui fixes the autofocus bug */
-@layer utilities {
-  .modal {
-    transition:
-      translate 0.3s ease-out,
-      background-color 0.3s ease-out,
-      opacity 0.1s ease-out;
-
-    @starting-style {
-      &.modal-open,
-      &[open],
-      &:target {
-        visibility: visible;
-      }
-    }
-  }
+.modal {
+  visibility: visible !important;
 }
 
 .navbar-offset {
