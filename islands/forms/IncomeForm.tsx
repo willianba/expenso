@@ -1,7 +1,7 @@
 import { useRef, useState } from "preact/hooks";
 import { incomeList } from "@/signals/income.ts";
 import { RawIncome } from "@/db/models/income.ts";
-import { daysInMonth, formDate, stripDate } from "@/utils/date.ts";
+import { daysInMonth, formDate, stripDate, getUserTimezoneOffset } from "@/utils/date.ts";
 import { activeMonth, activeYear } from "@/signals/menu.ts";
 
 type IncomeFormProps = {
@@ -30,6 +30,11 @@ export default function IncomeForm(props: IncomeFormProps) {
     }
 
     const formData = new FormData(formRef.current!);
+    
+    // Add timezone information
+    const userTimezoneOffset = getUserTimezoneOffset();
+    formData.append("timezoneOffset", userTimezoneOffset.toString());
+    
     const res = await fetch(`/api/income/${income.id}`, {
       method: "PUT",
       body: formData,
@@ -63,6 +68,11 @@ export default function IncomeForm(props: IncomeFormProps) {
     setSaveDisabled(true);
 
     const formData = new FormData(formRef.current!);
+    
+    // Add timezone information
+    const userTimezoneOffset = getUserTimezoneOffset();
+    formData.append("timezoneOffset", userTimezoneOffset.toString());
+    
     const res = await fetch("/api/income", {
       method: "POST",
       body: formData,
