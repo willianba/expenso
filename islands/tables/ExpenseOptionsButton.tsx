@@ -102,9 +102,18 @@ export default function ExpenseOptionsButton(props: ExpenseOptionButtonProps) {
     }
 
     const deletedExpense = await res.json() as ExpenseWithoutUser;
-    expenses.value = expenses.value.filter(
-      (expense) => expense.id !== deletedExpense.id,
-    );
+    
+    // If propagate is true, remove all expenses with the same correlationId
+    // Otherwise, just remove the single expense by ID
+    if (shouldPropagate) {
+      expenses.value = expenses.value.filter(
+        (expense) => expense.correlationId !== deletedExpense.correlationId,
+      );
+    } else {
+      expenses.value = expenses.value.filter(
+        (expense) => expense.id !== deletedExpense.id,
+      );
+    }
 
     closeMenu();
   };
