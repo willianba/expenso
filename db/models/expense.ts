@@ -255,13 +255,18 @@ export default class ExpenseService {
     }
 
     const paymentType = rawExpense.value.payment.type;
-    if (paymentType !== PaymentType.FIXED && propagate) {
+
+    // OVER_TIME expenses should always delete all correlated expenses
+    const shouldDeleteCorrelated = propagate ||
+      paymentType === PaymentType.OVER_TIME;
+
+    if (paymentType === PaymentType.CURRENT && propagate) {
       throw new Deno.errors.WouldBlock(
         `Expenses of type ${paymentType} cannot be propagated when deleted`,
       );
     }
 
-    if (!propagate) {
+    if (!shouldDeleteCorrelated) {
       const correlationKey = [
         Keys.EXPENSES_BY_CORRELATION,
         userId,
