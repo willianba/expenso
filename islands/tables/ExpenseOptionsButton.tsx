@@ -69,7 +69,7 @@ export default function ExpenseOptionsButton(props: ExpenseOptionButtonProps) {
       setModalMessage(
         "Would you like to delete this expense only for the current month or propagate the deletion for all future months as well?",
       );
-    } else {
+    } else if (expense.payment.type === PaymentType.OVER_TIME) {
       setModalMessage(
         "This will delete all entries from past and future months related to this expense.",
       );
@@ -85,9 +85,14 @@ export default function ExpenseOptionsButton(props: ExpenseOptionButtonProps) {
   };
 
   const deleteExpense = async (propagate: boolean) => {
+    // For OVER_TIME expenses, always propagate to delete all related expenses
+    const shouldPropagate = expense.payment.type === PaymentType.OVER_TIME
+      ? true
+      : propagate;
+
     const res = await fetch(`/api/expenses/${expense.id}`, {
       method: "DELETE",
-      body: JSON.stringify({ propagate }),
+      body: JSON.stringify({ propagate: shouldPropagate }),
     });
 
     if (!res.ok) {
@@ -198,6 +203,7 @@ export default function ExpenseOptionsButton(props: ExpenseOptionButtonProps) {
             message={modalMessage}
             onConfirm={deleteExpense}
             showPropagate={expense.payment.type === PaymentType.FIXED}
+            hideCancel={expense.payment.type === PaymentType.OVER_TIME}
             buttonText="Delete"
           />
         </ConfirmationModal>

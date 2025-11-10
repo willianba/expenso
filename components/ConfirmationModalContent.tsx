@@ -4,12 +4,20 @@ type ConfirmationModalProps = {
   title: string;
   message: string;
   showPropagate?: boolean;
+  hideCancel?: boolean;
   buttonText: string;
 };
 
 export function ConfirmationModalContent(props: ConfirmationModalProps) {
-  const { closeModal, title, message, onConfirm, showPropagate, buttonText } =
-    props;
+  const {
+    closeModal,
+    title,
+    message,
+    onConfirm,
+    showPropagate,
+    hideCancel,
+    buttonText,
+  } = props;
 
   const confirmAndClose = () => {
     onConfirm(false);
@@ -25,13 +33,15 @@ export function ConfirmationModalContent(props: ConfirmationModalProps) {
       <p class="py-4">{message}</p>
       <div class="modal-action">
         <form method="dialog" class="flex gap-1">
-          <button
-            type="button"
-            class="btn btn-neutral"
-            onClick={closeModal}
-          >
-            Cancel
-          </button>
+          {!hideCancel && (
+            <button
+              type="button"
+              class="btn btn-neutral"
+              onClick={closeModal}
+            >
+              Cancel
+            </button>
+          )}
           {showPropagate && (
             <button
               type="button"
