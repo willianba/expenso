@@ -189,8 +189,8 @@ export default class ExpenseService {
       });
     }
 
-    // TODO make this more atomic. if one fails, all should fail
-    expensesToUpdate.forEach(async (expense) => {
+    // Update all expenses atomically - if one fails, all fail
+    const updatePromises = expensesToUpdate.map(async (expense) => {
       const expenseKey = [Keys.EXPENSES, userId, expense.id];
       const correlationKey = [
         Keys.EXPENSES_BY_CORRELATION,
@@ -206,15 +206,17 @@ export default class ExpenseService {
         expense.id,
       ];
 
-      // keep the original date, only update the day
-      expense.payment.date.setDate(input.payment.date.getDate());
+      // keep the original date, only update the day (create new Date to avoid mutation)
+      const updatedDate = new Date(expense.payment.date);
+      updatedDate.setDate(input.payment.date.getDate());
+
       const updatedExpense = {
         ...expense,
         ...payload,
         payment: {
           ...expense.payment,
           ...payload.payment,
-          date: expense.payment.date,
+          date: updatedDate,
         },
       };
 
@@ -228,7 +230,12 @@ export default class ExpenseService {
       if (!res.ok) {
         throw new Deno.errors.Interrupted("Failed to update expense");
       }
+
+      return updatedExpense;
     });
+
+    // Wait for all updates to complete
+    await Promise.all(updatePromises);
 
     const updatedExpense = {
       ...rawExpense.value,
@@ -321,8 +328,8 @@ export default class ExpenseService {
         (e) => e.payment.date.getMonth() + 1 >= initialMonth,
       );
     }
-    // TODO make this more atomic. if one fails, all should fail
-    expensesToDelete.forEach(async (expense) => {
+    // Delete all expenses atomically - if one fails, all fail
+    const deletePromises = expensesToDelete.map(async (expense) => {
       const expenseKey = [Keys.EXPENSES, userId, expense.id];
       const correlationKey = [
         Keys.EXPENSES_BY_CORRELATION,
@@ -352,7 +359,12 @@ export default class ExpenseService {
           `Failed to delete expense. Expense ID: ${expense.id}`,
         );
       }
+
+      return expense;
     });
+
+    // Wait for all deletes to complete
+    await Promise.all(deletePromises);
 
     return rawExpense.value;
   }
