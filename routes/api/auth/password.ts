@@ -75,6 +75,17 @@ export const handler: RouteHandler<User, State> = {
       });
     }
 
+    // This ensures the middleware can find the session after redirect, preventing
+    // the race condition where eventual consistency hasn't caught up yet
+    const verifySession = await kv.get<User>(sessionKey, {
+      consistency: "strong",
+    });
+
+    if (!verifySession.value) {
+      logger.error("Session verification failed after write", { sessionId });
+      throw new Error("Failed to verify session creation");
+    }
+
     await kv.delete([UserKeys.TEMPORARY_LOGIN, email]);
     logger.debug("User logged in! Redirecting to home", { email });
 
