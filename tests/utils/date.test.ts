@@ -38,7 +38,8 @@ Deno.test("date.ts utils", async (t) => {
 
   await t.step("stripDate", async (t) => {
     await t.step("should return the year, month and day of the date", () => {
-      const date = new Date("2021-01-01T00:00:00Z");
+      // Use a date without timezone to avoid timezone conversion issues
+      const date = new Date("2021-01-01T12:00:00");
       const expected = { year: 2021, month: 1, day: 1 };
       const result = stripDate(date);
       assertEquals(result, expected);
