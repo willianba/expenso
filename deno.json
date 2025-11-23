@@ -10,6 +10,7 @@
     "dev": "vite",
     "build": "vite build",
     "start": "deno serve -A _fresh/server.js",
+    "test": "deno test -A --env-file=.env tests/",
     "update": "deno run -A -r jsr:@fresh/update ."
   },
   "lint": {
