@@ -253,7 +253,7 @@
     </div>
 
     <script>
-      const CHUNK_SIZE = 1024 * 1024; // 1MB chunks
+      const CHUNK_SIZE = 50 * 1024; // 50KB chunks (fits within KV's 65KB limit)
       const API_BASE = "/api/admin/import-chunked";
 
       let selectedFile = null;

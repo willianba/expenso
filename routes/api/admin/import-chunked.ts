@@ -10,6 +10,7 @@ import type {
 const DEFAULT_BATCH_SIZE = 100;
 const MAX_ATOMIC_OPERATIONS = 10;
 const CHUNK_EXPIRATION_MS = 3600000; // 1 hour
+const KV_MAX_VALUE_SIZE = 60000; // 60KB (slightly under 65KB limit for safety)
 
 interface ChunkMetadata {
   sessionId: string;
@@ -72,15 +73,27 @@ async function handleChunkUpload(
       );
     }
 
-    // Store chunk in KV with expiration
-    const chunkKey = ["import-session", sessionId, chunkIndex];
-    await kv.set(chunkKey, data, { expireIn: CHUNK_EXPIRATION_MS });
+    // Split large chunk into sub-chunks that fit in KV (65KB limit)
+    const subChunks = splitIntoSubChunks(data);
+
+    // Store each sub-chunk with expiration
+    for (let i = 0; i < subChunks.length; i++) {
+      const chunkKey = ["import-session", sessionId, chunkIndex, i];
+      await kv.set(chunkKey, subChunks[i], { expireIn: CHUNK_EXPIRATION_MS });
+    }
+
+    // Store metadata about how many sub-chunks exist
+    const metaKey = ["import-session", sessionId, chunkIndex, "meta"];
+    await kv.set(metaKey, { subChunkCount: subChunks.length }, {
+      expireIn: CHUNK_EXPIRATION_MS,
+    });
 
     logger.info("Chunk uploaded", {
       userId: ctx.state.sessionUser.id,
       sessionId,
       chunkIndex,
       totalChunks,
+      subChunks: subChunks.length,
     });
 
     return Response.json({
@@ -99,6 +112,17 @@ async function handleChunkUpload(
       { status: 500 },
     );
   }
+}
+
+/**
+ * Split data into sub-chunks that fit within KV's size limit
+ */
+function splitIntoSubChunks(data: string): string[] {
+  const chunks: string[] = [];
+  for (let i = 0; i < data.length; i += KV_MAX_VALUE_SIZE) {
+    chunks.push(data.substring(i, i + KV_MAX_VALUE_SIZE));
+  }
+  return chunks;
 }
 
 /**
@@ -127,14 +151,37 @@ async function handleComplete(
   });
 
   try {
-    // Retrieve all chunks for this session
-    const chunks: string[] = [];
+    // Retrieve all chunks for this session and reassemble sub-chunks
+    const chunkMap = new Map<number, string[]>();
     const prefix = ["import-session", sessionId];
     const iter = kv.list({ prefix });
 
     for await (const entry of iter) {
-      const chunkIndex = entry.key[2] as number;
-      chunks[chunkIndex] = entry.value as string;
+      const key = entry.key;
+      const chunkIndex = key[2] as number;
+      const subPart = key[3];
+
+      // Skip metadata entries
+      if (subPart === "meta") continue;
+
+      if (!chunkMap.has(chunkIndex)) {
+        chunkMap.set(chunkIndex, []);
+      }
+
+      const subChunkIndex = subPart as number;
+      const subChunks = chunkMap.get(chunkIndex)!;
+      subChunks[subChunkIndex] = entry.value as string;
+    }
+
+    // Reassemble chunks from sub-chunks
+    const chunks: string[] = [];
+    const sortedChunkIndices = Array.from(chunkMap.keys()).sort((a, b) =>
+      a - b
+    );
+
+    for (const chunkIndex of sortedChunkIndices) {
+      const subChunks = chunkMap.get(chunkIndex)!;
+      chunks[chunkIndex] = subChunks.join("");
     }
 
     // Verify we have all chunks
