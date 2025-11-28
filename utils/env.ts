@@ -6,6 +6,7 @@ export const envSchema = z.object({
   DENO_KV_PATH: z.string().optional(),
   DOMAIN: z.string(),
   RESEND_API_KEY: z.string(),
+  ADMIN_EMAIL: z.string().email().optional(),
 });
 
 type Env = z.infer<typeof envSchema>;
