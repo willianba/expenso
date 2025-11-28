@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chunked Database Import</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+          Ubuntu, Cantarell, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+
+      .container {
+        background: white;
+        border-radius: 12px;
+        padding: 40px;
+        max-width: 600px;
+        width: 100%;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      }
+
+      h1 {
+        color: #333;
+        margin-bottom: 10px;
+        font-size: 28px;
+      }
+
+      .subtitle {
+        color: #666;
+        margin-bottom: 30px;
+        font-size: 14px;
+      }
+
+      .upload-area {
+        border: 2px dashed #ddd;
+        border-radius: 8px;
+        padding: 40px;
+        text-align: center;
+        margin-bottom: 20px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+      }
+
+      .upload-area:hover {
+        border-color: #667eea;
+        background: #f8f9ff;
+      }
+
+      .upload-area.drag-over {
+        border-color: #667eea;
+        background: #f0f3ff;
+      }
+
+      input[type="file"] {
+        display: none;
+      }
+
+      .file-info {
+        margin: 20px 0;
+        padding: 15px;
+        background: #f5f5f5;
+        border-radius: 8px;
+        display: none;
+      }
+
+      .file-info.visible {
+        display: block;
+      }
+
+      .options {
+        margin: 20px 0;
+      }
+
+      .checkbox-group {
+        margin: 10px 0;
+        display: flex;
+        align-items: center;
+      }
+
+      .checkbox-group input {
+        margin-right: 8px;
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+      }
+
+      .checkbox-group label {
+        cursor: pointer;
+        user-select: none;
+      }
+
+      button {
+        width: 100%;
+        padding: 14px;
+        background: #667eea;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      button:hover:not(:disabled) {
+        background: #5568d3;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+      }
+
+      button:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .progress-container {
+        margin: 20px 0;
+        display: none;
+      }
+
+      .progress-container.visible {
+        display: block;
+      }
+
+      .progress-bar {
+        width: 100%;
+        height: 30px;
+        background: #f0f0f0;
+        border-radius: 15px;
+        overflow: hidden;
+        margin-bottom: 10px;
+      }
+
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        transition: width 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 600;
+        font-size: 14px;
+      }
+
+      .status {
+        text-align: center;
+        color: #666;
+        font-size: 14px;
+      }
+
+      .result {
+        margin-top: 20px;
+        padding: 15px;
+        border-radius: 8px;
+        display: none;
+      }
+
+      .result.visible {
+        display: block;
+      }
+
+      .result.success {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+      }
+
+      .result.error {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+      }
+
+      .result.warning {
+        background: #fff3cd;
+        color: #856404;
+        border: 1px solid #ffeeba;
+      }
+
+      .error-list {
+        margin-top: 10px;
+        max-height: 200px;
+        overflow-y: auto;
+        font-size: 13px;
+      }
+
+      .icon {
+        font-size: 48px;
+        margin-bottom: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🗄️ Chunked Database Import</h1>
+      <p class="subtitle">
+        Upload large backup files by splitting them into manageable chunks
+      </p>
+
+      <div class="upload-area" id="uploadArea">
+        <div class="icon">📁</div>
+        <p>
+          <strong>Click to select</strong> or drag and drop your backup file
+        </p>
+        <p style="color: #999; font-size: 13px; margin-top: 8px">
+          Supports .jsonl files
+        </p>
+        <input type="file" id="fileInput" accept=".jsonl,.json">
+      </div>
+
+      <div class="file-info" id="fileInfo">
+        <p><strong>File:</strong> <span id="fileName"></span></p>
+        <p><strong>Size:</strong> <span id="fileSize"></span></p>
+        <p><strong>Chunks:</strong> <span id="chunkCount"></span></p>
+      </div>
+
+      <div class="options">
+        <div class="checkbox-group">
+          <input type="checkbox" id="dryRun">
+          <label for="dryRun">Dry run (test without importing)</label>
+        </div>
+        <div class="checkbox-group">
+          <input type="checkbox" id="skipExisting" checked>
+          <label for="skipExisting">Skip existing entries</label>
+        </div>
+      </div>
+
+      <button id="uploadBtn" disabled>Select a file to upload</button>
+
+      <div class="progress-container" id="progressContainer">
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill">0%</div>
+        </div>
+        <div class="status" id="status">Preparing upload...</div>
+      </div>
+
+      <div class="result" id="result"></div>
+    </div>
+
+    <script>
+      const CHUNK_SIZE = 1024 * 1024; // 1MB chunks
+      const API_BASE = "/api/admin/import-chunked";
+
+      let selectedFile = null;
+
+      // Elements
+      const uploadArea = document.getElementById("uploadArea");
+      const fileInput = document.getElementById("fileInput");
+      const fileInfo = document.getElementById("fileInfo");
+      const fileName = document.getElementById("fileName");
+      const fileSize = document.getElementById("fileSize");
+      const chunkCount = document.getElementById("chunkCount");
+      const uploadBtn = document.getElementById("uploadBtn");
+      const progressContainer = document.getElementById(
+        "progressContainer",
+      );
+      const progressFill = document.getElementById("progressFill");
+      const status = document.getElementById("status");
+      const result = document.getElementById("result");
+      const dryRunCheckbox = document.getElementById("dryRun");
+      const skipExistingCheckbox = document.getElementById(
+        "skipExisting",
+      );
+
+      // Upload area click
+      uploadArea.addEventListener("click", () => fileInput.click());
+
+      // Drag and drop
+      uploadArea.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        uploadArea.classList.add("drag-over");
+      });
+
+      uploadArea.addEventListener("dragleave", () => {
+        uploadArea.classList.remove("drag-over");
+      });
+
+      uploadArea.addEventListener("drop", (e) => {
+        e.preventDefault();
+        uploadArea.classList.remove("drag-over");
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+          handleFileSelect(files[0]);
+        }
+      });
+
+      // File input change
+      fileInput.addEventListener("change", (e) => {
+        if (e.target.files.length > 0) {
+          handleFileSelect(e.target.files[0]);
+        }
+      });
+
+      // Upload button click
+      uploadBtn.addEventListener("click", handleUpload);
+
+      function handleFileSelect(file) {
+        selectedFile = file;
+
+        const sizeInMB = (file.size / (1024 * 1024)).toFixed(2);
+        const chunks = Math.ceil(file.size / CHUNK_SIZE);
+
+        fileName.textContent = file.name;
+        fileSize.textContent = `${sizeInMB} MB`;
+        chunkCount.textContent = chunks;
+
+        fileInfo.classList.add("visible");
+        uploadBtn.disabled = false;
+        uploadBtn.textContent = "Start Upload";
+        result.classList.remove("visible");
+      }
+
+      async function handleUpload() {
+        if (!selectedFile) return;
+
+        uploadBtn.disabled = true;
+        progressContainer.classList.add("visible");
+        result.classList.remove("visible");
+
+        const sessionId = generateSessionId();
+        const totalChunks = Math.ceil(selectedFile.size / CHUNK_SIZE);
+        const dryRun = dryRunCheckbox.checked;
+        const skipExisting = skipExistingCheckbox.checked;
+
+        try {
+          // Upload chunks
+          for (let i = 0; i < totalChunks; i++) {
+            const start = i * CHUNK_SIZE;
+            const end = Math.min(start + CHUNK_SIZE, selectedFile.size);
+            const chunk = selectedFile.slice(start, end);
+            const chunkText = await chunk.text();
+
+            updateProgress(i, totalChunks, "Uploading chunks...");
+
+            const response = await fetch(API_BASE, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                sessionId,
+                chunkIndex: i,
+                totalChunks,
+                data: chunkText,
+              }),
+            });
+
+            if (!response.ok) {
+              const error = await response.json();
+              throw new Error(error.message || "Chunk upload failed");
+            }
+          }
+
+          // Complete the import
+          updateProgress(
+            totalChunks,
+            totalChunks,
+            "Processing import...",
+          );
+
+          const completeUrl =
+            `${API_BASE}?action=complete&sessionId=${sessionId}&dryRun=${dryRun}&skipExisting=${skipExisting}`;
+          const completeResponse = await fetch(completeUrl, {
+            method: "POST",
+          });
+
+          const resultData = await completeResponse.json();
+
+          if (completeResponse.ok || completeResponse.status === 207) {
+            showResult(
+              resultData,
+              completeResponse.status === 207 ? "warning" : "success",
+            );
+          } else {
+            throw new Error(resultData.message || "Import failed");
+          }
+        } catch (error) {
+          showResult({
+            success: false,
+            message: error.message,
+            errors: [error.toString()],
+          }, "error");
+
+          // Attempt cleanup
+          try {
+            await fetch(`${API_BASE}?sessionId=${sessionId}`, {
+              method: "DELETE",
+            });
+          } catch (cleanupError) {
+            console.error("Cleanup failed:", cleanupError);
+          }
+        } finally {
+          uploadBtn.disabled = false;
+          uploadBtn.textContent = "Upload Another File";
+        }
+      }
+
+      function updateProgress(current, total, message) {
+        const percent = Math.round((current / total) * 100);
+        progressFill.style.width = percent + "%";
+        progressFill.textContent = percent + "%";
+        status.textContent = message;
+      }
+
+      function showResult(data, type) {
+        result.className = "result visible " + type;
+
+        let html = `<p><strong>${data.message}</strong></p>`;
+
+        if (data.entriesImported !== undefined) {
+          html += `<p>Entries imported: ${data.entriesImported}</p>`;
+        }
+
+        if (
+          data.entriesSkipped !== undefined && data.entriesSkipped > 0
+        ) {
+          html += `<p>Entries skipped: ${data.entriesSkipped}</p>`;
+        }
+
+        if (data.errors && data.errors.length > 0) {
+          html += `<div class="error-list">`;
+          html +=
+            `<p><strong>Errors (${data.errors.length}):</strong></p>`;
+          data.errors.slice(0, 10).forEach((error) => {
+            html += `<p>• ${escapeHtml(error)}</p>`;
+          });
+          if (data.errors.length > 10) {
+            html += `<p>... and ${data.errors.length - 10} more</p>`;
+          }
+          html += `</div>`;
+        }
+
+        result.innerHTML = html;
+      }
+
+      function generateSessionId() {
+        return Date.now().toString(36) +
+          Math.random().toString(36).substr(2);
+      }
+
+      function escapeHtml(text) {
+        const div = document.createElement("div");
+        div.textContent = text;
+        return div.innerHTML;
+      }
+    </script>
+  </body>
+</html>
