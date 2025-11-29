@@ -57,22 +57,13 @@ export default function NotFoundError(props: PageProps) {
     }
   }
 
-  if (error instanceof ZodError) {
-    const status = getStatusCode(error);
-    const validationError = fromError(error);
-
-    return (
-      <ErrorPage
-        title={`${status} - ${STATUS_TEXT[status]}`}
-        description={validationError.message}
-      />
-    );
-  }
+  const status = getStatusCode(error as Error);
+  const validationError = fromError(error);
 
   return (
     <ErrorPage
-      title="500 - Oops, something went wrong"
-      description="An unexpected error occurred. Please try again later."
+      title={`${status} - ${STATUS_TEXT[status]}`}
+      description={validationError.message}
     />
   );
 }
