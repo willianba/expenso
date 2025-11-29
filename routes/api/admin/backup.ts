@@ -26,13 +26,13 @@ interface ImportStats {
 }
 
 /**
- * POST /api/admin/import-chunked
+ * POST /api/admin/backup
  * Upload a chunk of the backup file
  *
- * POST /api/admin/import-chunked?action=complete&sessionId=X&dryRun=true&skipExisting=true
+ * POST /api/admin/backup?action=complete&sessionId=X&dryRun=true&skipExisting=true
  * Complete the chunked upload and process the import
  *
- * DELETE /api/admin/import-chunked?sessionId=X
+ * DELETE /api/admin/backup?sessionId=X
  * Clean up a session manually
  */
 export const handler: RouteHandler<unknown, SignedInState> = {
