@@ -31,7 +31,7 @@ export async function handler(ctx: Context<State>) {
   if (ctx.url.pathname.startsWith("/api/admin")) {
     if (!assertAdminEmail(ctx)) {
       // Return 404 instead of 403 for security through obscurity
-      return new Response("Not Found", { status: 404 });
+      throw new Deno.errors.NotFound("Page not found");
     }
   }
 

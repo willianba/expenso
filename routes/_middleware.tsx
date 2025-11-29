@@ -6,7 +6,6 @@ import { getSessionIdCookie } from "@/utils/auth.ts";
 export async function handler(ctx: Context<State>) {
   ctx.state.sessionUser = undefined;
 
-  // fetch session id from cookies. try one provider at a time
   const sessionId = getSessionIdCookie(ctx.req);
   if (sessionId === undefined) {
     return await ctx.next();
