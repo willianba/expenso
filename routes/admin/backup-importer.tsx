@@ -1,22 +1,10 @@
-import { RouteConfig } from "fresh";
 import BackupImporter from "@/islands/BackupImporter.tsx";
+import { define } from "@/utils/state.ts";
 
-export const config: RouteConfig = {
-  skipInheritedLayouts: true,
-};
-
-export default function BackupImporterPage() {
+export default define.page(() => {
   return (
-    <html lang="en">
-      <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Backup Importer</title>
-        <link rel="stylesheet" href="/backup-importer.css" />
-      </head>
-      <body>
-        <BackupImporter />
-      </body>
-    </html>
+    <div class="min-h-screen bg-base-200 flex items-center justify-center p-4">
+      <BackupImporter />
+    </div>
   );
-}
+});
